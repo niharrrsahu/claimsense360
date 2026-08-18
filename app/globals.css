@@ -1,0 +1,431 @@
+@import "tailwindcss";
+
+/* Wire Tailwind's `font-serif` utility to the Fraunces variable set up
+   in app/layout.tsx, so every existing `font-serif` className in the
+   codebase picks up the real display face instead of the browser's
+   generic serif fallback. */
+@theme {
+  --font-serif: var(--font-display), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+:root {
+  --background: #f4f1e8;
+  --foreground: #101412;
+
+  --surface: #ffffff;
+  --surface-dark: #171717;
+
+  --cs-ink: #101412;
+  --cs-paper: #f4f1e8;
+  --cs-paper-soft: #ebe7dc;
+
+  --cs-accent: #c9ff3d;
+  --cs-accent-dark: #9fcf1f;
+
+  --cs-blue: #2448ff;
+  --cs-blue-dark: #1936c9;
+
+  --cs-muted: #73776f;
+  --cs-border: rgba(16, 20, 18, 0.14);
+
+  --cs-success: #3d9b62;
+  --cs-warning: #d99a24;
+  --cs-danger: #d95757;
+
+  --cs-shadow-soft: 0 20px 60px rgba(16, 20, 18, 0.08);
+  --cs-shadow-card: 0 12px 40px rgba(16, 20, 18, 0.1);
+
+  --cs-radius-sm: 12px;
+  --cs-radius-md: 20px;
+  --cs-radius-lg: 28px;
+  --cs-radius-xl: 40px;
+
+  /* Strong, deliberate easing curves — built-in CSS easings read as
+     weak/generic, these give motion a more intentional feel. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+  overflow-y: scroll;
+}
+
+/* ---------- Custom Sleek Scrollbar ---------- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F4F1EA;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(23, 59, 50, 0.25);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(23, 59, 50, 0.5);
+}
+
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--cs-paper);
+  color: var(--cs-ink);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  color: inherit;
+  letter-spacing: -0.04em;
+}
+
+
+button,
+a,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+::selection {
+  background: var(--cs-accent);
+  color: var(--cs-ink);
+}
+
+.container {
+  width: min(1400px, 90%);
+  margin: 0 auto;
+}
+
+.section {
+  position: relative;
+  width: 100%;
+  padding: 140px 0;
+}
+
+.cs-card {
+  border: 1px solid var(--cs-border);
+  border-radius: var(--cs-radius-lg);
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: var(--cs-shadow-card);
+  backdrop-filter: blur(14px);
+}
+
+/* =========================================
+   RESPONSIVE TYPOGRAPHY (SCOPED TO LANDING)
+========================================= */
+
+.landing-scope h1 {
+  font-size: clamp(3.5rem, 6vw, 6.5rem);
+  line-height: 0.92;
+  font-weight: 800;
+  letter-spacing: -0.055em;
+}
+
+.landing-scope h2 {
+  font-size: clamp(2.5rem, 4vw, 4.5rem);
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.045em;
+}
+
+.landing-scope h3 {
+  font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+
+.landing-scope h4 {
+  font-size: 1.25rem;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+p {
+  line-height: 1.7;
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 90%;
+  }
+
+  .section {
+    padding: 90px 0;
+  }
+
+  .landing-scope h1 {
+    font-size: clamp(3rem, 12vw, 4.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+  }
+
+  .landing-scope h2 {
+    font-size: clamp(2.25rem, 9vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+
+  .landing-scope h3 {
+    font-size: 1.5rem;
+  }
+
+  p {
+    line-height: 1.6;
+  }
+}
+
+
+
+/* =========================================
+   INTERACTIVE STATES
+   Buttons, links and focus states
+========================================= */
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  cursor: pointer;
+}
+
+.cs-nav-link {
+  position: relative;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.cs-nav-link:hover {
+  opacity: 0.65;
+}
+
+/* ---------- PRIMARY BUTTON ---------- */
+
+.cs-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  border: 1px solid transparent;
+  border-radius: 999px;
+
+  background: var(--cs-accent);
+  color: var(--cs-ink) !important;
+
+  padding: 14px 24px;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.25s var(--ease-out),
+    box-shadow 0.25s var(--ease-out),
+    background 0.25s var(--ease-out);
+}
+
+.cs-button:hover {
+  transform: translateY(-2px);
+  background: #d5ff66;
+  box-shadow: 0 12px 30px rgba(201, 255, 61, 0.25);
+}
+
+.cs-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* ---------- SECONDARY BUTTON ---------- */
+
+.cs-button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  border: 1px solid var(--cs-border);
+  border-radius: 999px;
+
+  background: transparent;
+  color: var(--cs-ink);
+
+  padding: 14px 24px;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.25s var(--ease-out),
+    border-color 0.25s var(--ease-out),
+    transform 0.25s var(--ease-out);
+}
+
+.cs-button-secondary:hover {
+  background: rgba(255, 255, 255, 0.65);
+  border-color: rgba(16, 20, 18, 0.25);
+  transform: translateY(-2px);
+}
+
+.cs-button-secondary:active {
+  transform: translateY(0);
+}
+
+/* ---------- FOCUS ACCESSIBILITY ---------- */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(36, 72, 255, 0.35);
+  outline-offset: 3px;
+}
+
+/* ---------- REDUCED MOTION ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* =========================================
+   CONTRAST & VISIBILITY FIXES
+========================================= */
+
+button.bg-\[\#101412\],
+button.bg-\[\#171717\],
+a.bg-\[\#101412\],
+a.bg-\[\#171717\] {
+  color: #ffffff !important;
+}
+
+/* ---------- Hero CTAs ---------- */
+
+.hero-primary-button {
+  color: #ffffff !important;
+  text-decoration: none !important;
+  -webkit-tap-highlight-color: transparent;
+  will-change: transform;
+}
+
+.hero-primary-button:hover {
+  color: #ffffff !important;
+}
+
+.hero-primary-button span {
+  color: inherit;
+}
+
+.hero-secondary-button {
+  color: #173b32 !important;
+  text-decoration: none !important;
+  -webkit-tap-highlight-color: transparent;
+  will-change: transform;
+}
+
+.hero-secondary-button:hover {
+  color: #e66a4e !important;
+}
+
+.hero-primary-button:focus-visible,
+.hero-secondary-button:focus-visible {
+  outline: 3px solid rgba(46, 107, 91, 0.35);
+  outline-offset: 4px;
+}
+
+/* ---------- Footer ---------- */
+
+footer h1,
+footer h2,
+footer h3,
+footer h4 {
+  color: #ffffff !important;
+}
+
+footer p {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+footer a {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+footer a:hover {
+  color: #c9ff3d !important;
+}
+
+/* =========================================
+   LIVE RISK ANALYZER — custom range input
+========================================= */
+
+.cs-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(244, 241, 234, 0.16);
+  outline: none;
+}
+
+.cs-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #c9ff3d;
+  border: 3px solid #101412;
+  cursor: pointer;
+  transition: transform 0.16s var(--ease-out);
+}
+
+.cs-range::-webkit-slider-thumb:hover {
+  transform: scale(1.12);
+}
+
+.cs-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #c9ff3d;
+  border: 3px solid #101412;
+  cursor: pointer;
+}
