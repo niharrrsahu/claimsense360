@@ -35,7 +35,8 @@ export default async function ClaimsPage({
           userEmail={currentUser?.email || "niharrrsahu@gmail.com"}
         />
 
-        <div className="flex-1 space-y-6 p-4 sm:p-6 lg:p-8 w-full max-w-full overflow-x-hidden">
+        <div className="flex-1 space-y-6 px-4 sm:px-6 lg:px-8 py-5 w-full max-w-full overflow-x-hidden">
+
 
 
           {/* Header */}

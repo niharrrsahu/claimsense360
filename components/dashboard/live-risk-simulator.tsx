@@ -205,7 +205,12 @@ export default function LiveRiskSimulator() {
 
 
   return (
-    <div className="rounded-3xl border border-[#173B32]/12 bg-white p-6 shadow-sm space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="rounded-3xl border border-[#173B32]/12 bg-white p-4 sm:p-6 shadow-sm space-y-4 min-w-0"
+    >
       
       {/* Header + Comparison Pill */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#173B32]/10 pb-5">
@@ -469,6 +474,7 @@ export default function LiveRiskSimulator() {
         )}
       </div>
 
-    </div>
+    </motion.div>
   );
 }
+

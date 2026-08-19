@@ -53,8 +53,9 @@ export default function DamageCard({ latestDamage }: DamageCardProps) {
     <motion.div
       whileHover={{ y: -4 }}
       transition={{ duration: 0.25 }}
-      className="rounded-3xl border border-[#173B32]/12 bg-white p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow"
+      className="rounded-3xl border border-[#173B32]/12 bg-white p-4 sm:p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow min-w-0"
     >
+
       <div>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-3">

@@ -28,8 +28,9 @@ export default async function DashboardPage() {
           userEmail={currentUser?.email || "niharrrsahu@gmail.com"}
         />
 
-        <div className="flex-1 space-y-6 sm:space-y-8 p-4 sm:p-6 lg:p-8 w-full max-w-full overflow-x-hidden">
+        <div className="flex-1 space-y-6 sm:space-y-8 px-4 sm:px-6 lg:px-8 py-5 w-full max-w-full overflow-x-hidden">
           {/* Header Banner & Quick Action Bar */}
+
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
             <div>

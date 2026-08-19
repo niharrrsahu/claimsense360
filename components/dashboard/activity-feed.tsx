@@ -19,7 +19,8 @@ interface ActivityFeedProps {
 
 export default function ActivityFeed({ activities = [] }: ActivityFeedProps) {
   return (
-    <div className="rounded-3xl border border-[#173B32]/12 bg-white p-6 shadow-sm flex flex-col justify-between">
+    <div className="rounded-3xl border border-[#173B32]/12 bg-white p-4 sm:p-6 shadow-sm flex flex-col justify-between min-w-0">
+
 
       <div>
         <div className="flex items-center justify-between">

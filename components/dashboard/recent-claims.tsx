@@ -23,7 +23,8 @@ export default function RecentClaims({ claims = [] }: RecentClaimsProps) {
   const router = useRouter();
 
   return (
-    <div className="rounded-3xl border border-[#173B32]/12 bg-white p-6 shadow-sm">
+    <div className="rounded-3xl border border-[#173B32]/12 bg-white p-4 sm:p-6 shadow-sm min-w-0">
+
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-sans font-bold text-[#173B32]">Recent Claims Overview</h3>
