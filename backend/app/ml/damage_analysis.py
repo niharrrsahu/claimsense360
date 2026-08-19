@@ -9,37 +9,14 @@ import io
 import functools
 import numpy as np
 from PIL import Image, ImageOps
-import gc
-try:
-    import torch
-    import torchvision.models as models
-    import torchvision.transforms as transforms
-    HAS_TORCH = True
-    DEVICE = "cpu"
-    torch.set_num_threads(1)
-    if hasattr(torch, "set_num_interop_threads"):
-        try:
-            torch.set_num_interop_threads(1)
-        except Exception:
-            pass
-except ImportError:
-    HAS_TORCH = False
-    DEVICE = "cpu"
-
-
-try:
-    from ultralytics import YOLO
-    HAS_YOLO = True
-except ImportError:
-    HAS_YOLO = False
+os.environ["YOLO_CONFIG_DIR"] = "/tmp"
 
 @functools.lru_cache(maxsize=1)
 def get_yolo_damage_model():
-    if not HAS_YOLO:
-        return None
     try:
+        from ultralytics import YOLO
         model = YOLO("yolov8n.pt")
-        model.to(DEVICE)
+        model.to("cpu")
         return model
     except Exception as e:
         print(f"Warning: Could not load YOLOv8 model: {e}")
@@ -47,29 +24,39 @@ def get_yolo_damage_model():
 
 @functools.lru_cache(maxsize=1)
 def get_resnet_feature_extractor():
-    if not HAS_TORCH:
-        return None
     try:
+        import torch
+        import torchvision.models as models
+        torch.set_num_threads(1)
+        if hasattr(torch, "set_num_interop_threads"):
+            try:
+                torch.set_num_interop_threads(1)
+            except Exception:
+                pass
         model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
         feature_extractor = torch.nn.Sequential(*list(model.children())[:-1])
-        feature_extractor.to(DEVICE)
+        feature_extractor.to("cpu")
         feature_extractor.eval()
         return feature_extractor
     except Exception as e:
         print(f"Warning: Could not load ResNet weights: {e}")
         return None
 
-if HAS_TORCH:
-    PYTORCH_TRANSFORM = transforms.Compose([
-        transforms.Resize((224, 224)),
-        transforms.ToTensor(),
-        transforms.Normalize(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225]
-        ),
-    ])
-else:
-    PYTORCH_TRANSFORM = None
+
+def get_pytorch_transform():
+    try:
+        import torchvision.transforms as transforms
+        return transforms.Compose([
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225]
+            ),
+        ])
+    except Exception:
+        return None
+
 
 
 def analyze_damage_image(image_bytes: bytes) -> dict | None:
@@ -120,9 +107,12 @@ def analyze_damage_image(image_bytes: bytes) -> dict | None:
         cnn_component = 0.5
         feature_norm = 0.0
 
-        if resnet is not None and PYTORCH_TRANSFORM is not None:
-            input_tensor = PYTORCH_TRANSFORM(rgb_img).unsqueeze(0).to(DEVICE)
+        pytorch_transform = get_pytorch_transform()
+        if resnet is not None and pytorch_transform is not None:
+            import torch
+            input_tensor = pytorch_transform(rgb_img).unsqueeze(0).to("cpu")
             with torch.no_grad():
+
                 deep_features = resnet(input_tensor)
                 feature_vec = deep_features.flatten().cpu().numpy()
                 feature_norm = float(np.linalg.norm(feature_vec))
