@@ -100,29 +100,29 @@ export default function DamageCard({ latestDamage }: DamageCardProps) {
             transition={{ duration: 0.2 }}
             className="mt-4 space-y-4"
           >
-            <div className="rounded-2xl border border-[#173B32]/15 bg-[#F4F1EA] p-5">
-              <div className="flex justify-between items-center">
+            <div className="rounded-2xl border border-[#173B32]/15 bg-[#F4F1EA] p-3.5 sm:p-5 min-w-0 overflow-hidden">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2 min-w-0">
                 <span className="text-xs text-[#173B32]/70 font-medium">Claim Reference:</span>
-                <span className="text-xs font-mono font-bold text-[#173B32]">
+                <span className="text-xs font-mono font-bold text-[#173B32] truncate">
                   CLM-{String(activeDamage.claimId).padStart(5, "0")}
                 </span>
               </div>
 
-              <div className="mt-3 flex justify-between items-center">
+              <div className="mt-2.5 sm:mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2 min-w-0">
                 <span className="text-xs text-[#173B32]/70 font-medium">Vehicle:</span>
-                <span className="text-sm font-bold text-[#101412]">{activeDamage.vehicle}</span>
+                <span className="text-xs sm:text-sm font-bold text-[#101412] truncate">{activeDamage.vehicle}</span>
               </div>
 
-              <div className="mt-3 flex justify-between items-center border-t border-[#173B32]/10 pt-3">
+              <div className="mt-2.5 sm:mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2 border-t border-[#173B32]/10 pt-2.5 sm:pt-3 min-w-0">
                 <span className="text-xs text-[#173B32]/70 font-medium">CV Severity Score:</span>
-                <span className="text-xl font-serif font-extrabold text-[#173B32]">
+                <span className="text-base sm:text-xl font-serif font-extrabold text-[#173B32] truncate">
                   {activeDamage.score} / 100
                 </span>
               </div>
 
-              <div className="mt-2.5 flex justify-between items-center">
+              <div className="mt-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2 min-w-0">
                 <span className="text-xs text-[#173B32]/70 font-medium">Severity Band:</span>
-                <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-bold whitespace-nowrap ${activeDamage.badge}`}>
+                <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-bold shrink-0 ${activeDamage.badge}`}>
                   {activeDamage.severity}
                 </span>
               </div>
@@ -131,6 +131,7 @@ export default function DamageCard({ latestDamage }: DamageCardProps) {
             <p className="text-xs text-[#173B32]/70 font-medium leading-relaxed">
               {activeDamage.description}
             </p>
+
           </motion.div>
         </AnimatePresence>
       </div>

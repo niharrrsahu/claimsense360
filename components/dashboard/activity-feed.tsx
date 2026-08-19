@@ -76,9 +76,10 @@ export default function ActivityFeed({ activities = [] }: ActivityFeedProps) {
                       </p>
                     </div>
 
-                    <span className="text-[11px] text-[#173B32]/60 shrink-0 font-medium">
+                    <span className="hidden sm:inline-block text-[11px] text-[#173B32]/60 shrink-0 font-medium">
                       {item.time}
                     </span>
+
                   </Link>
                 </motion.div>
               );
