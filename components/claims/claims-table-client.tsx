@@ -1,7 +1,6 @@
 "use client";
 
 
-
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -38,10 +37,10 @@ export default function ClaimsTableClient({
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-full overflow-hidden">
       {/* Interactive Search Banner */}
-      <div className="rounded-3xl border border-[#173B32]/12 bg-white p-6 shadow-sm">
-        <div className="flex items-center gap-4">
+      <div className="rounded-3xl border border-[#173B32]/12 bg-white p-4 sm:p-6 shadow-sm">
+        <div className="flex items-center gap-3">
           <div className="flex flex-1 items-center gap-3 rounded-2xl border border-[#173B32]/15 bg-[#F4F1EA] px-4 py-3 text-sm text-[#101412] focus-within:border-[#173B32] transition">
             <Search className="text-[#173B32]/60" size={18} />
             <input
@@ -57,7 +56,7 @@ export default function ClaimsTableClient({
             <button
               type="button"
               onClick={() => setSearchTerm("")}
-              className="rounded-2xl border border-[#173B32]/20 bg-white hover:bg-[#F4F1EA] px-4 py-3 text-xs font-bold text-[#E66A4E] shadow-2xs transition active:scale-95 cursor-pointer"
+              className="rounded-2xl border border-[#173B32]/20 bg-white hover:bg-[#F4F1EA] px-4 py-3 text-xs font-bold text-[#E66A4E] shadow-2xs transition active:scale-95 cursor-pointer shrink-0"
             >
               Clear
             </button>
@@ -74,7 +73,7 @@ export default function ClaimsTableClient({
       </div>
 
       {/* Claims Directory Table */}
-      <div className="rounded-3xl border border-[#173B32]/12 bg-white p-6 sm:p-8 shadow-sm">
+      <div className="rounded-3xl border border-[#173B32]/12 bg-white p-4 sm:p-8 shadow-sm max-w-full overflow-hidden">
         {filteredClaims.length === 0 ? (
           <div className="flex h-64 flex-col items-center justify-center rounded-2xl border border-dashed border-[#173B32]/20 bg-[#F4F1EA]/50 p-6 text-center">
             <FileText className="h-10 w-10 text-[#173B32]/50 mb-3" />
@@ -92,20 +91,19 @@ export default function ClaimsTableClient({
             </Link>
           </div>
         ) : (
-          <div className="overflow-x-auto -mx-2 sm:mx-0">
+          <div className="overflow-x-auto -mx-2 sm:mx-0 rounded-2xl border border-[#173B32]/10">
             <table className="w-full text-left text-sm min-w-[700px]">
-              <thead className="border-b border-[#173B32]/10 text-xs font-semibold uppercase tracking-wider text-[#173B32]/70">
+              <thead className="bg-[#F4F1EA] border-b border-[#173B32]/15 text-xs font-bold uppercase tracking-wider text-[#173B32]">
                 <tr>
-                  <th className="pb-3 min-w-[100px]">Claim Ref</th>
-                  <th className="pb-3 min-w-[140px]">Customer</th>
-                  <th className="pb-3 min-w-[140px]">Vehicle</th>
-                  <th className="pb-3 min-w-[110px]">Claim Amount</th>
-                  <th className="pb-3 min-w-[130px]">Fraud Risk</th>
-                  <th className="pb-3 min-w-[180px]">Recommended Action</th>
-                  <th className="pb-3 text-right pr-2">Details</th>
+                  <th className="py-3.5 px-4 min-w-[110px]">Claim Ref</th>
+                  <th className="py-3.5 px-4 min-w-[140px]">Customer</th>
+                  <th className="py-3.5 px-4 min-w-[150px]">Vehicle</th>
+                  <th className="py-3.5 px-4 min-w-[120px]">Claim Amount</th>
+                  <th className="py-3.5 px-4 min-w-[140px]">Fraud Risk</th>
+                  <th className="py-3.5 px-4 min-w-[190px]">Recommended Action</th>
+                  <th className="py-3.5 px-4 text-right">Details</th>
                 </tr>
               </thead>
-
 
               <tbody className="divide-y divide-[#173B32]/10">
                 {filteredClaims.map((claim) => {
@@ -128,44 +126,36 @@ export default function ClaimsTableClient({
                   return (
                     <motion.tr
                       key={claim.id}
-                      whileHover={{ scale: 1.006, x: 2 }}
+                      whileHover={{ scale: 1.002, backgroundColor: "rgba(23,59,50,0.06)" }}
                       whileTap={{ scale: 0.995 }}
                       onClick={() => router.push(`/claims/${claim.id}`)}
-                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                      className="group cursor-pointer transition-all duration-200 hover:bg-[#173B32]/5"
+                      transition={{ duration: 0.15 }}
+                      className="group cursor-pointer transition-colors odd:bg-white even:bg-[#F4F1EA]/40 border-b border-[#173B32]/10"
                     >
-                      <td className="py-4 px-2 font-mono font-bold text-[#173B32] group-hover:text-[#E66A4E] transition-colors rounded-l-xl">
+                      <td className="py-3.5 px-4 font-mono font-bold text-[#173B32] group-hover:text-[#E66A4E] transition-colors">
                         CLM-{String(claim.id).padStart(5, "0")}
                       </td>
-
-                      <td className="py-4 font-bold text-[#101412]">
-                        {claim.customer_name || "Anonymous"}
+                      <td className="py-3.5 px-4 font-semibold text-[#101412]">
+                        {claim.customer_name || "N/A"}
                       </td>
-
-                      <td className="py-4 text-[#173B32]/80 font-medium">
+                      <td className="py-3.5 px-4 text-xs font-medium text-[#173B32]/80">
                         {claim.vehicle_make_model || "N/A"}
                       </td>
-
-                      <td className="py-4 font-bold text-[#101412]">
-                        ₹{claim.claim_amount?.toLocaleString("en-IN")}
+                      <td className="py-3.5 px-4 font-bold text-[#101412]">
+                        ₹{Number(claim.claim_amount || 0).toLocaleString("en-IN")}
                       </td>
-
-                      <td className="py-4">
-                        <span
-                          className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-bold transition-transform duration-200 group-hover:scale-105 ${badgeClass}`}
-                        >
-                          {displayLabel} ({claim.overall_risk_score})
+                      <td className="py-3.5 px-4">
+                        <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs border ${badgeClass}`}>
+                          {displayLabel} ({score.toFixed(1)})
                         </span>
                       </td>
-
-                      <td className="py-4 text-xs font-semibold text-[#173B32]">
-                        {claim.recommended_action || "Standard Review"}
+                      <td className="py-3.5 px-4 text-xs font-semibold text-[#173B32]/90">
+                        {claim.recommended_action || "Approve automatically"}
                       </td>
-
-                      <td className="py-4 px-2 text-right rounded-r-xl">
-                        <div className="inline-flex items-center justify-center h-8 w-8 rounded-xl bg-[#F4F1EA] text-[#173B32] group-hover:bg-[#173B32] transition-all duration-200 group-hover:scale-110 shadow-xs">
-                          <ArrowRight className="h-4 w-4 text-[#173B32] group-hover:text-[#C9FF3D] transition-colors duration-200 group-hover:translate-x-0.5" />
-                        </div>
+                      <td className="py-3.5 px-4 text-right">
+                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#101412]/5 text-[#101412] transition-all group-hover:bg-[#173B32] group-hover:text-[#C9FF3D]">
+                          <ArrowRight size={14} />
+                        </span>
                       </td>
                     </motion.tr>
                   );

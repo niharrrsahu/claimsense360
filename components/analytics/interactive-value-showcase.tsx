@@ -348,23 +348,24 @@ export default function InteractiveValueShowcase() {
           </div>
 
           {/* Dynamic ROI Display */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-xl border border-[#173B32]/15 bg-white p-4 text-center">
-              <span className="text-[10px] font-bold text-[#173B32]/70 uppercase">Est. Annual Fraud Savings</span>
-              <p className="mt-1 font-serif text-xl sm:text-2xl font-extrabold text-[#E66A4E]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="rounded-xl border border-[#173B32]/15 bg-white p-3 sm:p-4 text-center min-w-0 overflow-hidden">
+              <span className="text-[10px] font-bold text-[#173B32]/70 uppercase block truncate">Est. Annual Fraud Savings</span>
+              <p className="mt-1 font-serif text-base sm:text-xl lg:text-2xl font-extrabold text-[#E66A4E] truncate max-w-full tracking-tight">
                 ₹{annualFraudSavings.toLocaleString("en-IN")}
               </p>
-              <span className="text-[9px] text-[#173B32]/60 font-semibold">Based on 8% fraud prevention</span>
+              <span className="text-[9px] text-[#173B32]/60 font-semibold block truncate">Based on 8% fraud prevention</span>
             </div>
 
-            <div className="rounded-xl border border-[#173B32]/15 bg-white p-4 text-center">
-              <span className="text-[10px] font-bold text-[#173B32]/70 uppercase">Annual Adjuster Hours Saved</span>
-              <p className="mt-1 font-serif text-xl sm:text-2xl font-extrabold text-[#173B32]">
+            <div className="rounded-xl border border-[#173B32]/15 bg-white p-3 sm:p-4 text-center min-w-0 overflow-hidden">
+              <span className="text-[10px] font-bold text-[#173B32]/70 uppercase block truncate">Annual Adjuster Hours Saved</span>
+              <p className="mt-1 font-serif text-base sm:text-xl lg:text-2xl font-extrabold text-[#173B32] truncate max-w-full tracking-tight">
                 {annualHoursSaved.toLocaleString()} hrs
               </p>
-              <span className="text-[9px] text-[#173B32]/60 font-semibold">3.5 hrs saved per claim</span>
+              <span className="text-[9px] text-[#173B32]/60 font-semibold block truncate">3.5 hrs saved per claim</span>
             </div>
           </div>
+
         </div>
       </div>
     </div>

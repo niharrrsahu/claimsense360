@@ -54,17 +54,17 @@ export default function RecentClaims({ claims = [] }: RecentClaimsProps) {
           </Link>
         </div>
       ) : (
-        <div className="mt-6 overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-[#173B32]/10 text-xs font-semibold uppercase tracking-wider text-[#173B32]/70">
+        <div className="mt-6 overflow-x-auto rounded-2xl border border-[#173B32]/10">
+          <table className="w-full text-left text-sm min-w-[650px]">
+            <thead className="bg-[#F4F1EA] border-b border-[#173B32]/15 text-xs font-bold uppercase tracking-wider text-[#173B32]">
               <tr>
-                <th className="pb-3">Claim ID</th>
-                <th className="pb-3">Customer</th>
-                <th className="pb-3">Vehicle</th>
-                <th className="pb-3">Claim Amount</th>
-                <th className="pb-3">Risk Band</th>
-                <th className="pb-3">Action</th>
-                <th className="pb-3 text-right">View</th>
+                <th className="py-3.5 px-4 min-w-[100px]">Claim ID</th>
+                <th className="py-3.5 px-4 min-w-[130px]">Customer</th>
+                <th className="py-3.5 px-4 min-w-[140px]">Vehicle</th>
+                <th className="py-3.5 px-4 min-w-[110px]">Claim Amount</th>
+                <th className="py-3.5 px-4 min-w-[130px]">Risk Band</th>
+                <th className="py-3.5 px-4 min-w-[160px]">Action</th>
+                <th className="py-3.5 px-4 text-right">View</th>
               </tr>
             </thead>
 
@@ -89,39 +89,39 @@ export default function RecentClaims({ claims = [] }: RecentClaimsProps) {
                 return (
                   <motion.tr
                     key={claim.id}
-                    whileHover={{ scale: 1.006, x: 2 }}
+                    whileHover={{ scale: 1.002, backgroundColor: "rgba(23,59,50,0.06)" }}
                     whileTap={{ scale: 0.995 }}
                     onClick={() => router.push(`/claims/${claim.id}`)}
-                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    className="group cursor-pointer transition-all duration-200 hover:bg-[#173B32]/5"
+                    transition={{ duration: 0.15 }}
+                    className="group cursor-pointer transition-colors odd:bg-white even:bg-[#F4F1EA]/40 border-b border-[#173B32]/10"
                   >
-                    <td className="py-3 px-2 font-mono font-bold text-[#173B32] group-hover:text-[#E66A4E] transition-colors rounded-l-xl">
+                    <td className="py-3.5 px-4 font-mono font-bold text-[#173B32] group-hover:text-[#E66A4E] transition-colors">
                       CLM-{String(claim.id).padStart(5, "0")}
                     </td>
 
-                    <td className="py-3 font-bold text-[#101412]">
+                    <td className="py-3.5 px-4 font-bold text-[#101412]">
                       {claim.customer_name || "Anonymous"}
                     </td>
 
-                    <td className="py-3 text-[#173B32]/80 font-medium">
+                    <td className="py-3.5 px-4 text-xs font-medium text-[#173B32]/80">
                       {claim.vehicle_make_model || "N/A"}
                     </td>
 
-                    <td className="py-3 font-bold text-[#101412]">
+                    <td className="py-3.5 px-4 font-bold text-[#101412]">
                       ₹{claim.claim_amount?.toLocaleString("en-IN")}
                     </td>
 
-                    <td className="py-3">
+                    <td className="py-3.5 px-4">
                       <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-bold transition-transform duration-200 group-hover:scale-105 ${badgeClass}`}>
                         {displayLabel} ({claim.overall_risk_score})
                       </span>
                     </td>
 
-                    <td className="py-3 text-xs font-medium text-[#173B32]/80">
+                    <td className="py-3.5 px-4 text-xs font-semibold text-[#173B32]/90">
                       {claim.recommended_action}
                     </td>
 
-                    <td className="py-3 px-2 text-right rounded-r-xl">
+                    <td className="py-3.5 px-4 text-right">
                       <div
                         className="inline-flex items-center justify-center h-8 w-8 rounded-xl bg-[#F4F1EA] text-[#173B32] group-hover:bg-[#173B32] transition-all duration-200 group-hover:scale-110 shadow-xs"
                       >
@@ -134,6 +134,7 @@ export default function RecentClaims({ claims = [] }: RecentClaimsProps) {
             </tbody>
           </table>
         </div>
+
       )}
     </div>
   );
