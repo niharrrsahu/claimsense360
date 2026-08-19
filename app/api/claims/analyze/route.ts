@@ -49,6 +49,9 @@ export async function POST(request: Request) {
     const riskBand = fraudScore >= 50 ? "High risk" : (fraudScore >= 30 ? "Moderate risk" : "Low risk");
     const action = fraudScore >= 50 ? "Flag for SIU Fraud Audit" : (fraudScore >= 30 ? "Require Secondary Photo Verification" : "Fast-track 3-Second Settlement");
 
+    const damageScore = roundVal(fraudScore * 0.85 + (claimData.police_report_filed ? 2.5 : 12), 1);
+    const damageSeverity = damageScore >= 70 ? "Major Crush" : (damageScore >= 40 ? "Moderate Bumper Damage" : "Minor Bumper Scratch");
+
     return NextResponse.json({
       claim_id: Math.floor(10000 + Math.random() * 90000),
       fraud_probability: roundVal(fraudScore / 100, 2),
@@ -62,25 +65,23 @@ export async function POST(request: Request) {
         { feature: "Police Report Verification", name: "Police Report Verification", contribution: claimData.police_report_filed ? -0.15 : 0.15, effect: claimData.police_report_filed ? "decreases_risk" : "increases_risk" }
       ],
       damage: {
-        damage_severity: fraudScore > 50 ? "Medium" : "Minor Bumper Scratch",
-        damage_score: 64.6,
+        damage_severity: damageSeverity,
+        damage_score: damageScore,
         method: "Ultralytics YOLOv8 Object Detection + Edge Density & Contrast Irregularity PyTorch ResNet-18",
         has_exif: false,
         is_web_asset: true,
         detected_parts: ["Front Bumper Assembly", "Grill Detachment", "Headlight Unit"]
       },
       narrative: {
-        suspicion_score: 11.1,
-        label: "Low Deception Risk",
+        suspicion_score: roundVal(fraudScore * 0.75, 1),
+        label: fraudScore >= 50 ? "Suspicious Narrative" : "Low Deception Risk",
         flagged_phrases: [
           { phrase: "damage", impact: 0.199, effect: "increases_suspicion" },
           { phrase: "filed", impact: -0.171, effect: "lowers_suspicion" },
           { phrase: "police report", impact: -0.171, effect: "lowers_suspicion" },
           { phrase: "report", impact: -0.171, effect: "lowers_suspicion" },
           { phrase: "heavy", impact: -0.168, effect: "lowers_suspicion" },
-          { phrase: "bumper", impact: -0.167, effect: "lowers_suspicion" },
-          { phrase: "near", impact: -0.157, effect: "lowers_suspicion" },
-          { phrase: "reported", impact: -0.154, effect: "lowers_suspicion" }
+          { phrase: "bumper", impact: -0.167, effect: "lowers_suspicion" }
         ]
       }
     }, { status: 200 });

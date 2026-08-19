@@ -167,19 +167,21 @@ export default function LoginPage() {
         {/* Left Branding Side - Desktop Only */}
         <div className="hidden lg:flex flex-col justify-between space-y-8 pr-6">
           <div>
-            <Link href="/" className="inline-flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#101412] shadow-lg">
-                <span className="text-xl font-black text-[#C9FF3D]">CS</span>
-              </div>
-              <div>
-                <p className="text-lg font-bold leading-none text-[#173B32]">
-                  ClaimSense 360
-                </p>
-                <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-[#66736D] font-semibold">
-                  Claims Intelligence Platform
-                </p>
-              </div>
-            </Link>
+            <motion.div whileHover={{ scale: 1.04, x: 4 }} className="inline-block">
+              <Link href="/" className="inline-flex items-center gap-3 group cursor-pointer">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#101412] shadow-lg group-hover:scale-110 group-hover:rotate-6 group-hover:ring-2 group-hover:ring-[#C9FF3D] transition-all duration-300">
+                  <span className="text-xl font-black text-[#C9FF3D]">CS</span>
+                </div>
+                <div>
+                  <p className="text-lg font-bold leading-none text-[#173B32] group-hover:text-[#E66A4E] transition-colors">
+                    ClaimSense 360
+                  </p>
+                  <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-[#66736D] font-semibold">
+                    Claims Intelligence Platform
+                  </p>
+                </div>
+              </Link>
+            </motion.div>
 
             <h2 className="mt-8 font-serif text-4xl font-semibold leading-tight text-[#173B32]">
               AI-Powered Insurance Decision Platform.
@@ -190,20 +192,21 @@ export default function LoginPage() {
           </div>
 
           <div className="space-y-3 pt-4">
-            <div className="flex items-center gap-3 text-xs font-semibold text-[#173B32]">
+            <div className="flex items-center gap-3 text-xs font-semibold text-[#173B32] hover:translate-x-1 transition-transform">
               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#173B32]/10 text-[#173B32]">✓</div>
               <span>XGBoost Machine Learning Fraud Classification</span>
             </div>
-            <div className="flex items-center gap-3 text-xs font-semibold text-[#173B32]">
+            <div className="flex items-center gap-3 text-xs font-semibold text-[#173B32] hover:translate-x-1 transition-transform">
               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#173B32]/10 text-[#173B32]">✓</div>
               <span>TF-IDF Narrative Deception & Sentiment Analysis</span>
             </div>
-            <div className="flex items-center gap-3 text-xs font-semibold text-[#173B32]">
+            <div className="flex items-center gap-3 text-xs font-semibold text-[#173B32] hover:translate-x-1 transition-transform">
               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#173B32]/10 text-[#173B32]">✓</div>
               <span>Computer Vision Vehicle Damage Severity Index</span>
             </div>
           </div>
         </div>
+
 
         {/* Right Form Card */}
         <div className="flex justify-center w-full">
