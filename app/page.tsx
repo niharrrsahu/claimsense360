@@ -1,6 +1,5 @@
 import Navbar from "@/components/landing/navbar";
 
-
 import Hero from "@/components/landing/hero";
 import DashboardPreview from "@/components/landing/dashboard-preview";
 import LiveRiskAnalyzer from "@/components/landing/live-risk-analyzer";
@@ -18,8 +17,9 @@ export default function Home() {
       {/* 1. PLATFORM SECTION */}
       <section
         id="platform"
-        className="scroll-mt-32 lg:scroll-mt-36 mx-auto grid max-w-[1400px] items-center gap-6 px-6 pb-4 pt-20 sm:pt-24 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:px-10 lg:pb-6 lg:pt-28"
+        className="scroll-mt-32 lg:scroll-mt-36 mx-auto grid max-w-[1400px] items-center gap-6 px-4 sm:px-6 pb-4 pt-28 sm:pt-32 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:px-10 lg:pb-6 lg:pt-36"
       >
+
         <Hero />
 
         <div className="flex justify-center lg:justify-end">

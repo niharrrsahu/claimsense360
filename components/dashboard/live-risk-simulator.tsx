@@ -1,5 +1,7 @@
 "use client";
 
+
+
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Play, ShieldAlert, ShieldCheck, AlertTriangle, ArrowRight, RefreshCw, Cpu } from "lucide-react";
@@ -223,15 +225,15 @@ export default function LiveRiskSimulator() {
         </div>
 
         {/* Enterprise Comparison Badge */}
-        <div className="flex items-center gap-3 rounded-2xl bg-[#F4F1EA] p-3 border border-[#173B32]/10 shrink-0">
-          <div className="text-center px-2">
-            <span className="text-[10px] uppercase font-bold text-[#173B32]/60 block">Manual Process</span>
-            <span className="text-xs font-extrabold text-[#E66A4E]">14 Days • ₹1,200 Cost</span>
+        <div className="flex flex-wrap sm:flex-nowrap items-center justify-center sm:justify-start gap-2 sm:gap-3 rounded-2xl bg-[#F4F1EA] p-2.5 sm:p-3 border border-[#173B32]/10 w-full sm:w-auto max-w-full overflow-hidden">
+          <div className="text-center px-1.5 sm:px-2 min-w-0">
+            <span className="text-[9px] sm:text-[10px] uppercase font-bold text-[#173B32]/60 block truncate">Manual Process</span>
+            <span className="text-[11px] sm:text-xs font-extrabold text-[#E66A4E] block truncate">14 Days • ₹1,200</span>
           </div>
-          <div className="h-7 w-[1px] bg-[#173B32]/15" />
-          <div className="text-center px-2">
-            <span className="text-[10px] uppercase font-bold text-[#173B32]/60 block">ClaimSense AI</span>
-            <span className="text-xs font-extrabold text-[#173B32]">3 Sec • 94.2% Accuracy</span>
+          <div className="hidden sm:block h-7 w-[1px] bg-[#173B32]/15" />
+          <div className="text-center px-1.5 sm:px-2 min-w-0">
+            <span className="text-[9px] sm:text-[10px] uppercase font-bold text-[#173B32]/60 block truncate">ClaimSense AI</span>
+            <span className="text-[11px] sm:text-xs font-extrabold text-[#173B32] block truncate">3 Sec • 94.2% Acc.</span>
           </div>
         </div>
       </div>
@@ -242,7 +244,7 @@ export default function LiveRiskSimulator() {
           <Sparkles size={14} className="text-[#E66A4E]" /> 1-Click Interactive Test Scenarios:
         </span>
 
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 grid-cols-1 sm:grid-cols-3">
           {PRESETS.map((scenario) => {
             const isSelected = selectedPreset.id === scenario.id;
             let badgeBg = "bg-[#EBF7EE] text-[#173B32]";
@@ -256,25 +258,26 @@ export default function LiveRiskSimulator() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => runSimulation(scenario)}
-                className={`flex flex-col justify-between text-left p-4 rounded-2xl border transition-all duration-200 ${
+                className={`flex flex-col justify-between text-left p-3.5 sm:p-4 rounded-2xl border transition-all duration-200 w-full overflow-hidden ${
                   isSelected
                     ? "border-[#173B32] bg-[#F4F1EA] shadow-md ring-2 ring-[#173B32]/20"
                     : "border-[#173B32]/15 bg-white hover:border-[#173B32]/30 hover:bg-[#F4F1EA]/40 shadow-xs"
                 }`}
               >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-[#101412] line-clamp-1">
+                <div className="min-w-0 w-full">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-xs font-bold text-[#101412] truncate">
                       {scenario.name.split("(")[0]}
                     </span>
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${badgeBg}`}>
+                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold shrink-0 ${badgeBg}`}>
                       {scenario.riskBand} Risk
                     </span>
                   </div>
-                  <p className="mt-1 text-[11px] text-[#173B32]/70 font-medium line-clamp-1">
+                  <p className="mt-1 text-[11px] text-[#173B32]/70 font-medium truncate">
                     {scenario.vehicle} • ₹{scenario.amount.toLocaleString("en-IN")}
                   </p>
                 </div>
+
 
                 <div className="mt-3 flex items-center justify-between pt-2 border-t border-[#173B32]/10 text-[11px] font-bold text-[#173B32]">
                   <span>Run Live Test</span>

@@ -43,40 +43,49 @@ export default function Navbar() {
   }, []);
 
 
-  return (
-    <header className="fixed left-0 right-0 top-0 z-50 px-6 pt-5 sm:px-8">
-      <nav className="mx-auto max-w-[1450px] rounded-[28px] border border-[#173B32]/10 bg-[#F4F1EA]/90 shadow-[0_8px_30px_rgba(23,59,50,0.05)] backdrop-blur-md lg:rounded-full">
-        <div className="flex items-center justify-between px-6 py-3.5 lg:px-7">
-          {/* LOGO */}
-          <a
-            href="/"
-            onClick={(e) => {
-              e.preventDefault();
-              window.location.href = "/";
-            }}
-            className="flex items-center gap-3 cursor-pointer group"
-          >
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith("#")) {
+      e.preventDefault();
+      const id = href.substring(1);
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+        setActiveSection(id);
+      }
+    }
+    setOpen(false);
+  };
 
+  return (
+    <header className="fixed left-0 right-0 top-0 z-50 px-3 sm:px-8 pt-3 sm:pt-5">
+      <nav className="mx-auto max-w-[1450px] rounded-[28px] border border-[#173B32]/10 bg-[#F4F1EA]/95 shadow-[0_8px_30px_rgba(23,59,50,0.08)] backdrop-blur-md lg:rounded-full">
+        <div className="flex items-center justify-between px-4 py-3 sm:px-6 lg:px-7">
+
+          {/* LOGO */}
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            title="Click to Refresh Site"
+            className="flex items-center gap-3 cursor-pointer group bg-transparent border-0 outline-none text-left"
+          >
             <motion.div
+              whileHover={{ scale: 1.12, rotate: 6 }}
               whileTap={{ rotate: 360, scale: 0.9 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              className="flex h-11 w-11 items-center justify-center rounded-full bg-[#101412] shadow-sm transition-transform duration-300 group-hover:scale-105"
+              transition={{ duration: 0.4 }}
+              className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-[#101412] shadow-sm transition-transform duration-300 group-hover:ring-2 group-hover:ring-[#C8F000]"
             >
-              <span className="text-base font-black text-[#C8F000]">CS</span>
+              <span className="text-sm sm:text-base font-black text-[#C8F000]">CS</span>
             </motion.div>
 
-            <div className="hidden sm:block">
-              <p className="text-base font-bold leading-none text-[#101412] group-hover:text-[#2E6B5B] transition-colors">
+            <div className="block">
+              <p className="text-sm sm:text-base font-bold leading-none text-[#101412] group-hover:text-[#2E6B5B] transition-colors">
                 ClaimSense 360
               </p>
-
-              <p className="mt-1 text-[10px] uppercase tracking-[0.16em] text-[#7A847F]">
+              <p className="mt-1 text-[9px] sm:text-[10px] uppercase tracking-[0.16em] text-[#7A847F]">
                 Claims Intelligence
               </p>
             </div>
-          </a>
-
-
+          </button>
 
           {/* NAVIGATION — desktop with Scroll Spy Highlight */}
           <div className="hidden items-center gap-2 lg:flex">
@@ -87,7 +96,7 @@ export default function Navbar() {
                 <a
                   key={link.href}
                   href={link.href}
-                  onClick={() => setActiveSection(id)}
+                  onClick={(e) => handleNavClick(e, link.href)}
                   className={`relative px-4 py-2 rounded-full text-sm font-bold transition-all duration-300 ${
                     isActive
                       ? "bg-[#101412] text-[#C8F000] shadow-sm scale-105"
@@ -100,7 +109,6 @@ export default function Navbar() {
             })}
           </div>
 
-
           {/* ACTIONS */}
           <div className="flex items-center gap-2 sm:gap-3">
             <a
@@ -112,10 +120,10 @@ export default function Navbar() {
 
             <Link
               href="/dashboard"
-              className="rounded-full bg-[#101412] px-5 py-3 text-sm font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#173B32]"
+              className="rounded-full bg-[#101412] px-4 py-2.5 sm:px-5 sm:py-3 text-xs sm:text-sm font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#173B32]"
             >
               Open Platform
-              <span className="ml-2">→</span>
+              <span className="ml-1.5">→</span>
             </Link>
 
             {/* MOBILE TOGGLE */}
@@ -124,7 +132,7 @@ export default function Navbar() {
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
               onClick={() => setOpen((v) => !v)}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-[#173B32]/15 text-[#101412] transition-colors hover:bg-[#101412]/5 lg:hidden"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-[#173B32]/15 text-[#101412] transition-colors hover:bg-[#101412]/5 lg:hidden cursor-pointer"
             >
               {open ? <X size={18} /> : <Menu size={18} />}
             </button>
@@ -147,20 +155,13 @@ export default function Navbar() {
                   <a
                     key={link.href}
                     href={link.href}
-                    onClick={() => setOpen(false)}
+                    onClick={(e) => handleNavClick(e, link.href)}
                     className="rounded-xl px-3 py-3 text-sm font-semibold text-[#101412] transition-colors hover:bg-[#101412]/5"
                   >
                     {link.label}
                   </a>
                 ))}
 
-                <a
-                  href="/login"
-                  onClick={() => setOpen(false)}
-                  className="rounded-xl px-3 py-3 text-sm font-semibold text-[#2E6B5B]"
-                >
-                  Sign in
-                </a>
               </div>
             </motion.div>
           )}
@@ -169,6 +170,7 @@ export default function Navbar() {
     </header>
   );
 }
+
 
 
 // "use client";
