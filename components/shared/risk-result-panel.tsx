@@ -269,15 +269,16 @@ export default function RiskResultPanel({
           )}
 
 
-          {(result.image_data || (result.damage as any)?.image_data) && (
+          {(result.image_data || (result as any)?.image_path || (result.damage as any)?.image_data) && (
             <div className="overflow-hidden rounded-2xl border border-[#173B32]/15 shadow-sm max-h-48 my-3">
               <img
-                src={result.image_data || (result.damage as any)?.image_data}
+                src={result.image_data || (result as any)?.image_path || (result.damage as any)?.image_data}
                 alt="Vehicle Damage Analysis"
                 className="w-full object-cover h-48 hover:scale-105 transition-transform duration-300"
               />
             </div>
           )}
+
 
           <div className="flex items-center justify-between text-xs text-[#173B32]/70 font-medium">
             <span>CV Method: {result.damage.method}</span>
