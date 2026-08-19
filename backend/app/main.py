@@ -18,8 +18,20 @@ from app.api.copilot import router as copilot_router
 from app.database.database import engine, Base
 import app.models  # load models
 
+from sqlalchemy import text
+
 # Create database tables automatically
 Base.metadata.create_all(bind=engine)
+
+# Auto-migrate missing columns for existing PostgreSQL / SQLite databases
+try:
+    with engine.begin() as conn:
+        conn.execute(text("ALTER TABLE claims ADD COLUMN IF NOT EXISTS image_path VARCHAR;"))
+        conn.execute(text("ALTER TABLE claims ADD COLUMN IF NOT EXISTS is_seed BOOLEAN DEFAULT FALSE;"))
+        conn.execute(text("ALTER TABLE claims ADD COLUMN IF NOT EXISTS forensic_penalty FLOAT DEFAULT 0.0;"))
+except Exception as migration_err:
+    print(f"Auto-migration notice: {migration_err}")
+
 
 app = FastAPI(
     title="ClaimSense360 API",
