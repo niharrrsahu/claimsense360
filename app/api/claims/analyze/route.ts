@@ -28,7 +28,15 @@ export async function POST(request: Request) {
 
     // Fallback ML calculation if FastAPI backend is restarting
     const claimRaw = formData.get("claim");
-    const claimData = claimRaw ? JSON.parse(claimRaw.toString()) : {};
+    let claimData: any = {};
+    if (claimRaw) {
+      try {
+        claimData = typeof claimRaw === "string" ? JSON.parse(claimRaw) : JSON.parse(claimRaw.toString());
+      } catch (e) {
+        claimData = {};
+      }
+    }
+
 
     const claimAmt = Number(claimData.claim_amount || 95000);
     const price = Number(claimData.vehicle_price || 1400000);
