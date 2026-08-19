@@ -57,9 +57,9 @@ export default function Navbar() {
   };
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 px-3 sm:px-8 pt-3 sm:pt-5">
-      <nav className="mx-auto max-w-[1450px] rounded-[28px] border border-[#173B32]/10 bg-[#F4F1EA]/95 shadow-[0_8px_30px_rgba(23,59,50,0.08)] backdrop-blur-md lg:rounded-full">
-        <div className="flex items-center justify-between px-4 py-3 sm:px-6 lg:px-7">
+    <header className="fixed left-0 right-0 top-0 z-50 px-6 pt-5 sm:px-8">
+      <nav className="mx-auto max-w-[1450px] rounded-full border border-[#173B32]/10 bg-[#F4F1EA]/90 px-6 py-4 shadow-[0_8px_30px_rgba(23,59,50,0.05)] backdrop-blur-md lg:px-7">
+        <div className="flex items-center justify-between">
 
           {/* LOGO */}
           <button
@@ -69,23 +69,24 @@ export default function Navbar() {
             className="flex items-center gap-3 cursor-pointer group bg-transparent border-0 outline-none text-left"
           >
             <motion.div
-              whileHover={{ scale: 1.12, rotate: 6 }}
+              whileHover={{ scale: 1.1, rotate: 6 }}
               whileTap={{ rotate: 360, scale: 0.9 }}
               transition={{ duration: 0.4 }}
-              className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-[#101412] shadow-sm transition-transform duration-300 group-hover:ring-2 group-hover:ring-[#C8F000]"
+              className="flex h-12 w-12 items-center justify-center rounded-full bg-[#101412] shadow-sm transition-transform duration-300 group-hover:ring-2 group-hover:ring-[#C8F000]"
             >
-              <span className="text-sm sm:text-base font-black text-[#C8F000]">CS</span>
+              <span className="text-lg font-black text-[#C8F000]">CS</span>
             </motion.div>
 
-            <div className="block">
-              <p className="text-sm sm:text-base font-bold leading-none text-[#101412] group-hover:text-[#2E6B5B] transition-colors">
+            <div className="hidden sm:block">
+              <p className="text-lg font-bold leading-none text-[#101412] group-hover:text-[#2E6B5B] transition-colors">
                 ClaimSense 360
               </p>
-              <p className="mt-1 text-[9px] sm:text-[10px] uppercase tracking-[0.16em] text-[#7A847F]">
+              <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-[#7A847F]">
                 Claims Intelligence
               </p>
             </div>
           </button>
+
 
           {/* NAVIGATION — desktop with Scroll Spy Highlight */}
           <div className="hidden items-center gap-2 lg:flex">
