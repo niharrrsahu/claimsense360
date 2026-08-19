@@ -56,12 +56,15 @@ function LoginForm() {
           type="button"
           whileHover={{ scale: 1.15, rotate: 8 }}
           whileTap={{ scale: 0.9, rotate: -8 }}
-          onClick={() => window.location.reload()}
-          title="Click to Refresh Page"
+          onClick={() => {
+            window.location.href = "/";
+          }}
+          title="Go to Homepage"
           className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#101412] shadow-md hover:ring-2 hover:ring-[#C9FF3D] transition-all cursor-pointer"
         >
           <span className="text-lg font-black text-[#C9FF3D]">CS</span>
         </motion.button>
+
 
         <p className="mt-4 text-xs font-bold uppercase tracking-[0.18em] text-[#173B32]/70">
           Enterprise Workspace

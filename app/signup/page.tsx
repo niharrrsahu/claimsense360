@@ -90,9 +90,14 @@ export default function SignupPage() {
           <div className="relative w-full max-w-md rounded-3xl border border-[#173B32]/12 bg-white p-8 sm:p-10 shadow-[0_25px_70px_rgba(23,59,50,0.12)]">
             {/* Header */}
             <div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#101412] shadow-md">
+              <Link
+                href="/"
+                title="Go to Homepage"
+                className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#101412] shadow-md hover:ring-2 hover:ring-[#C9FF3D] transition-all cursor-pointer"
+              >
                 <span className="text-lg font-black text-[#C9FF3D]">CS</span>
-              </div>
+              </Link>
+
               <p className="mt-4 text-xs font-bold uppercase tracking-[0.18em] text-[#173B32]/70">
                 Create Account
               </p>
