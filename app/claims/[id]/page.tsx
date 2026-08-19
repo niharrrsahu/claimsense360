@@ -80,9 +80,11 @@ export default async function SingleClaimPage({
 
       <div className="flex flex-1 flex-col">
         <TopNavbar
-          userName={currentUser?.full_name || "System Admin"}
+          userName={currentUser?.full_name || "Nihar Sahu"}
           userRole={currentUser?.role || "Admin"}
+          userEmail={currentUser?.email || "niharrrsahu@gmail.com"}
         />
+
 
         <div className="flex-1 space-y-8 p-8">
           {/* Header */}

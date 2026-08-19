@@ -97,7 +97,12 @@ export default function NewClaimPage() {
       <Sidebar />
 
       <div className="flex flex-1 flex-col">
-        <TopNavbar />
+        <TopNavbar
+          userName="Nihar Sahu"
+          userRole="Admin"
+          userEmail="niharrrsahu@gmail.com"
+        />
+
 
         <div className="flex-1 space-y-8 p-8">
           {/* Header */}

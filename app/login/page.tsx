@@ -24,12 +24,13 @@ function LoginForm() {
     setLoading(true);
 
     try {
-      document.cookie = `cs_token=demo_token_${Date.now()}; path=/; max-age=86400; SameSite=Lax`;
       await login(email, password);
+      window.location.href = nextParam;
     } catch (err: any) {
       console.warn("API login notice:", err);
+      setError(err?.message || "Invalid email or password");
+      setLoading(false);
     }
-    window.location.href = nextParam;
   };
 
   const handleDemoLogin = async () => {
@@ -39,13 +40,14 @@ function LoginForm() {
     setLoading(true);
 
     try {
-      document.cookie = `cs_token=demo_admin_token_${Date.now()}; path=/; max-age=86400; SameSite=Lax`;
       await login("admin@claimsense.ai", "password123");
+      window.location.href = nextParam;
     } catch (err: any) {
       console.warn("Demo login notice:", err);
+      window.location.href = nextParam;
     }
-    window.location.href = nextParam;
   };
+
 
 
 

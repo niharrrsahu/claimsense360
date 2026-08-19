@@ -11,11 +11,13 @@ import { logout } from "@/lib/auth";
 interface TopNavbarProps {
   userName?: string | null;
   userRole?: string | null;
+  userEmail?: string | null;
 }
 
 export default function TopNavbar({
-  userName = "Admin User",
+  userName = "Nihar Sahu",
   userRole = "Claims Specialist",
+  userEmail,
 }: TopNavbarProps) {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
@@ -42,9 +44,10 @@ export default function TopNavbar({
     }
   };
 
-  const safeUserName = userName || "System Admin";
+  const safeUserName = userName || "Nihar Sahu";
   const initial = safeUserName.charAt(0).toUpperCase();
-  const userEmail = `${safeUserName.toLowerCase().replace(/\s+/g, ".")}@claimsense360.ai`;
+  const displayEmail = userEmail || (safeUserName.toLowerCase().includes("nihar") ? "niharrrsahu@gmail.com" : `${safeUserName.toLowerCase().replace(/\s+/g, ".")}@gmail.com`);
+
 
 
   return (
@@ -115,8 +118,9 @@ export default function TopNavbar({
                     {initial}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h4 className="text-sm font-serif font-bold text-[#101412] truncate">{userName}</h4>
-                    <p className="text-[11px] text-[#173B32]/70 font-medium truncate">{userEmail}</p>
+                    <h4 className="text-sm font-serif font-bold text-[#101412] truncate">{safeUserName}</h4>
+                    <p className="text-[11px] text-[#173B32]/70 font-medium truncate">{displayEmail}</p>
+
 
                     <div className="mt-1 flex flex-wrap gap-1">
                       <span className="inline-flex items-center gap-1 rounded-full bg-[#EBF7EE] text-[#173B32] px-2 py-0.5 text-[10px] font-bold border border-[#173B32]/20">

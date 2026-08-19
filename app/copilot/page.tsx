@@ -167,7 +167,8 @@ export default function CopilotPage() {
       <Sidebar />
 
       <div className="flex flex-1 flex-col h-screen overflow-hidden">
-        <TopNavbar userName="System Admin" userRole="Admin" />
+        <TopNavbar userName="Nihar Sahu" userRole="Admin" userEmail="niharrrsahu@gmail.com" />
+
 
         <div className="flex-1 flex flex-col p-4 sm:p-6 overflow-hidden max-w-6xl w-full mx-auto space-y-4">
           

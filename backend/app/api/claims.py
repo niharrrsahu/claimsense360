@@ -89,8 +89,16 @@ def get_high_risk_claims_endpoint(
             "witness_present": c.witness_present
         }
         _, _, top_f = predict_fraud(claim_dict)
+        top_factors_list = [FraudFactor(**f) for f in top_f]
+        if getattr(c, "forensic_penalty", 0) > 0:
+            top_factors_list.insert(0, FraudFactor(
+                feature="image_forensics",
+                name="Image Forensics (Missing EXIF / Web Asset)",
+                contribution=1.850,
+                effect="increases_risk"
+            ))
         c_res = ClaimResponse.model_validate(c)
-        c_res.top_factors = [FraudFactor(**f) for f in top_f]
+        c_res.top_factors = top_factors_list
         res.append(c_res)
     return res
 
@@ -118,8 +126,16 @@ def get_claims_history_endpoint(
             "witness_present": c.witness_present
         }
         _, _, top_f = predict_fraud(claim_dict)
+        top_factors_list = [FraudFactor(**f) for f in top_f]
+        if getattr(c, "forensic_penalty", 0) > 0:
+            top_factors_list.insert(0, FraudFactor(
+                feature="image_forensics",
+                name="Image Forensics (Missing EXIF / Web Asset)",
+                contribution=1.850,
+                effect="increases_risk"
+            ))
         c_res = ClaimResponse.model_validate(c)
-        c_res.top_factors = [FraudFactor(**f) for f in top_f]
+        c_res.top_factors = top_factors_list
         res.append(c_res)
     return res
 
@@ -150,6 +166,15 @@ def get_claim_by_id_endpoint(
         "witness_present": c.witness_present
     }
     _, _, top_f = predict_fraud(claim_dict)
+    top_factors_list = [FraudFactor(**f) for f in top_f]
+    if getattr(c, "forensic_penalty", 0) > 0:
+        top_factors_list.insert(0, FraudFactor(
+            feature="image_forensics",
+            name="Image Forensics (Missing EXIF / Web Asset)",
+            contribution=1.850,
+            effect="increases_risk"
+        ))
     c_res = ClaimResponse.model_validate(c)
-    c_res.top_factors = [FraudFactor(**f) for f in top_f]
+    c_res.top_factors = top_factors_list
     return c_res
+
