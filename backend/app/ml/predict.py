@@ -8,9 +8,8 @@ import warnings
 import joblib
 import numpy as np
 import pandas as pd
-import shap
-
 warnings.filterwarnings("ignore")
+
 
 
 @functools.lru_cache(maxsize=1)
@@ -26,8 +25,10 @@ def load_fraud_artifacts():
     model = joblib.load(model_path)
     preprocessor = joblib.load(prep_path)
     feature_names = joblib.load(feat_path)
+    import shap
     explainer = shap.TreeExplainer(model)
     return model, preprocessor, feature_names, explainer
+
 
 FEATURE_NAME_MAP = {
     "age": "Driver Age",
