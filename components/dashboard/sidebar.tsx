@@ -106,9 +106,10 @@ export default function Sidebar() {
                 onClick={(e) => {
                   if (pathname === "/dashboard") {
                     e.preventDefault();
-                    window.scrollTo({ top: 0, behavior: "smooth" });
+                    window.location.reload();
                   }
                 }}
+
                 className="flex items-center gap-3 group cursor-pointer"
               >
                 <div className="flex h-10 w-10 aspect-square shrink-0 items-center justify-center rounded-full bg-[#101412] font-extrabold text-[#C9FF3D] shadow-lg group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-[#C9FF3D]/40 group-hover:ring-2 group-hover:ring-[#C9FF3D]/60 transition-all duration-300">

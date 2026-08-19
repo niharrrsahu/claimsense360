@@ -1,5 +1,7 @@
 "use client";
 
+
+
 import { useState } from "react";
 
 
@@ -104,7 +106,7 @@ export default function NewClaimPage() {
         />
 
 
-        <div className="flex-1 space-y-8 p-8">
+        <div className="flex-1 space-y-6 sm:space-y-8 p-4 sm:p-6 lg:p-8 max-w-full overflow-x-hidden">
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
@@ -114,22 +116,23 @@ export default function NewClaimPage() {
               >
                 <ArrowLeft className="h-4 w-4" /> Back to Claims List
               </Link>
-              <h1 className="mt-2 text-3xl font-serif font-bold text-[#173B32]">
+              <h1 className="mt-2 text-xl sm:text-2xl lg:text-3xl font-serif font-bold text-[#173B32]">
                 Submit New Claim for AI Analysis
               </h1>
-              <p className="mt-1 text-sm text-[#173B32]/70 font-medium">
+              <p className="mt-1 text-xs sm:text-sm text-[#173B32]/70 font-medium">
                 Run XGBoost fraud predictions, SHAP explainability, NLP suspicion detection &amp; damage CV
               </p>
             </div>
           </div>
 
           {/* Form & Live Result 2-Column Grid */}
-          <div className="grid gap-8 lg:grid-cols-12">
+          <div className="grid gap-6 sm:gap-8 lg:grid-cols-12">
             {/* Left Column: Input Form (7 cols) */}
             <form
               onSubmit={handleSubmit}
-              className="lg:col-span-7 space-y-6 rounded-3xl border border-[#173B32]/12 bg-white p-8 shadow-sm"
+              className="lg:col-span-7 space-y-6 rounded-3xl border border-[#173B32]/12 bg-white p-4 sm:p-6 lg:p-8 shadow-sm"
             >
+
               <h3 className="text-xl font-serif font-bold text-[#173B32] border-b border-[#173B32]/10 pb-4 flex items-center gap-2">
                 <FileCheck className="h-5 w-5 text-[#173B32]" /> Claim Intake Details
               </h3>
