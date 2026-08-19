@@ -1,5 +1,7 @@
 "use client";
 
+
+
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -90,19 +92,20 @@ export default function ClaimsTableClient({
             </Link>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+          <div className="overflow-x-auto -mx-2 sm:mx-0">
+            <table className="w-full text-left text-sm min-w-[700px]">
               <thead className="border-b border-[#173B32]/10 text-xs font-semibold uppercase tracking-wider text-[#173B32]/70">
                 <tr>
-                  <th className="pb-3">Claim Ref</th>
-                  <th className="pb-3">Customer</th>
-                  <th className="pb-3">Vehicle</th>
-                  <th className="pb-3">Claim Amount</th>
-                  <th className="pb-3">Fraud Risk</th>
-                  <th className="pb-3">Recommended Action</th>
-                  <th className="pb-3 text-right">Details</th>
+                  <th className="pb-3 min-w-[100px]">Claim Ref</th>
+                  <th className="pb-3 min-w-[140px]">Customer</th>
+                  <th className="pb-3 min-w-[140px]">Vehicle</th>
+                  <th className="pb-3 min-w-[110px]">Claim Amount</th>
+                  <th className="pb-3 min-w-[130px]">Fraud Risk</th>
+                  <th className="pb-3 min-w-[180px]">Recommended Action</th>
+                  <th className="pb-3 text-right pr-2">Details</th>
                 </tr>
               </thead>
+
 
               <tbody className="divide-y divide-[#173B32]/10">
                 {filteredClaims.map((claim) => {

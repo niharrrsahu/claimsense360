@@ -261,14 +261,15 @@ export default function RiskResultPanel({
               <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
               <div>
                 <span className="font-bold uppercase tracking-wide text-amber-900 block mb-0.5">
-                  ⚠️ Image Forensics Warning: Missing Camera EXIF Metadata
+                  🛡️ Digital Image Forensics Audit: Photo Telemetry Check
                 </span>
                 <span>
-                  No smartphone camera telemetry found. Photo detected as web/Google Images download. Risk score elevated.
+                  Computer Vision detected a web-sourced / downloaded photo asset lacking native smartphone EXIF camera telemetry. Automated anti-spoofing fraud risk score adjusted accordingly.
                 </span>
               </div>
             </div>
           )}
+
 
 
           {(result.image_data || (result as any)?.image_path || (result.damage as any)?.image_data) && (

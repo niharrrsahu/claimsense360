@@ -51,17 +51,31 @@ export default function TopNavbar({
 
 
   return (
-    <header className="flex h-16 items-center justify-between border-b border-[#173B32]/10 bg-[#F4F1EA] px-4 pl-16 sm:px-6 lg:pl-6 sticky top-0 z-30 shadow-xs">
+    <header className="flex h-16 items-center justify-between border-b border-[#173B32]/10 bg-[#F4F1EA] px-3 sm:px-6 lg:pl-6 sticky top-0 z-30 shadow-xs gap-2">
 
-      {/* Left Title */}
-      <div className="min-w-0">
-        <p className="text-base sm:text-lg font-sans font-bold text-[#173B32] tracking-tight truncate">
-          Insurance Claims Intelligence
-        </p>
-        <p className="text-[11px] sm:text-xs text-[#173B32]/70 font-medium truncate">
-          Welcome, <span className="text-[#E66A4E] font-semibold">{userName}</span> 👋
-        </p>
+      {/* Left Title & CS Logo Button */}
+      <div className="flex items-center gap-2.5 min-w-0">
+        <motion.button
+          type="button"
+          whileHover={{ scale: 1.1, rotate: 6 }}
+          whileTap={{ scale: 0.9, rotate: -6 }}
+          onClick={() => window.location.reload()}
+          title="Click to Refresh Workspace"
+          className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-[#173B32] font-black text-[#C9FF3D] text-xs sm:text-sm shadow-md hover:ring-2 hover:ring-[#C9FF3D] transition-all cursor-pointer shrink-0"
+        >
+          CS
+        </motion.button>
+
+        <div className="min-w-0">
+          <p className="text-xs sm:text-base font-sans font-bold text-[#173B32] tracking-tight truncate">
+            Insurance Claims Intelligence
+          </p>
+          <p className="text-[10px] sm:text-xs text-[#173B32]/70 font-medium truncate">
+            Welcome, <span className="text-[#E66A4E] font-semibold">{userName}</span> 👋
+          </p>
+        </div>
       </div>
+
 
       {/* Right Controls */}
       <div className="flex items-center gap-2 sm:gap-4">

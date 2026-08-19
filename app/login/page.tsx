@@ -1,10 +1,10 @@
 "use client";
 
+
 import { useState, Suspense } from "react";
-
-
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
 import { ShieldCheck, ArrowRight, AlertCircle, Loader2 } from "lucide-react";
 import { login } from "@/lib/auth";
 
@@ -48,16 +48,21 @@ function LoginForm() {
     }
   };
 
-
-
-
   return (
-    <div className="relative w-full max-w-md rounded-3xl border border-[#173B32]/12 bg-white p-8 sm:p-10 shadow-[0_25px_70px_rgba(23,59,50,0.12)] text-[#101412]">
+    <div className="relative w-full max-w-md rounded-3xl border border-[#173B32]/12 bg-white p-6 sm:p-10 shadow-[0_25px_70px_rgba(23,59,50,0.12)] text-[#101412]">
       {/* Header */}
       <div>
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#101412] shadow-md">
+        <motion.button
+          type="button"
+          whileHover={{ scale: 1.15, rotate: 8 }}
+          whileTap={{ scale: 0.9, rotate: -8 }}
+          onClick={() => window.location.reload()}
+          title="Click to Refresh Page"
+          className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#101412] shadow-md hover:ring-2 hover:ring-[#C9FF3D] transition-all cursor-pointer"
+        >
           <span className="text-lg font-black text-[#C9FF3D]">CS</span>
-        </div>
+        </motion.button>
+
         <p className="mt-4 text-xs font-bold uppercase tracking-[0.18em] text-[#173B32]/70">
           Enterprise Workspace
         </p>
