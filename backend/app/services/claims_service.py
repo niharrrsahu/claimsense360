@@ -54,6 +54,7 @@ def seed_initial_claims_if_empty(db: Session):
             recommended_action="Flag for SIU Fraud Audit",
             damage_severity="Major Crush",
             damage_score=82.5,
+            is_seed=True,
             created_at=now - timedelta(days=1),
         ),
         Claim(
@@ -79,6 +80,7 @@ def seed_initial_claims_if_empty(db: Session):
             recommended_action="Fast-track 3-Second Settlement",
             damage_severity="Minor Scuff",
             damage_score=12.0,
+            is_seed=True,
             created_at=now - timedelta(days=3),
         ),
         Claim(
@@ -104,6 +106,7 @@ def seed_initial_claims_if_empty(db: Session):
             recommended_action="Proceed to Standard Approval",
             damage_severity="Minor Bumper Scuff",
             damage_score=22.0,
+            is_seed=True,
             created_at=now - timedelta(days=5),
         ),
         Claim(
@@ -129,6 +132,7 @@ def seed_initial_claims_if_empty(db: Session):
             recommended_action="Flag for SIU Fraud Audit",
             damage_severity="Heavy Crash",
             damage_score=75.0,
+            is_seed=True,
             created_at=now - timedelta(days=8),
         ),
         Claim(
@@ -155,6 +159,7 @@ def seed_initial_claims_if_empty(db: Session):
             recommended_action="Fast-track Automatic Payout",
             damage_severity="Minor Scuff",
             damage_score=15.0,
+            is_seed=True,
             created_at=now - timedelta(days=12),
         ),
         Claim(
@@ -180,8 +185,10 @@ def seed_initial_claims_if_empty(db: Session):
             recommended_action="Flag for SIU Fraud Audit",
             damage_severity="Heavy Rear Collision",
             damage_score=78.0,
+            is_seed=True,
             created_at=now - timedelta(days=15),
         ),
+
     ]
 
     try:
@@ -242,6 +249,8 @@ def analyze_and_save_claim(
     damage_severity_str = None
     damage_score_val = None
     image_b64_str = None
+    image_file_path = None
+    forensic_penalty_val = 0.0
     
     if image_bytes:
         raw_damage = analyze_damage_image(image_bytes)
@@ -252,9 +261,8 @@ def analyze_and_save_claim(
 
             # Digital Image Forensics Anti-Spoofing Check
             if raw_damage.get("is_web_asset") or not raw_damage.get("has_exif"):
-                overall_risk_score = min(98.0, round(overall_risk_score + 18.5, 1))
-                fraud_score = min(98.0, round(fraud_score + 18.5, 1))
-                fraud_prob = round(fraud_score / 100.0, 2)
+                forensic_penalty_val = 18.5
+                overall_risk_score = min(98.0, round(overall_risk_score + forensic_penalty_val, 1))
 
                 top_factors.insert(0, FraudFactor(
                     feature="image_forensics",
@@ -268,9 +276,23 @@ def analyze_and_save_claim(
                     recommended_action = "Flag for SIU Fraud Audit & Digital Forensics"
 
         try:
+            # Save image locally to disk to prevent database bloat
+            uploads_dir = os.path.join(os.path.dirname(__file__), "..", "uploads")
+            os.makedirs(uploads_dir, exist_ok=True)
+            filename = f"damage_{uuid.uuid4().hex[:8]}.jpg"
+            full_path = os.path.join(uploads_dir, filename)
+            with open(full_path, "wb") as f:
+                f.write(image_bytes)
+            image_file_path = f"/uploads/{filename}"
+
             image_b64_str = f"data:image/jpeg;base64,{base64.b64encode(image_bytes).decode('utf-8')}"
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"Warning saving upload image file: {e}")
+            try:
+                image_b64_str = f"data:image/jpeg;base64,{base64.b64encode(image_bytes).decode('utf-8')}"
+            except Exception:
+                pass
+
 
             
     # 6. Save DB record wrapped in try/except for resilience

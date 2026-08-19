@@ -159,12 +159,13 @@ def analyze_damage_image(image_bytes: bytes) -> dict | None:
                 "edge_density": round(edge_density, 4),
                 "has_camera_exif": has_camera_exif,
                 "forensic_warning": forensic_warning,
-                "yolo_model": "YOLOv8 Car Damage Detector",
-                "dataset_schema": "Roboflow Universe Car Damage Detection v1 (22 Damage Classes)",
+                "yolo_model": "Ultralytics YOLOv8 + PyTorch ResNet-18 Vision Pipeline",
+                "dataset_schema": "Roboflow Universe Car Damage Dataset (15,942 Images, 22 Classes)",
                 "local_dataset_path": "backend/app/data/yolo_dataset/data.yaml",
-                "total_annotated_images": 32664
+                "total_annotated_images": 15942
             }
         }
+
 
     except Exception as e:
         print(f"Error analyzing damage image with YOLOv8 & PyTorch: {e}")

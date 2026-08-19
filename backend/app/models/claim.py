@@ -34,6 +34,11 @@ class Claim(Base):
     damage_severity = Column(String, nullable=True)
     damage_score = Column(Float, nullable=True)
     image_data = Column(Text, nullable=True)
+    image_path = Column(String, nullable=True)
     
+    is_seed = Column(Boolean, default=False)
+    forensic_penalty = Column(Float, default=0.0)
+
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
 

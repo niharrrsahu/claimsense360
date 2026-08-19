@@ -82,6 +82,9 @@ class ClaimResponse(BaseModel):
     damage_severity: str | None
     damage_score: float | None
     image_data: str | None = None
+    image_path: str | None = None
+    is_seed: bool = False
+    forensic_penalty: float = 0.0
     created_at: datetime
     top_factors: list[FraudFactor] | None = None
 
