@@ -9,17 +9,23 @@ import io
 import functools
 import numpy as np
 from PIL import Image, ImageOps
+import gc
 try:
     import torch
     import torchvision.models as models
     import torchvision.transforms as transforms
     HAS_TORCH = True
-    DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-    if DEVICE == "cpu":
-        torch.set_num_threads(os.cpu_count() or 8)
+    DEVICE = "cpu"
+    torch.set_num_threads(1)
+    if hasattr(torch, "set_num_interop_threads"):
+        try:
+            torch.set_num_interop_threads(1)
+        except Exception:
+            pass
 except ImportError:
     HAS_TORCH = False
     DEVICE = "cpu"
+
 
 try:
     from ultralytics import YOLO

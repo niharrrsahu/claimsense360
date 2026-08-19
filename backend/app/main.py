@@ -1,5 +1,15 @@
+import os
+import sys
+
+# Memory optimization for 512MB RAM cloud instances
+os.environ["MALLOC_TRIM_THRESHOLD_"] = "100000"
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 
 from app.api.auth import router as auth_router
 from app.api.claims import router as claims_router
