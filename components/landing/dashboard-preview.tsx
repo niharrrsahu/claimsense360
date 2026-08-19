@@ -186,23 +186,24 @@ export default function DashboardPreview() {
               </div>
 
               {/* CLAIM VALUE CARD */}
-              <div className="rounded-[24px] bg-[#173B32] p-4.5 text-[#F4F1EA] flex flex-col justify-between shadow-md">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-white/70">
+              <div className="rounded-[24px] bg-[#173B32] p-3.5 sm:p-4.5 text-[#F4F1EA] flex flex-col justify-between shadow-md min-w-0 overflow-hidden">
+                <div className="min-w-0">
+                  <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-white/70 truncate">
                     Estimated Claim
                   </p>
-                  <p className="mt-3 font-serif text-3xl font-extrabold text-[#C9FF3D]">
+                  <p className="mt-2 sm:mt-3 font-serif text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#C9FF3D] truncate max-w-full tracking-tight">
                     {activeScenario.claimAmount}
                   </p>
                 </div>
 
-                <div className="mt-4 flex items-center justify-between text-xs border-t border-white/10 pt-2.5">
-                  <span className="text-white/60 font-medium">Damage Severity</span>
-                  <span className="font-bold text-[#F2C96D]">
+                <div className="mt-3 sm:mt-4 flex items-center justify-between text-[11px] sm:text-xs border-t border-white/10 pt-2.5 min-w-0">
+                  <span className="text-white/60 font-medium truncate">Damage Severity</span>
+                  <span className="font-bold text-[#F2C96D] truncate ml-1">
                     {activeScenario.damageSeverity}
                   </span>
                 </div>
               </div>
+
             </div>
 
             {/* AI DECISION */}

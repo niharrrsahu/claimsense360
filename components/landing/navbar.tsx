@@ -44,17 +44,22 @@ export default function Navbar() {
 
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    setOpen(false);
     if (href.startsWith("#")) {
-      e.preventDefault();
       const id = href.substring(1);
       const element = document.getElementById(id);
       if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "start" });
-        setActiveSection(id);
+        setTimeout(() => {
+          const yOffset = -90;
+          const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+          setActiveSection(id);
+        }, 150);
       }
     }
-    setOpen(false);
   };
+
 
   return (
     <header className="fixed left-0 right-0 top-0 z-50 px-6 pt-5 sm:px-8">
