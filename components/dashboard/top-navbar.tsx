@@ -4,21 +4,23 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Plus, ShieldCheck, ChevronDown, ExternalLink } from "lucide-react";
+import { Search, Plus, ShieldCheck, ChevronDown, ExternalLink, Menu } from "lucide-react";
 import { logout } from "@/lib/auth";
-
 
 interface TopNavbarProps {
   userName?: string | null;
   userRole?: string | null;
   userEmail?: string | null;
+  onOpenMobileMenu?: () => void;
 }
 
 export default function TopNavbar({
   userName = "Nihar Sahu",
   userRole = "Claims Specialist",
   userEmail,
+  onOpenMobileMenu,
 }: TopNavbarProps) {
+
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -79,6 +81,18 @@ export default function TopNavbar({
 
       {/* Right Controls */}
       <div className="flex items-center gap-2 sm:gap-4">
+        {/* Mobile Sidebar Menu Toggle Button */}
+        {onOpenMobileMenu && (
+          <button
+            type="button"
+            onClick={onOpenMobileMenu}
+            aria-label="Open navigation menu"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#173B32] text-[#C9FF3D] shadow-md lg:hidden active:scale-95 cursor-pointer shrink-0"
+          >
+            <Menu size={18} />
+          </button>
+        )}
+
         {/* Search Input */}
         <div className="hidden md:flex items-center gap-2.5 rounded-2xl border border-[#173B32]/15 bg-white px-3.5 py-2 text-sm text-[#101412] shadow-sm focus-within:border-[#173B32] transition">
           <Search className="text-[#173B32]/60 shrink-0" size={16} />
@@ -91,6 +105,7 @@ export default function TopNavbar({
             className="bg-transparent text-[#101412] outline-none placeholder:text-[#173B32]/40 w-36 lg:w-48 text-xs font-medium"
           />
         </div>
+
 
         {/* Interactive User Profile Dropdown Pill with Click-Outside Ref */}
         <div ref={profileRef} className="relative">
