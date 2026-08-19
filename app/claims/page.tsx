@@ -28,15 +28,15 @@ export default async function ClaimsPage({
     <main className="flex min-h-screen bg-[#F4F1EA] text-[#101412]">
       <Sidebar />
 
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col min-w-0 max-w-full overflow-x-hidden">
         <TopNavbar
           userName={currentUser?.full_name || "Nihar Sahu"}
           userRole={currentUser?.role || "Admin"}
           userEmail={currentUser?.email || "niharrrsahu@gmail.com"}
         />
 
+        <div className="flex-1 space-y-6 p-4 sm:p-6 lg:p-8 w-full max-w-full overflow-x-hidden">
 
-        <div className="flex-1 space-y-6 p-4 sm:p-6">
 
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
