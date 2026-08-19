@@ -5,6 +5,12 @@ from app.api.auth import router as auth_router
 from app.api.claims import router as claims_router
 from app.api.copilot import router as copilot_router
 
+from app.database.database import engine, Base
+import app.models  # load models
+
+# Create database tables automatically
+Base.metadata.create_all(bind=engine)
+
 app = FastAPI(
     title="ClaimSense360 API",
     version="1.0.0",
@@ -13,14 +19,12 @@ app = FastAPI(
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 import os
 from fastapi.staticfiles import StaticFiles
