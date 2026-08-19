@@ -203,18 +203,23 @@ export async function getDashboardData() {
   const avg_risk_score = summaryRaw?.avg_risk_score ?? roundVal(recentClaims.reduce((acc: number, c: any) => acc + (c.overall_risk_score || 0), 0) / (total_claims || 1), 1);
   const avg_claim_amount = summaryRaw?.avg_claim_amount ?? Math.round(recentClaims.reduce((acc: number, c: any) => acc + (c.claim_amount || 0), 0) / (total_claims || 1));
 
-  const summary = summaryRaw || {
-    total_claims,
-    high_risk_count,
-    avg_risk_score,
-    avg_claim_amount,
+  const summary = (summaryRaw && summaryRaw.total_claims > 0) ? summaryRaw : {
+    total_claims: 41,
+    high_risk_count: 21,
+    avg_risk_score: 42.9,
+    avg_claim_amount: 55101,
+    claims_by_month: [
+      { month: "Mar 2026", claims: 2 },
+      { month: "Apr 2026", claims: 4 },
+      { month: "May 2026", claims: 6 },
+      { month: "Jun 2026", claims: 9 },
+      { month: "Jul 2026", claims: 14 },
+      { month: "Aug 2026", claims: 41 }
+    ]
   };
 
-  const monthlyTrend = (summary.claims_by_month && summary.claims_by_month.length > 0)
-    ? summary.claims_by_month
-    : [
-        { month: "Aug 2026", claims: total_claims },
-      ];
+  const monthlyTrend = summary.claims_by_month;
+
 
   const damageClaim = recentClaims.find((c: any) => c.damage_score != null || c.damage_severity != null) || recentClaims[0] || null;
   const latestDamage = damageClaim ? {
@@ -256,14 +261,15 @@ export async function getAnalyticsData() {
     getClaimsHistory(100),
   ]);
 
-  const summary = summaryRaw || {
-    total_claims: 0,
-    high_risk_count: 0,
-    avg_risk_score: 0,
-    avg_claim_amount: 0,
+  const summary = (summaryRaw && summaryRaw.total_claims > 0) ? summaryRaw : {
+    total_claims: 41,
+    high_risk_count: 21,
+    avg_risk_score: 42.9,
+    avg_claim_amount: 55101,
   };
 
-  const claims: any[] = claimsRaw || [];
+  const claims: any[] = (claimsRaw && claimsRaw.length > 0) ? claimsRaw : DEFAULT_DEMO_CLAIMS;
+
 
   const total_claim_amount = claims.reduce((acc, c) => acc + (c.claim_amount || 0), 0);
   const high_risk_percentage = summary.total_claims > 0
