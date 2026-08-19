@@ -63,14 +63,15 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile Menu Toggle Button (Now cleanly placed in TopNavbar) */}
+      {/* Mobile Menu Toggle Button */}
       <button
         type="button"
         onClick={() => setMobileOpen(true)}
-        className="hidden"
+        className="fixed bottom-4 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#173B32] text-[#C9FF3D] shadow-xl lg:hidden active:scale-95"
       >
         <Menu size={22} />
       </button>
+
 
 
       {/* Mobile Drawer Backdrop */}

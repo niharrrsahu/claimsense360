@@ -100,33 +100,34 @@ export default function DamageCard({ latestDamage }: DamageCardProps) {
             transition={{ duration: 0.2 }}
             className="mt-4 space-y-4"
           >
-            <div className="rounded-2xl border border-[#173B32]/15 bg-[#F4F1EA] p-3.5 sm:p-5 min-w-0 overflow-hidden space-y-2.5">
+            <div className="rounded-2xl border border-[#173B32]/15 bg-[#F4F1EA] p-4 sm:p-5 min-w-0 overflow-hidden space-y-3">
               <div className="flex items-center justify-between gap-2 min-w-0">
-                <span className="text-[11px] sm:text-xs text-[#173B32]/70 font-medium shrink-0">Claim Reference:</span>
-                <span className="text-xs font-mono font-bold text-[#173B32] truncate text-right">
+                <span className="text-xs text-[#173B32]/70 font-medium shrink-0">Claim Reference:</span>
+                <span className="text-xs font-mono font-bold text-[#173B32] truncate">
                   CLM-{String(activeDamage.claimId).padStart(5, "0")}
                 </span>
               </div>
 
               <div className="flex items-center justify-between gap-2 min-w-0">
-                <span className="text-[11px] sm:text-xs text-[#173B32]/70 font-medium shrink-0">Vehicle:</span>
-                <span className="text-xs sm:text-sm font-bold text-[#101412] truncate text-right">{activeDamage.vehicle}</span>
+                <span className="text-xs text-[#173B32]/70 font-medium shrink-0">Vehicle:</span>
+                <span className="text-xs sm:text-sm font-bold text-[#101412] truncate">{activeDamage.vehicle}</span>
               </div>
 
-              <div className="flex items-center justify-between gap-2 border-t border-[#173B32]/10 pt-2.5 min-w-0">
-                <span className="text-[11px] sm:text-xs text-[#173B32]/70 font-medium shrink-0">CV Severity Score:</span>
-                <span className="text-sm sm:text-xl font-serif font-extrabold text-[#173B32] truncate text-right">
+              <div className="flex items-center justify-between gap-2 border-t border-[#173B32]/10 pt-3 min-w-0">
+                <span className="text-xs text-[#173B32]/70 font-medium shrink-0">CV Severity Score:</span>
+                <span className="text-base sm:text-xl font-serif font-extrabold text-[#173B32] truncate">
                   {activeDamage.score} / 100
                 </span>
               </div>
 
               <div className="flex items-center justify-between gap-2 min-w-0">
-                <span className="text-[11px] sm:text-xs text-[#173B32]/70 font-medium shrink-0">Severity Band:</span>
-                <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] sm:text-xs font-bold shrink-0 ${activeDamage.badge}`}>
+                <span className="text-xs text-[#173B32]/70 font-medium shrink-0">Severity Band:</span>
+                <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-bold shrink-0 ${activeDamage.badge}`}>
                   {activeDamage.severity}
                 </span>
               </div>
             </div>
+
 
 
             <p className="text-xs text-[#173B32]/70 font-medium leading-relaxed">
