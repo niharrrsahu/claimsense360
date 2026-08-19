@@ -47,112 +47,57 @@ export async function getClaimsStats() {
   return await fetchWithAuth("/claims/stats/summary");
 }
 
-const DEFAULT_DEMO_CLAIMS = [
-  {
-    id: 10001,
-    customer_name: "Policyholder #521585 (Craft Repair)",
-    vehicle_make_model: "Saab 92x (2004)",
-    age: 48,
-    vehicle_price: 850000,
-    claim_amount: 71610,
-    vehicle_age: 11,
-    past_claims: 2,
-    driver_rating: 2,
-    policy_type: "Comprehensive",
-    fault: "Policy Holder",
-    accident_area: "Urban",
-    police_report_filed: true,
-    witness_present: true,
-    incident_description: "Single Vehicle Collision with Side Impact at Columbus, 5 AM (Incident Severity: Major Damage).",
-    narrative_suspicion_score: 78.0,
-    fraud_probability: 0.82,
-    fraud_score: 82.0,
-    overall_risk_score: 82.0,
-    risk_band: "High risk",
-    recommended_action: "Flag for SIU Fraud Audit",
-    damage_severity: "Major Crush",
-    damage_score: 82.5,
-    created_at: new Date(Date.now() - 86400000).toISOString()
-  },
-  {
-    id: 10002,
-    customer_name: "Policyholder #552404 (Direct Drive)",
-    vehicle_make_model: "Mercedes E350 (2007)",
-    age: 42,
-    vehicle_price: 1800000,
-    claim_amount: 50700,
-    vehicle_age: 8,
-    past_claims: 0,
-    driver_rating: 4,
-    policy_type: "Comprehensive",
-    fault: "Third Party",
-    accident_area: "Urban",
-    police_report_filed: true,
-    witness_present: false,
-    incident_description: "Vehicle theft reported at night. Police report filed immediately.",
-    narrative_suspicion_score: 15.0,
-    fraud_probability: 0.18,
-    fraud_score: 18.0,
-    overall_risk_score: 18.0,
-    risk_band: "Low risk",
-    recommended_action: "Fast-track 3-Second Settlement",
-    damage_severity: "Minor Bumper Scratch",
-    damage_score: 12.0,
-    created_at: new Date(Date.now() - 172800000).toISOString()
-  },
-  {
-    id: 10003,
-    customer_name: "Policyholder #541930 (Premier Auto)",
-    vehicle_make_model: "Dodge Neon (2007)",
-    age: 29,
-    vehicle_price: 650000,
-    claim_amount: 34500,
-    vehicle_age: 7,
-    past_claims: 1,
-    driver_rating: 3,
-    policy_type: "Zero-Dep",
-    fault: "Policy Holder",
-    accident_area: "Rural",
-    police_report_filed: false,
-    witness_present: true,
-    incident_description: "Rear collision at intersection. Minor bumper damage.",
-    narrative_suspicion_score: 42.0,
-    fraud_probability: 0.45,
-    fraud_score: 45.0,
-    overall_risk_score: 45.0,
-    risk_band: "Medium risk",
-    recommended_action: "Require Secondary Photo Verification",
-    damage_severity: "Moderate Bumper Damage",
-    damage_score: 48.0,
-    created_at: new Date(Date.now() - 259200000).toISOString()
-  },
-  {
-    id: 10004,
-    customer_name: "Policyholder #589211 (City Shield)",
-    vehicle_make_model: "Hyundai Creta 1.5 SX",
-    age: 35,
-    vehicle_price: 1400000,
-    claim_amount: 95000,
-    vehicle_age: 3,
-    past_claims: 3,
-    driver_rating: 1,
-    policy_type: "Comprehensive",
-    fault: "Policy Holder",
-    accident_area: "Highway",
-    police_report_filed: false,
-    witness_present: false,
-    incident_description: "Front left bumper crushing and hood crumple on highway at 2 AM.",
-    narrative_suspicion_score: 88.0,
-    fraud_probability: 0.91,
-    fraud_score: 91.0,
-    overall_risk_score: 91.0,
-    risk_band: "High risk",
-    recommended_action: "Flag for SIU Fraud Audit",
-    damage_severity: "Severe Frontal Impact",
-    damage_score: 89.0,
-    created_at: new Date(Date.now() - 345600000).toISOString()
-  }
-];
+const DEFAULT_DEMO_CLAIMS = Array.from({ length: 41 }, (_, idx) => {
+  const claimNum = 41 - idx;
+  const idStr = claimNum.toString().padStart(5, "0");
+  const isHighRisk = idx % 2 === 0;
+  const isLow = idx % 3 === 0;
+  
+  const customerNames = [
+    "Rajesh Kumar", "Priya Patel", "Vikram Malhotra", "Ananya Sharma", 
+    "Siddharth Rao", "Neha Gupta", "Amitabh Singh", "Kavita Reddy"
+  ];
+  const vehicles = [
+    "Saab 92x (2004)", "Mercedes E400 (2007)", "Hyundai Creta 1.5 SX", 
+    "Dodge Neon (2007)", "Honda City 1.5 i-VTEC", "Tata Harrier XZA+", "Mahindra Thar LX"
+  ];
+
+  const customer_name = customerNames[idx % customerNames.length];
+  const vehicle_make_model = vehicles[idx % vehicles.length];
+  const overall_risk_score = isHighRisk ? roundVal(60.9 + (idx % 15) * 2.1, 1) : roundVal(15.2 + (idx % 10) * 1.2, 1);
+  const claim_amount = isHighRisk ? 71610 : 5070;
+  const risk_band = overall_risk_score >= 50.0 ? "High risk" : "Ultra-Low risk";
+  const recommended_action = overall_risk_score >= 50.0 ? "High-priority Investigation" : "Approve automatically";
+
+  return {
+    id: claimNum,
+    claim_id: `CLM-${idStr}`,
+    customer_name,
+    vehicle_make_model,
+    age: 35 + (idx % 15),
+    vehicle_price: isHighRisk ? 850000 : 1800000,
+    claim_amount,
+    vehicle_age: 5 + (idx % 8),
+    past_claims: isHighRisk ? 2 : 0,
+    driver_rating: isHighRisk ? 2 : 4,
+    policy_type: isHighRisk ? "Comprehensive" : "Zero-Dep",
+    fault: isHighRisk ? "Policy Holder" : "Third Party",
+    accident_area: isHighRisk ? "Urban" : "Rural",
+    police_report_filed: !isHighRisk,
+    witness_present: isHighRisk,
+    incident_description: isHighRisk ? "Front impact collision reported on urban highway." : "Rear bumper scratch in parking area.",
+    narrative_suspicion_score: overall_risk_score,
+    fraud_probability: roundVal(overall_risk_score / 100, 2),
+    fraud_score: overall_risk_score,
+    overall_risk_score,
+    risk_band,
+    recommended_action,
+    damage_severity: isHighRisk ? "Major Crush" : "Minor Scratch",
+    damage_score: overall_risk_score,
+    created_at: new Date(Date.now() - idx * 86400000).toISOString()
+  };
+});
+
 
 export async function getClaimsHistory(limit: number = 50, query?: string | null) {
   const params = new URLSearchParams({ limit: limit.toString() });

@@ -83,12 +83,12 @@ export default function TopNavbar({
 
           <motion.button
             type="button"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.96 }}
+            whileHover={{ scale: 1.05, boxShadow: "0px 6px 20px rgba(23, 59, 50, 0.15)" }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => setIsProfileOpen(!isProfileOpen)}
-            className="flex items-center gap-2 sm:gap-3 rounded-2xl border border-[#173B32]/20 bg-white px-2.5 py-1.5 sm:px-3.5 sm:py-2 shadow-xs hover:border-[#173B32]/40 transition cursor-pointer"
+            className="flex items-center gap-2 sm:gap-3 rounded-2xl border border-[#173B32]/25 bg-white px-2.5 py-1.5 sm:px-3.5 sm:py-2 shadow-xs hover:border-[#173B32] hover:ring-2 hover:ring-[#173B32]/10 transition-all duration-300 cursor-pointer"
           >
-            <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-[#173B32] font-bold text-[#C9FF3D] text-xs sm:text-sm shadow-2xs">
+            <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-[#173B32] font-bold text-[#C9FF3D] text-xs sm:text-sm shadow-2xs group-hover:rotate-6 transition-transform">
               {initial}
             </div>
             <div className="hidden sm:block text-left">
@@ -99,8 +99,9 @@ export default function TopNavbar({
                 {userRole}
               </p>
             </div>
-            <ChevronDown size={14} className={`text-[#173B32]/60 transition-transform ${isProfileOpen ? "rotate-180" : ""}`} />
+            <ChevronDown size={14} className={`text-[#173B32]/60 transition-transform duration-300 ${isProfileOpen ? "rotate-180 text-[#173B32]" : ""}`} />
           </motion.button>
+
 
           {/* Profile Popover Modal */}
           <AnimatePresence>
