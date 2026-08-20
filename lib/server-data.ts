@@ -43,8 +43,9 @@ export async function getCurrentUser() {
   return await fetchWithAuth("/auth/me");
 }
 
-export async function getClaimsStats() {
-  return await fetchWithAuth("/claims/stats/summary");
+export async function getClaimsStats(excludeSeed: boolean = false) {
+  const query = excludeSeed ? "?exclude_seed=true" : "";
+  return await fetchWithAuth(`/claims/stats/summary${query}`);
 }
 
 const DEFAULT_DEMO_CLAIMS = Array.from({ length: 41 }, (_, idx) => {
@@ -99,10 +100,13 @@ const DEFAULT_DEMO_CLAIMS = Array.from({ length: 41 }, (_, idx) => {
 });
 
 
-export async function getClaimsHistory(limit: number = 50, query?: string | null) {
+export async function getClaimsHistory(limit: number = 50, query?: string | null, excludeSeed: boolean = false) {
   const params = new URLSearchParams({ limit: limit.toString() });
   if (query) {
     params.set("q", query);
+  }
+  if (excludeSeed) {
+    params.set("exclude_seed", "true");
   }
   const result = await fetchWithAuth(`/claims/history?${params.toString()}`);
   if (result && Array.isArray(result) && result.length > 0) {
@@ -112,13 +116,15 @@ export async function getClaimsHistory(limit: number = 50, query?: string | null
 }
 
 
-export async function getHighRiskClaims(limit: number = 50) {
-  const result = await fetchWithAuth(`/claims/high-risk?limit=${limit}`);
+export async function getHighRiskClaims(limit: number = 50, excludeSeed: boolean = false) {
+  const query = excludeSeed ? `&exclude_seed=true` : "";
+  const result = await fetchWithAuth(`/claims/high-risk?limit=${limit}${query}`);
   if (result && Array.isArray(result) && result.length > 0) {
     return result;
   }
   return DEFAULT_DEMO_CLAIMS.filter((c: any) => c.overall_risk_score >= 50.0);
 }
+
 
 
 export async function getClaimById(claimId: number) {
