@@ -90,9 +90,10 @@ export async function getClaimsList(query?: string | null) {
 export async function getDashboardData() {
   const [currentUser, summaryRaw, recentClaimsRaw] = await Promise.all([
     getCurrentUser(),
-    getClaimsStats(false),
-    getClaimsHistory(10, null, false),
+    getClaimsStats(true),
+    getClaimsHistory(10, null, true),
   ]);
+
 
   const recentClaims: any[] = (recentClaimsRaw && Array.isArray(recentClaimsRaw)) ? recentClaimsRaw : [];
 
@@ -140,9 +141,10 @@ function roundVal(val: number, decimals: number): number {
 
 export async function getAnalyticsData() {
   const [summaryRaw, claimsRaw] = await Promise.all([
-    getClaimsStats(false),
-    getClaimsHistory(100, null, false),
+    getClaimsStats(true),
+    getClaimsHistory(100, null, true),
   ]);
+
 
   const claims: any[] = (claimsRaw && Array.isArray(claimsRaw)) ? claimsRaw : [];
 
