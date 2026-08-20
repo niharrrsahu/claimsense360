@@ -286,15 +286,14 @@ def analyze_and_save_claim(
             with open(full_path, "wb") as f:
                 f.write(image_bytes)
             image_file_path = f"/uploads/{filename}"
-
-            image_b64_str = f"data:image/jpeg;base64,{base64.b64encode(image_bytes).decode('utf-8')}"
+            # Clean disk storage - do NOT write megabytes of base64 data to DB
+            image_b64_str = None
         except Exception as e:
             print(f"Warning saving upload image file: {e}")
             try:
                 image_b64_str = f"data:image/jpeg;base64,{base64.b64encode(image_bytes).decode('utf-8')}"
             except Exception:
                 pass
-
 
             
     # 6. Save DB record wrapped in try/except for resilience
@@ -327,7 +326,10 @@ def analyze_and_save_claim(
             recommended_action=recommended_action,
             damage_severity=damage_severity_str,
             damage_score=damage_score_val,
-            image_data=image_b64_str,
+            image_data=None,
+            image_path=image_file_path,
+            is_seed=False,
+            forensic_penalty=forensic_penalty_val,
         )
         db.add(db_claim)
         db.commit()
@@ -349,9 +351,11 @@ def analyze_and_save_claim(
         narrative=narrative_res
     )
 
-def get_claims_history(db: Session, limit: int = 50, query: str | None = None):
+def get_claims_history(db: Session, limit: int = 50, query: str | None = None, exclude_seed: bool = False):
     seed_initial_claims_if_empty(db)
     q = db.query(Claim)
+    if exclude_seed:
+        q = q.filter(Claim.is_seed == False)
     if query and query.strip():
         term = f"%{query.strip()}%"
         q = q.filter(
@@ -359,11 +363,13 @@ def get_claims_history(db: Session, limit: int = 50, query: str | None = None):
         )
     return q.order_by(Claim.created_at.desc()).limit(limit).all()
 
-def get_high_risk_claims(db: Session, limit: int = 50):
+def get_high_risk_claims(db: Session, limit: int = 50, exclude_seed: bool = False):
     seed_initial_claims_if_empty(db)
+    q = db.query(Claim)
+    if exclude_seed:
+        q = q.filter(Claim.is_seed == False)
     return (
-        db.query(Claim)
-        .filter(
+        q.filter(
             or_(
                 Claim.overall_risk_score >= 50.0,
                 Claim.risk_band.ilike("%high%")
@@ -378,9 +384,13 @@ def get_claim_by_id(db: Session, claim_id: int):
     seed_initial_claims_if_empty(db)
     return db.query(Claim).filter(Claim.id == claim_id).first()
 
-def get_claims_summary_stats(db: Session) -> ClaimsSummaryStats:
+def get_claims_summary_stats(db: Session, exclude_seed: bool = False) -> ClaimsSummaryStats:
     seed_initial_claims_if_empty(db)
-    total_claims = db.query(Claim).count()
+    q_base = db.query(Claim)
+    if exclude_seed:
+        q_base = q_base.filter(Claim.is_seed == False)
+    total_claims = q_base.count()
+
 
     if total_claims == 0:
         return ClaimsSummaryStats(
@@ -396,28 +406,29 @@ def get_claims_summary_stats(db: Session) -> ClaimsSummaryStats:
             accident_area_breakdown=[]
         )
         
-    high_risk_count = db.query(Claim).filter(
+    high_risk_count = q_base.filter(
         or_(Claim.overall_risk_score >= 50.0, Claim.risk_band.ilike("%high%"))
     ).count()
     
-    medium_risk_count = db.query(Claim).filter(
+    medium_risk_count = q_base.filter(
         Claim.overall_risk_score >= 30.0,
         Claim.overall_risk_score < 50.0
     ).count()
     
-    low_risk_count = db.query(Claim).filter(
+    low_risk_count = q_base.filter(
         Claim.overall_risk_score < 30.0
     ).count()
     
-    avg_score = db.query(func.avg(Claim.overall_risk_score)).scalar() or 0.0
-    avg_amount = db.query(func.avg(Claim.claim_amount)).scalar() or 0.0
+    avg_score = q_base.with_entities(func.avg(Claim.overall_risk_score)).scalar() or 0.0
+    avg_amount = q_base.with_entities(func.avg(Claim.claim_amount)).scalar() or 0.0
     
     # Policy type breakdown
     policy_counts = (
-        db.query(Claim.policy_type, func.count(Claim.id))
+        q_base.with_entities(Claim.policy_type, func.count(Claim.id))
         .group_by(Claim.policy_type)
         .all()
     )
+
     policy_breakdown = [LabelCount(label=p, count=c) for p, c in policy_counts]
     
     # Fault breakdown

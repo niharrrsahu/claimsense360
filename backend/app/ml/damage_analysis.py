@@ -15,12 +15,24 @@ os.environ["YOLO_CONFIG_DIR"] = "/tmp"
 def get_yolo_damage_model():
     try:
         from ultralytics import YOLO
-        model = YOLO("yolov8n.pt")
+        # Search for custom fine-tuned weights trained on dataset
+        custom_weights_paths = [
+            os.path.join(os.path.dirname(__file__), "..", "data", "best.pt"),
+            os.path.join(os.path.dirname(__file__), "..", "data", "yolo_dataset", "runs", "detect", "train", "weights", "best.pt"),
+            os.path.join(os.path.dirname(__file__), "yolov8_damage.pt")
+        ]
+        chosen_weights = "yolov8n.pt"
+        for p in custom_weights_paths:
+            if os.path.exists(p):
+                chosen_weights = p
+                break
+        model = YOLO(chosen_weights)
         model.to("cpu")
         return model
     except Exception as e:
         print(f"Warning: Could not load YOLOv8 model: {e}")
         return None
+
 
 @functools.lru_cache(maxsize=1)
 def get_resnet_feature_extractor():

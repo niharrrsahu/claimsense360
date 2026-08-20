@@ -213,10 +213,30 @@ export default function LoginPage() {
 
         {/* Right Form Card */}
         <div className="flex justify-center w-full">
-          <Suspense fallback={<div className="text-[#173B32] text-sm font-medium">Loading workspace...</div>}>
+          <Suspense fallback={
+            <div className="relative w-full max-w-md rounded-3xl border border-[#173B32]/12 bg-white p-6 sm:p-10 shadow-[0_25px_70px_rgba(23,59,50,0.12)] text-[#101412]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#101412]">
+                <span className="text-lg font-black text-[#C9FF3D]">CS</span>
+              </div>
+              <p className="mt-4 text-xs font-bold uppercase tracking-[0.18em] text-[#173B32]/70">Enterprise Workspace</p>
+              <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#173B32]">Sign In to ClaimSense 360</h1>
+              <div className="mt-6 space-y-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#173B32]/70">Email Address</label>
+                  <input type="email" placeholder="admin@claimsense.ai" disabled className="mt-2 w-full rounded-2xl border border-[#173B32]/15 bg-[#F4F1EA] px-4 py-3.5 text-sm" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#173B32]/70">Password</label>
+                  <input type="password" placeholder="••••••••" disabled className="mt-2 w-full rounded-2xl border border-[#173B32]/15 bg-[#F4F1EA] px-4 py-3.5 text-sm" />
+                </div>
+                <button disabled className="w-full rounded-2xl bg-[#E66A4E] py-3.5 font-bold text-white">Sign In to Workspace</button>
+              </div>
+            </div>
+          }>
             <LoginForm />
           </Suspense>
         </div>
+
       </div>
     </main>
   );
