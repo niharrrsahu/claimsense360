@@ -33,6 +33,26 @@ def get_yolo_damage_model():
         print(f"Warning: Could not load YOLOv8 model: {e}")
         return None
 
+def train_custom_yolo_model(epochs: int = 50):
+    """
+    Fine-tunes Ultralytics YOLOv8 on the 22-class Roboflow Car Damage Dataset.
+    Saves trained fine-tuned weights to backend/app/data/best.pt.
+    """
+    try:
+        from ultralytics import YOLO
+        data_yaml = os.path.join(os.path.dirname(__file__), "..", "data", "yolo_dataset", "data.yaml")
+        if os.path.exists(data_yaml):
+            model = YOLO("yolov8n.pt")
+            results = model.train(data=data_yaml, epochs=epochs, imgsz=640, project=os.path.dirname(data_yaml))
+            best_dest = os.path.join(os.path.dirname(__file__), "..", "data", "best.pt")
+            if hasattr(model, "save"):
+                model.save(best_dest)
+            return best_dest
+    except Exception as e:
+        print(f"Warning training custom YOLO model: {e}")
+    return None
+
+
 
 @functools.lru_cache(maxsize=1)
 def get_resnet_feature_extractor():

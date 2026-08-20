@@ -62,18 +62,20 @@ async def analyze_claim_endpoint(
 
 @router.get("/stats/summary", response_model=ClaimsSummaryStats)
 def get_stats_summary_endpoint(
+    exclude_seed: bool = False,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    return get_claims_summary_stats(db)
+    return get_claims_summary_stats(db, exclude_seed=exclude_seed)
 
 @router.get("/high-risk", response_model=list[ClaimResponse])
 def get_high_risk_claims_endpoint(
     limit: int = 50,
+    exclude_seed: bool = False,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    claims = get_high_risk_claims(db, limit=limit)
+    claims = get_high_risk_claims(db, limit=limit, exclude_seed=exclude_seed)
     res = []
     for c in claims:
         # Re-compute SHAP factors for detail response
@@ -108,10 +110,12 @@ def get_high_risk_claims_endpoint(
 def get_claims_history_endpoint(
     limit: int = 50,
     q: str | None = None,
+    exclude_seed: bool = False,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    claims = get_claims_history(db, limit=limit, query=q)
+    claims = get_claims_history(db, limit=limit, query=q, exclude_seed=exclude_seed)
+
     res = []
     for c in claims:
         claim_dict = {
