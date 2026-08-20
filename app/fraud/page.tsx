@@ -9,9 +9,10 @@ export const dynamic = "force-dynamic";
 
 export default async function FraudPage() {
   const [highRiskClaims, { currentUser }] = await Promise.all([
-    getHighRiskClaims(),
+    getHighRiskClaims(50, true),
     getDashboardData(),
   ]);
+
 
   return (
     <main className="flex min-h-screen bg-[#F4F1EA] text-[#101412]">
