@@ -58,9 +58,11 @@ function LoginForm() {
       window.location.href = nextParam;
     } catch (err: any) {
       console.warn("Demo login notice:", err);
-      window.location.href = nextParam;
+      setError(err?.message || "Invalid email or password. Please sign up first.");
+      setLoading(false);
     }
   };
+
 
   return (
     <div className="relative w-full max-w-md rounded-3xl border border-[#173B32]/12 bg-white p-6 sm:p-10 shadow-[0_25px_70px_rgba(23,59,50,0.12)] text-[#101412]">
