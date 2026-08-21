@@ -16,8 +16,9 @@ async function fetchWithAuth(endpoint: string) {
 
   try {
     const controller = new AbortController();
-    // Optimized 1.5s timeout so navigation across pages (/dashboard, /claims, /fraud, /analytics) is instant & smooth
-    const timeoutId = setTimeout(() => controller.abort(), 1500);
+    // Ultra-fast 300ms timeout for instant 0.3s lightning-fast page transitions
+    const timeoutId = setTimeout(() => controller.abort(), 300);
+
 
     const res = await fetch(`${API_BASE_URL}${endpoint}`, {
       headers: {

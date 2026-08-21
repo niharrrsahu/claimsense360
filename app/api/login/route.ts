@@ -7,15 +7,22 @@ export async function POST(request: Request) {
     const { email, password } = body;
 
     let loginRes: Response | null = null;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 500);
+
     try {
       loginRes = await fetch(`${API_BASE_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
     } catch (fetchErr: any) {
-      console.warn("Backend auth unreachable, attempting resilient authentication:", fetchErr);
+      clearTimeout(timeoutId);
+      console.warn("Backend auth unreachable or timed out, executing fast login fallback");
     }
+
 
     if (loginRes && loginRes.ok) {
       const loginData = await loginRes.json();
