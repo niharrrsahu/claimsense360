@@ -130,6 +130,9 @@ export async function getHighRiskClaims(limit: number = 50, excludeSeed: boolean
 }
 
 export async function getClaimById(claimId: number) {
+  const submitted = globalSubmittedClaims.find((c) => c.id === claimId || c.claim_id === claimId);
+  if (submitted) return submitted;
+
   const result = await fetchWithAuth(`/claims/${claimId}`);
   if (result) return result;
 
@@ -159,6 +162,8 @@ export async function getClaimById(claimId: number) {
     recommended_action: "Send to investigator",
     damage_severity: "Major Damage",
     damage_score: 61.1,
+    image_data: "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80",
+    image_path: "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80",
     top_factors: [
       { feature: "incident_severity", name: "Incident Severity (Major Damage)", contribution: 18.0, effect: "increases_risk" },
       { feature: "police_report_filed", name: "Police Report Verification", contribution: -6.0, effect: "decreases_risk" },
@@ -168,6 +173,7 @@ export async function getClaimById(claimId: number) {
     created_at: new Date().toISOString(),
   };
 }
+
 
 
 export async function getSingleClaim(claimId: number) {

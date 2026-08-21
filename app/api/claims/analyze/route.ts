@@ -125,9 +125,12 @@ export async function POST(request: Request) {
           recommended_action: action,
           damage_severity: severity,
           damage_score: Math.round((overallRiskScore + 5) * 10) / 10,
+          image_data: "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80",
+          image_path: "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80",
           top_factors: topFactors,
           created_at: new Date().toISOString(),
         };
+
 
         const { registerSubmittedClaim } = await import("@/lib/server-data");
         registerSubmittedClaim(processedClaimObj);
