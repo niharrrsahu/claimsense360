@@ -90,8 +90,12 @@ export default function NewClaimPage() {
 
     try {
       const res = await analyzeClaim(claimInput, imageFile);
+      if (imagePreview && !res.image_data) {
+        res.image_data = imagePreview;
+      }
       setAnalysisResult(res);
     } catch (err: any) {
+
       const msg = err?.message || "Failed to analyze claim.";
       if (msg.includes("401") || msg.includes("token") || msg.includes("authenticated")) {
         setError("Security session expired or not authenticated. Please click 'Logout' on the left menu, sign in again, and retry.");
