@@ -1,7 +1,6 @@
-import "server-only";
-
-
 import { cookies } from "next/headers";
+
+
 
 
 import { API_BASE_URL } from "@/lib/config";
@@ -52,17 +51,9 @@ export async function getClaimsStats(excludeSeed: boolean = false) {
 }
 
 
-export const globalSubmittedClaims: any[] = [];
+import { globalSubmittedClaims, registerSubmittedClaim } from "@/lib/submitted-claims";
+export { globalSubmittedClaims, registerSubmittedClaim };
 
-export function registerSubmittedClaim(claim: any) {
-  if (!claim || !claim.id) return;
-  const existingIdx = globalSubmittedClaims.findIndex((c) => c.id === claim.id);
-  if (existingIdx >= 0) {
-    globalSubmittedClaims[existingIdx] = claim;
-  } else {
-    globalSubmittedClaims.unshift(claim);
-  }
-}
 
 export async function getClaimsHistory(limit: number = 50, query?: string | null, excludeSeed: boolean = false) {
   const params = new URLSearchParams({ limit: limit.toString() });

@@ -102,7 +102,8 @@ export default function NewClaimPage() {
       if (exactUploadedPhoto) {
         res.image_data = exactUploadedPhoto;
 
-        const { registerSubmittedClaim } = await import("@/lib/server-data");
+        const { registerSubmittedClaim } = await import("@/lib/submitted-claims");
+
         registerSubmittedClaim({
           id: res.claim_id,
           claim_id: res.claim_id,
