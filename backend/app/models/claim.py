@@ -22,6 +22,7 @@ class Claim(Base):
     accident_area = Column(String, nullable=False)
     police_report_filed = Column(Boolean, default=False)
     witness_present = Column(Boolean, default=False)
+    incident_severity = Column(String, nullable=False, default="Minor Damage")
     incident_description = Column(Text, nullable=True)
     
     narrative_suspicion_score = Column(Float, nullable=True)

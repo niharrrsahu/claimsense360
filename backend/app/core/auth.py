@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timedelta, timezone
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -5,7 +6,13 @@ from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from app.database.session import get_db
 
-SECRET_KEY = "claimsense360_super_secret_key"
+SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
+if not SECRET_KEY:
+    raise RuntimeError(
+        "JWT_SECRET_KEY environment variable is not set. "
+        "Generate one with `openssl rand -hex 32` and set it in your environment "
+        "(Railway dashboard -> Variables). Refusing to start with no secret configured."
+    )
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -37,39 +44,38 @@ def get_current_user(
     credentials: HTTPAuthorizationCredentials | None = Depends(_bearer_scheme),
     db: Session = Depends(get_db),
 ):
+    """
+    Strictly validates the bearer JWT. No token, an empty token, or an invalid/expired
+    token all result in 401 Unauthorized. There is intentionally NO fallback that returns
+    a real or fake "admin" user — a previous version of this function did that, which
+    meant any request (even with no Authorization header at all) was silently treated
+    as an authenticated admin. That has been removed.
+    """
     from app.models.user import User
-    
-    first_user = db.query(User).first()
 
-    # If no credentials or demo/mock token provided, return valid admin user
-    if credentials is None or not credentials.credentials or credentials.credentials in ["system_demo_access_token", "mock_token_admin_claimsense360", "cs_token"]:
-        if first_user:
-            return first_user
-        class FallbackUser:
-            id = 1
-            email = "admin@claimsense360.com"
-            full_name = "System Admin"
-            role = "Admin"
-        return FallbackUser()
+    if credentials is None or not credentials.credentials:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
-    try:
-        payload = decode_access_token(credentials.credentials)
-        email = payload.get("sub")
-        if email:
-            user = db.query(User).filter(User.email == email).first()
-            if user:
-                return user
-    except Exception:
-        pass
+    payload = decode_access_token(credentials.credentials)
+    if not payload or not payload.get("sub"):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
-    if first_user:
-        return first_user
+    user = db.query(User).filter(User.email == payload["sub"]).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
-    class FallbackUser:
-        id = 1
-        email = "admin@claimsense360.com"
-        full_name = "System Admin"
-        role = "Admin"
-    return FallbackUser()
+    return user
 
 

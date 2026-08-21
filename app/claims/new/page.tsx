@@ -33,6 +33,9 @@ export default function NewClaimPage() {
   const [policyType, setPolicyType] = useState<"Third-Party" | "Comprehensive" | "Zero-Dep">("Comprehensive");
   const [fault, setFault] = useState<"Policy Holder" | "Third Party">("Third Party");
   const [accidentArea, setAccidentArea] = useState<"Urban" | "Rural" | "Highway">("Urban");
+  const [incidentSeverity, setIncidentSeverity] = useState<
+    "Trivial Damage" | "Minor Damage" | "Major Damage" | "Total Loss"
+  >("Minor Damage");
   const [policeReportFiled, setPoliceReportFiled] = useState(true);
   const [witnessPresent, setWitnessPresent] = useState(true);
   const [incidentDescription, setIncidentDescription] = useState(
@@ -79,6 +82,7 @@ export default function NewClaimPage() {
       policy_type: policyType,
       fault: fault,
       accident_area: accidentArea,
+      incident_severity: incidentSeverity,
       police_report_filed: policeReportFiled,
       witness_present: witnessPresent,
       incident_description: incidentDescription,
@@ -269,7 +273,23 @@ export default function NewClaimPage() {
               </div>
 
               {/* Selects */}
-              <div className="grid gap-4 sm:grid-cols-3">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div>
+                  <label className="block text-xs font-semibold uppercase text-[#173B32]/70">
+                    Incident Severity
+                  </label>
+                  <select
+                    value={incidentSeverity}
+                    onChange={(e: any) => setIncidentSeverity(e.target.value)}
+                    className="mt-1.5 w-full rounded-2xl border border-[#173B32]/15 bg-[#F4F1EA] px-4 py-3 text-sm text-[#101412] outline-none focus:border-[#173B32]"
+                  >
+                    <option value="Trivial Damage">Trivial Damage</option>
+                    <option value="Minor Damage">Minor Damage</option>
+                    <option value="Major Damage">Major Damage</option>
+                    <option value="Total Loss">Total Loss</option>
+                  </select>
+                </div>
+
                 <div>
                   <label className="block text-xs font-semibold uppercase text-[#173B32]/70">
                     Policy Type

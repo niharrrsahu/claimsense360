@@ -1,6 +1,6 @@
 import base64
-
-
+import os
+import uuid
 import math
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
@@ -54,6 +54,7 @@ def seed_initial_claims_if_empty(db: Session):
             overall_risk_score=82.0,
             risk_band="High risk",
             recommended_action="Flag for SIU Fraud Audit",
+            incident_severity="Major Damage",
             damage_severity="Major Crush",
             damage_score=82.5,
             is_seed=True,
@@ -80,6 +81,7 @@ def seed_initial_claims_if_empty(db: Session):
             overall_risk_score=12.0,
             risk_band="Low risk",
             recommended_action="Fast-track 3-Second Settlement",
+            incident_severity="Minor Damage",
             damage_severity="Minor Scuff",
             damage_score=12.0,
             is_seed=True,
@@ -106,6 +108,7 @@ def seed_initial_claims_if_empty(db: Session):
             overall_risk_score=24.0,
             risk_band="Low risk",
             recommended_action="Proceed to Standard Approval",
+            incident_severity="Minor Damage",
             damage_severity="Minor Bumper Scuff",
             damage_score=22.0,
             is_seed=True,
@@ -132,6 +135,7 @@ def seed_initial_claims_if_empty(db: Session):
             overall_risk_score=76.0,
             risk_band="High risk",
             recommended_action="Flag for SIU Fraud Audit",
+            incident_severity="Major Damage",
             damage_severity="Heavy Crash",
             damage_score=75.0,
             is_seed=True,
@@ -159,6 +163,7 @@ def seed_initial_claims_if_empty(db: Session):
             risk_band="Low risk",
 
             recommended_action="Fast-track Automatic Payout",
+            incident_severity="Trivial Damage",
             damage_severity="Minor Scuff",
             damage_score=15.0,
             is_seed=True,
@@ -185,6 +190,7 @@ def seed_initial_claims_if_empty(db: Session):
             overall_risk_score=79.0,
             risk_band="High risk",
             recommended_action="Flag for SIU Fraud Audit",
+            incident_severity="Major Damage",
             damage_severity="Heavy Rear Collision",
             damage_score=78.0,
             is_seed=True,
@@ -317,6 +323,7 @@ def analyze_and_save_claim(
             accident_area=claim_input.accident_area,
             police_report_filed=claim_input.police_report_filed,
             witness_present=claim_input.witness_present,
+            incident_severity=claim_input.incident_severity,
             incident_description=claim_input.incident_description,
             narrative_suspicion_score=narrative_score,
             fraud_probability=fraud_prob,

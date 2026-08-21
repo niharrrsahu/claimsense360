@@ -13,6 +13,13 @@ GENUINE_TEMPLATES = [
     "My vehicle was parked outside {location} on {street}. I returned at {time} to find scratches and a dent on the driver side door. I called traffic police immediately.",
     "Cruising at 40 km/h on {street}, another driver emerged from a side alley without signaling. My front bumper collided with their rear side. No injuries reported.",
     "I hit a pothole on {street} during heavy rain at {time}. The front axle and tire were damaged. Called breakdown service immediately and documented photographs.",
+    "While reversing out of a parking spot near {location}, my {part} scraped against a concrete pillar. I reported it to the mall security and my insurer the same evening.",
+    "A {vehicle} rear-ended me while I was stationary at a signal on {street} around {time}. Both drivers exchanged license and insurance details on the spot.",
+    "During {date}, a tree branch fell on my car parked near {location} after heavy winds. I have timestamped photos and a report from the housing society watchman.",
+    "I was involved in a minor collision with a {vehicle} at the {street} junction. We agreed it was a 60/40 fault split and both filed claims with our respective insurers.",
+    "My car slid on a wet patch of {street} at {time} and grazed the roadside barrier. I informed the highway patrol and got a reference number for the incident.",
+    "On {date}, while parked at {location}, my side mirror was clipped by a passing {vehicle}. The other driver stopped, and witness {witness} saw the whole thing.",
+    "I was stationary in traffic on {street} when a {vehicle} behind me nudged forward and dented my {part}. Officer {officer} was called and documented the scene at {time}.",
 ]
 
 SUSPICIOUS_TEMPLATES = [
@@ -21,6 +28,13 @@ SUSPICIOUS_TEMPLATES = [
     "I believe someone bumped into my vehicle. I am not completely certain who was driving or when it happened, but the entire panel is destroyed. Fast cash transfer requested.",
     "Accident occurred late night. I think it was around midnight but cannot recall details. No witnesses were there. Extremely urgent compensation required today.",
     "Car was damaged mysteriously while I was away. I don't remember the street name or exact time. I just want full claim amount settled immediately.",
+    "It's a bit hazy honestly, maybe near {location}, maybe somewhere else, but the whole front is smashed and I really need this settled before the weekend if at all possible.",
+    "Someone must have hit my car, I can't say who or when exactly. There were no witnesses I could find and I didn't think to call anyone at the time, it just happened.",
+    "The damage appeared after I left my car unattended for a while near {street}. I can't confirm the details but the repair estimate is quite high and I'd appreciate a quick decision.",
+    "I was not around when it happened so I don't have first-hand details, but the vehicle came back with heavy damage and I was hoping this could move quickly given my situation.",
+    "Not fully sure of the sequence of events near {location}, it all happened fast, no one else really saw it, and I'd rather not involve the police over something this minor.",
+    "The incident took place somewhere along {street}, I didn't get a good look at the other vehicle, and honestly I'd prefer to settle this without too many extra questions.",
+    "I noticed the damage only after returning to {location}; can't pin down exactly when it occurred, but given the amount involved I was hoping for a faster resolution.",
 ]
 
 STREETS = ["MG Road", "Park Street", "Ring Road", "Outer Bypass", "Station Avenue", "Industrial Highway"]

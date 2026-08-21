@@ -37,8 +37,11 @@ def train_fraud_model():
         df["witness_present"] = (df["witnesses"] > 0).astype(bool)
 
 
+    if "incident_severity" not in df.columns:
+        df["incident_severity"] = "Minor Damage"
+
     numeric_features = ["age", "vehicle_price", "claim_amount", "vehicle_age", "past_claims", "driver_rating"]
-    categorical_features = ["policy_type", "fault", "accident_area"]
+    categorical_features = ["policy_type", "fault", "accident_area", "incident_severity"]
     boolean_features = ["police_report_filed", "witness_present"]
 
     X = df[numeric_features + categorical_features + boolean_features]

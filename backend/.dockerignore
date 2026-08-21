@@ -3,5 +3,8 @@ __pycache__/
 .env
 *.db
 app/ml_models/
+app/data/yolo_dataset/
+app/data/insurance_claims_raw_kaggle.csv
+app/uploads/
 .pytest_cache/
 .git/

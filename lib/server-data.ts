@@ -16,7 +16,12 @@ async function fetchWithAuth(endpoint: string) {
 
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    // Increased from 2000ms: a 2-second timeout aborts almost every request during
+    // a Railway cold start (which commonly takes 5-15+ seconds, especially with
+    // torch/ultralytics imported at module load), causing the dashboard to silently
+    // render empty/zeroed data and look "broken" when it's really just a timeout
+    // that was too aggressive.
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
 
     const res = await fetch(`${API_BASE_URL}${endpoint}`, {
       headers: {

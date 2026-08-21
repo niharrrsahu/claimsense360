@@ -37,31 +37,25 @@ def authenticate_user(
     email: str,
     password: str,
 ):
+    """
+    Verifies a real user's credentials against the DB. A previous version of this
+    function auto-created and always accepted a hardcoded `admin@claimsense.ai` /
+    `password123` login (even bypassing the password check entirely). That backdoor
+    has been removed. If you need a seeded demo account for local development, create
+    it explicitly via `backend/app/database/seed_demo_user.py` and gate it behind
+    an environment check (e.g. `if os.getenv("ENV") == "development"`), never in
+    the authentication path itself.
+    """
     user = (
         db.query(User)
         .filter(User.email == email)
         .first()
     )
 
-    # Auto-seed demo admin user if missing
-    if not user and email.lower() == "admin@claimsense.ai":
-        user = User(
-            full_name="Admin User",
-            email="admin@claimsense.ai",
-            password=hash_password("password123"),
-            role="admin",
-        )
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-
     if not user:
         return None
 
-    if not verify_password(
-        password,
-        user.password,
-    ) and not (email.lower() == "admin@claimsense.ai" and password == "password123"):
+    if not verify_password(password, user.password):
         return None
 
     return user

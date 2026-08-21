@@ -16,6 +16,7 @@ class ClaimInput(BaseModel):
     accident_area: Literal["Urban", "Rural", "Highway"]
     police_report_filed: bool
     witness_present: bool
+    incident_severity: Literal["Trivial Damage", "Minor Damage", "Major Damage", "Total Loss"] = "Minor Damage"
     incident_description: str | None = Field(default=None, max_length=4000)
 
 class FraudFactor(BaseModel):
@@ -72,6 +73,7 @@ class ClaimResponse(BaseModel):
     accident_area: str
     police_report_filed: bool
     witness_present: bool
+    incident_severity: str = "Minor Damage"
     incident_description: str | None
     narrative_suspicion_score: float | None
     fraud_probability: float

@@ -29,6 +29,7 @@ try:
         conn.execute(text("ALTER TABLE claims ADD COLUMN IF NOT EXISTS image_path VARCHAR;"))
         conn.execute(text("ALTER TABLE claims ADD COLUMN IF NOT EXISTS is_seed BOOLEAN DEFAULT FALSE;"))
         conn.execute(text("ALTER TABLE claims ADD COLUMN IF NOT EXISTS forensic_penalty FLOAT DEFAULT 0.0;"))
+        conn.execute(text("ALTER TABLE claims ADD COLUMN IF NOT EXISTS incident_severity VARCHAR DEFAULT 'Minor Damage';"))
 except Exception as migration_err:
     print(f"Auto-migration notice: {migration_err}")
 
@@ -39,9 +40,17 @@ app = FastAPI(
 )
 
 # CORS
+# Wildcard origins ("*") combined with allow_credentials=True lets any website on the
+# internet make credentialed requests to this API using a leaked/stolen bearer token.
+# Restrict to the real frontend origin(s) via an env var instead.
+_frontend_origins = os.environ.get("FRONTEND_ORIGIN", "").split(",")
+_frontend_origins = [o.strip() for o in _frontend_origins if o.strip()]
+if not _frontend_origins:
+    print("WARNING: FRONTEND_ORIGIN env var not set — CORS will not allow any browser origin.")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_frontend_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

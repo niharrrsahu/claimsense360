@@ -67,6 +67,7 @@ def seed_kaggle_claims(n_rows: int = 15):
             inc_hour = int(row["incident_hour_of_the_day"]) if "incident_hour_of_the_day" in row and pd.notna(row["incident_hour_of_the_day"]) else 12
             
             auth_contacted = str(row["authorities_contacted"]) if "authorities_contacted" in row and pd.notna(row["authorities_contacted"]) else "Police"
+            incident_severity = str(row["incident_severity"]) if "incident_severity" in row and pd.notna(row["incident_severity"]) else "Minor Damage"
             description = (
                 f"Kaggle Row #{idx+1} (Policy #{policy_num}): {inc_type} ({coll_type}) at {inc_city}, "
                 f"time {inc_hour}:00. Authorities: {auth_contacted}. Witnesses: {witnesses}. Police report: {'Filed' if police_avail else 'Not filed'}."
@@ -87,6 +88,7 @@ def seed_kaggle_claims(n_rows: int = 15):
                 "accident_area": area,
                 "police_report_filed": police_avail,
                 "witness_present": witness_present,
+                "incident_severity": incident_severity,
                 "incident_description": description,
             })
             
@@ -116,6 +118,7 @@ def seed_kaggle_claims(n_rows: int = 15):
                 accident_area=area,
                 police_report_filed=police_avail,
                 witness_present=witness_present,
+                incident_severity=incident_severity,
                 incident_description=description,
                 narrative_suspicion_score=narrative_score,
                 fraud_probability=fraud_prob,

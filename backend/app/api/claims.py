@@ -90,7 +90,8 @@ def get_high_risk_claims_endpoint(
             "fault": c.fault,
             "accident_area": c.accident_area,
             "police_report_filed": c.police_report_filed,
-            "witness_present": c.witness_present
+            "witness_present": c.witness_present,
+            "incident_severity": c.incident_severity
         }
         _, _, top_f = predict_fraud(claim_dict)
         top_factors_list = [FraudFactor(**f) for f in top_f]
@@ -129,7 +130,8 @@ def get_claims_history_endpoint(
             "fault": c.fault,
             "accident_area": c.accident_area,
             "police_report_filed": c.police_report_filed,
-            "witness_present": c.witness_present
+            "witness_present": c.witness_present,
+            "incident_severity": c.incident_severity
         }
         _, _, top_f = predict_fraud(claim_dict)
         top_factors_list = [FraudFactor(**f) for f in top_f]
@@ -169,7 +171,8 @@ def get_claim_by_id_endpoint(
         "fault": c.fault,
         "accident_area": c.accident_area,
         "police_report_filed": c.police_report_filed,
-        "witness_present": c.witness_present
+        "witness_present": c.witness_present,
+        "incident_severity": c.incident_severity
     }
     _, _, top_f = predict_fraud(claim_dict)
     top_factors_list = [FraudFactor(**f) for f in top_f]

@@ -41,7 +41,8 @@ FEATURE_NAME_MAP = {
     "fault": "Fault Allocation",
     "accident_area": "Accident Area",
     "police_report_filed": "Police Report Filed",
-    "witness_present": "Witness Present"
+    "witness_present": "Witness Present",
+    "incident_severity": "Incident Severity"
 }
 
 def predict_fraud(claim_dict: dict) -> tuple[float, float, list[dict]]:
@@ -70,6 +71,8 @@ def predict_fraud(claim_dict: dict) -> tuple[float, float, list[dict]]:
             orig = "fault"
         elif feat_raw.startswith("accident_area_"):
             orig = "accident_area"
+        elif feat_raw.startswith("incident_severity_"):
+            orig = "incident_severity"
         else:
             orig = feat_raw
             

@@ -32,6 +32,18 @@ def generate_synthetic_claims(n_samples: int = 8000, seed: int = 42) -> pd.DataF
     # Police report & witness present
     police_report_filed = np.random.choice([True, False], size=n_samples, p=[0.65, 0.35])
     witness_present = np.random.choice([True, False], size=n_samples, p=[0.4, 0.6])
+
+    # Incident severity: real-world underwriting concept, genuinely correlated with fraud risk
+    # (mirrors the real distribution seen in the actual Kaggle dataset this app is grounded on)
+    incident_severity = np.random.choice(
+        ["Trivial Damage", "Minor Damage", "Major Damage", "Total Loss"],
+        size=n_samples, p=[0.10, 0.48, 0.32, 0.10]
+    )
+    severity_fraud_bump = np.select(
+        [incident_severity == "Major Damage", incident_severity == "Total Loss"],
+        [1.1, 0.3],
+        default=0.0,
+    )
     
     # Claim amount: usually a fraction of vehicle price (0.05 to 0.45), with occasional inflated outliers
     ratio_base = np.random.uniform(0.05, 0.45, size=n_samples)
@@ -50,6 +62,7 @@ def generate_synthetic_claims(n_samples: int = 8000, seed: int = 42) -> pd.DataF
         + np.where(police_report_filed, -1.05, 0.85)
         + np.where(witness_present, -0.45, 0.40)
         - 0.14 * driver_rating
+        + severity_fraud_bump
         + np.random.normal(0, 0.55, size=n_samples)
     )
     
@@ -68,6 +81,7 @@ def generate_synthetic_claims(n_samples: int = 8000, seed: int = 42) -> pd.DataF
         "accident_area": accident_area,
         "police_report_filed": police_report_filed,
         "witness_present": witness_present,
+        "incident_severity": incident_severity,
         "is_fraud": is_fraud
     })
     
