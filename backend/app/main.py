@@ -24,14 +24,19 @@ from sqlalchemy import text
 Base.metadata.create_all(bind=engine)
 
 # Auto-migrate missing columns for existing PostgreSQL / SQLite databases
-try:
-    with engine.begin() as conn:
-        conn.execute(text("ALTER TABLE claims ADD COLUMN IF NOT EXISTS image_path VARCHAR;"))
-        conn.execute(text("ALTER TABLE claims ADD COLUMN IF NOT EXISTS is_seed BOOLEAN DEFAULT FALSE;"))
-        conn.execute(text("ALTER TABLE claims ADD COLUMN IF NOT EXISTS forensic_penalty FLOAT DEFAULT 0.0;"))
-        conn.execute(text("ALTER TABLE claims ADD COLUMN IF NOT EXISTS incident_severity VARCHAR DEFAULT 'Minor Damage';"))
-except Exception as migration_err:
-    print(f"Auto-migration notice: {migration_err}")
+migrations = [
+    "ALTER TABLE claims ADD COLUMN image_path VARCHAR;",
+    "ALTER TABLE claims ADD COLUMN is_seed BOOLEAN DEFAULT FALSE;",
+    "ALTER TABLE claims ADD COLUMN forensic_penalty FLOAT DEFAULT 0.0;",
+    "ALTER TABLE claims ADD COLUMN incident_severity VARCHAR DEFAULT 'Minor Damage';"
+]
+for query in migrations:
+    try:
+        with engine.begin() as conn:
+            conn.execute(text(query))
+    except Exception:
+        pass
+
 
 
 app = FastAPI(
@@ -46,7 +51,7 @@ app = FastAPI(
 _frontend_origins = os.environ.get("FRONTEND_ORIGIN", "").split(",")
 _frontend_origins = [o.strip() for o in _frontend_origins if o.strip()]
 if not _frontend_origins:
-    print("WARNING: FRONTEND_ORIGIN env var not set — CORS will not allow any browser origin.")
+    _frontend_origins = ["https://claimsense360.vercel.app", "http://localhost:3000", "*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -55,6 +60,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 
 import os

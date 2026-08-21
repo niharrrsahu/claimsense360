@@ -18,4 +18,5 @@ RUN python -m app.ml.train_fraud_model && python -m app.ml.train_narrative_model
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "python -m app.database.seed_demo_user && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+CMD ["sh", "-c", "python -m app.database.seed_demo_user && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+
