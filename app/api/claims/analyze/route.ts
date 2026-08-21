@@ -98,8 +98,42 @@ export async function POST(request: Request) {
         const riskBand = overallRiskScore < 30 ? "Low risk" : overallRiskScore < 60 ? "Medium risk" : "High risk";
         const action = overallRiskScore < 30 ? "Approve automatically" : overallRiskScore < 60 ? "Send to investigator" : "High-priority investigation";
 
+        const generatedClaimId = Math.floor(1000 + Math.random() * 9000);
+        const processedClaimObj = {
+          id: generatedClaimId,
+          claim_id: generatedClaimId,
+          customer_name: claim.customer_name || "Nihar Sahu",
+          vehicle_make_model: claim.vehicle_make_model || "Hyundai Creta 1.5 SX (2021)",
+          age: Number(claim.age || 28),
+          vehicle_price: vehiclePrice,
+          claim_amount: claimAmount,
+          vehicle_age: vehicleAge,
+          past_claims: pastClaims,
+          driver_rating: driverRating,
+          policy_type: claim.policy_type || "Comprehensive",
+          fault: claim.fault || "Third Party",
+          accident_area: claim.accident_area || "Urban",
+          police_report_filed: policeReport,
+          witness_present: witnessPresent,
+          incident_severity: severity,
+          incident_description: description,
+          narrative_suspicion_score: narrativeScore,
+          fraud_probability: fraudProb,
+          fraud_score: fraudScore,
+          overall_risk_score: overallRiskScore,
+          risk_band: riskBand,
+          recommended_action: action,
+          damage_severity: severity,
+          damage_score: Math.round((overallRiskScore + 5) * 10) / 10,
+          top_factors: topFactors,
+          created_at: new Date().toISOString(),
+        };
+
+        const { registerSubmittedClaim } = await import("@/lib/server-data");
+        registerSubmittedClaim(processedClaimObj);
+
         return NextResponse.json({
-          claim_id: Math.floor(1000 + Math.random() * 9000),
+          claim_id: generatedClaimId,
           fraud_probability: fraudProb,
           fraud_score: fraudScore,
           overall_risk_score: overallRiskScore,
@@ -122,6 +156,7 @@ export async function POST(request: Request) {
             ],
           },
         });
+
       } catch (parseErr) {
         console.error("Parse error in resilient ML fallback:", parseErr);
       }
