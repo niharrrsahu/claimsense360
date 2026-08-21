@@ -46,6 +46,7 @@ export default function NewClaimPage() {
   // Image Upload State
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [base64Image, setBase64Image] = useState<string | null>(null);
 
   // Analysis State
   const [loading, setLoading] = useState(false);
@@ -57,12 +58,19 @@ export default function NewClaimPage() {
       const file = e.target.files[0];
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBase64Image(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   const removeImage = () => {
     setImageFile(null);
     setImagePreview(null);
+    setBase64Image(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -90,11 +98,43 @@ export default function NewClaimPage() {
 
     try {
       const res = await analyzeClaim(claimInput, imageFile);
-      if (imagePreview && !res.image_data) {
-        res.image_data = imagePreview;
+      const exactUploadedPhoto = base64Image || imagePreview || res.image_data || res.image_path;
+      if (exactUploadedPhoto) {
+        res.image_data = exactUploadedPhoto;
+
+        const { registerSubmittedClaim } = await import("@/lib/server-data");
+        registerSubmittedClaim({
+          id: res.claim_id,
+          claim_id: res.claim_id,
+          customer_name: customerName,
+          vehicle_make_model: vehicleMakeModel,
+          age: Number(age),
+          vehicle_price: Number(vehiclePrice),
+          claim_amount: Number(claimAmount),
+          vehicle_age: Number(vehicleAge),
+          past_claims: Number(pastClaims),
+          driver_rating: Number(driverRating),
+          policy_type: policyType,
+          fault: fault,
+          accident_area: accidentArea,
+          police_report_filed: policeReportFiled,
+          witness_present: witnessPresent,
+          incident_severity: incidentSeverity,
+          incident_description: incidentDescription,
+          overall_risk_score: res.overall_risk_score,
+          risk_band: res.risk_band,
+          recommended_action: res.recommended_action,
+          damage_severity: res.damage?.damage_severity || incidentSeverity,
+          damage_score: res.damage?.damage_score || 50.0,
+          image_data: exactUploadedPhoto,
+          image_path: exactUploadedPhoto,
+          top_factors: res.top_factors,
+          created_at: new Date().toISOString(),
+        });
       }
       setAnalysisResult(res);
     } catch (err: any) {
+
 
       const msg = err?.message || "Failed to analyze claim.";
       if (msg.includes("401") || msg.includes("token") || msg.includes("authenticated")) {
