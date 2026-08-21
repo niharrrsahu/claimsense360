@@ -135,7 +135,7 @@ export async function POST(request: Request) {
         const { registerSubmittedClaim } = await import("@/lib/server-data");
         registerSubmittedClaim(processedClaimObj);
 
-        return NextResponse.json({
+        const response = NextResponse.json({
           claim_id: generatedClaimId,
           fraud_probability: fraudProb,
           fraud_score: fraudScore,
@@ -159,6 +159,16 @@ export async function POST(request: Request) {
             ],
           },
         });
+
+        response.cookies.set({
+          name: `cs_claim_${generatedClaimId}`,
+          value: JSON.stringify(processedClaimObj),
+          path: "/",
+          maxAge: 86400,
+        });
+
+        return response;
+
 
       } catch (parseErr) {
         console.error("Parse error in resilient ML fallback:", parseErr);
