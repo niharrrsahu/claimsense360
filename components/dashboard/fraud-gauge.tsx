@@ -35,17 +35,27 @@ export default function FraudGauge({ score = 0, totalClaims = 0 }: FraudGaugePro
         </div>
 
         <div className="mt-8 flex justify-center">
-          <div className={`flex h-44 w-44 items-center justify-center rounded-full border-[12px] ${color.split(" ")[1]}`}>
-            <div className="text-center">
-              <h1 className="text-5xl font-serif font-black text-[#173B32]">
-                {score}
-              </h1>
-              <p className={`mt-1 text-xs font-bold uppercase tracking-wider ${color.split(" ")[0]}`}>
-                {totalClaims > 0 ? label : "No Claims Recorded"}
-              </p>
-            </div>
+          <div className={`flex h-44 w-44 flex-col items-center justify-center rounded-full border-[10px] p-2 text-center ${color.split(" ")[1]}`}>
+            {totalClaims > 0 ? (
+              <>
+                <h1 className="text-4xl font-serif font-black text-[#173B32] leading-none">
+                  {score}
+                </h1>
+                <p className={`mt-1.5 text-[11px] font-bold uppercase tracking-wider ${color.split(" ")[0]}`}>
+                  {label}
+                </p>
+              </>
+            ) : (
+              <>
+                <span className="text-2xl font-black text-[#173B32]/40 font-serif">0</span>
+                <p className="mt-1 text-[10px] font-bold uppercase tracking-tight text-[#173B32]/60 px-1">
+                  No Claims Found
+                </p>
+              </>
+            )}
           </div>
         </div>
+
       </div>
 
       <div className="mt-6 border-t border-[#173B32]/10 pt-4">
