@@ -48,14 +48,23 @@ export async function POST(request: Request) {
       return NextResponse.json(data, { status: 200 });
     }
 
-    let detail = "Failed to analyze claim";
+    let detail = `Failed to analyze claim (Status ${backendRes.status})`;
     try {
       const errData = await backendRes.json();
-      detail = errData.detail || detail;
+      if (typeof errData.detail === "string") {
+        detail = errData.detail;
+      } else if (Array.isArray(errData.detail)) {
+        detail = errData.detail.map((e: any) => `${e.loc?.join(".") || "field"}: ${e.msg}`).join("; ");
+      } else if (errData.detail) {
+        detail = JSON.stringify(errData.detail);
+      } else if (errData.error) {
+        detail = typeof errData.error === "string" ? errData.error : JSON.stringify(errData.error);
+      }
     } catch {
       // ignore
     }
     return NextResponse.json({ error: detail }, { status: backendRes.status });
+
   } catch (error: any) {
     return NextResponse.json(
       { error: error?.message || "Failed to analyze claim" },

@@ -92,10 +92,16 @@ export default function NewClaimPage() {
       const res = await analyzeClaim(claimInput, imageFile);
       setAnalysisResult(res);
     } catch (err: any) {
-      setError(err?.message || "Failed to analyze claim. Please check inputs.");
+      const msg = err?.message || "Failed to analyze claim.";
+      if (msg.includes("401") || msg.includes("token") || msg.includes("authenticated")) {
+        setError("Security session expired or not authenticated. Please click 'Logout' on the left menu, sign in again, and retry.");
+      } else {
+        setError(msg);
+      }
     } finally {
       setLoading(false);
     }
+
   };
 
   return (
