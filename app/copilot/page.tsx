@@ -5,7 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Brain, Sparkles, Send, Bot, User, RefreshCw, HelpCircle, ArrowRight, ShieldAlert, CheckCircle2 } from "lucide-react";
 import Sidebar from "@/components/dashboard/sidebar";
 import TopNavbar from "@/components/dashboard/top-navbar";
+import PageTransition from "@/components/shared/page-transition";
 import { API_BASE_URL } from "@/lib/config";
+
 
 interface ChatMessage {
   id: string;
@@ -166,11 +168,12 @@ export default function CopilotPage() {
     <main className="flex min-h-screen bg-[#F4F1EA] text-[#101412]">
       <Sidebar />
 
-      <div className="flex flex-1 flex-col h-screen overflow-hidden">
+      <div className="flex flex-1 flex-col h-screen overflow-hidden min-w-0 max-w-full">
         <TopNavbar userName="Nihar Sahu" userRole="Admin" userEmail="niharrrsahu@gmail.com" />
 
+        <PageTransition>
+          <div className="flex-1 flex flex-col p-4 sm:p-6 overflow-hidden max-w-6xl w-full mx-auto space-y-4 h-[calc(100vh-80px)]">
 
-        <div className="flex-1 flex flex-col p-4 sm:p-6 overflow-hidden max-w-6xl w-full mx-auto space-y-4">
           
           {/* Header Bar */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white border border-[#173B32]/12 p-4 rounded-3xl shadow-sm shrink-0">
@@ -326,9 +329,10 @@ export default function CopilotPage() {
               </button>
             </div>
           </form>
-
         </div>
+        </PageTransition>
       </div>
     </main>
   );
 }
+

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+
 import Sidebar from "@/components/dashboard/sidebar";
 import TopNavbar from "@/components/dashboard/top-navbar";
 import StatCard from "@/components/dashboard/stat-card";
@@ -9,6 +10,7 @@ import FraudGauge from "@/components/dashboard/fraud-gauge";
 import DamageCard from "@/components/dashboard/damage-card";
 import ActivityFeed from "@/components/dashboard/activity-feed";
 import LiveRiskSimulator from "@/components/dashboard/live-risk-simulator";
+import PageTransition from "@/components/shared/page-transition";
 import { getDashboardData } from "@/lib/server-data";
 
 export const dynamic = "force-dynamic";
@@ -28,7 +30,9 @@ export default async function DashboardPage() {
           userEmail={currentUser?.email || "niharrrsahu@gmail.com"}
         />
 
-        <div className="flex-1 space-y-6 sm:space-y-8 px-4 sm:px-6 lg:px-8 py-5 w-full max-w-full overflow-x-hidden">
+        <PageTransition>
+          <div className="flex-1 space-y-6 sm:space-y-8 px-4 sm:px-6 lg:px-8 py-5 w-full max-w-full overflow-x-hidden">
+
           {/* Header Banner & Quick Action Bar */}
 
 
@@ -110,10 +114,9 @@ export default async function DashboardPage() {
 
           {/* Row 4: Live Computer Vision Damage Inspector & Automated AI System Feed */}
           <div className="grid gap-8 lg:grid-cols-2">
-            <DamageCard latestDamage={latestDamage} />
-            <ActivityFeed activities={activityFeed} />
           </div>
         </div>
+        </PageTransition>
       </div>
     </main>
   );

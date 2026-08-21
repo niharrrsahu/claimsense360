@@ -18,7 +18,9 @@ import {
 import Sidebar from "@/components/dashboard/sidebar";
 import TopNavbar from "@/components/dashboard/top-navbar";
 import RiskResultPanel, { ClaimAnalysisResultData } from "@/components/shared/risk-result-panel";
+import PageTransition from "@/components/shared/page-transition";
 import { analyzeClaim } from "@/lib/api";
+
 
 export default function NewClaimPage() {
   // Form State
@@ -146,22 +148,24 @@ export default function NewClaimPage() {
     } finally {
       setLoading(false);
     }
-
   };
 
+
   return (
+
     <main className="flex min-h-screen bg-[#F4F1EA] text-[#101412]">
       <Sidebar />
 
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col min-w-0 max-w-full overflow-x-hidden">
         <TopNavbar
           userName="Nihar Sahu"
           userRole="Admin"
           userEmail="niharrrsahu@gmail.com"
         />
 
+        <PageTransition>
+          <div className="flex-1 space-y-6 sm:space-y-8 p-4 sm:p-6 lg:p-8 max-w-full overflow-x-hidden">
 
-        <div className="flex-1 space-y-6 sm:space-y-8 p-4 sm:p-6 lg:p-8 max-w-full overflow-x-hidden">
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
@@ -520,7 +524,9 @@ export default function NewClaimPage() {
             </div>
           </div>
         </div>
+        </PageTransition>
       </div>
     </main>
   );
 }
+

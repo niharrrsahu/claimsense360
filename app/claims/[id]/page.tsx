@@ -17,7 +17,9 @@ import {
 import Sidebar from "@/components/dashboard/sidebar";
 import TopNavbar from "@/components/dashboard/top-navbar";
 import RiskResultPanel, { ClaimAnalysisResultData } from "@/components/shared/risk-result-panel";
+import PageTransition from "@/components/shared/page-transition";
 import { getSingleClaim, getDashboardData } from "@/lib/server-data";
+
 
 export const dynamic = "force-dynamic";
 
@@ -77,18 +79,20 @@ export default async function SingleClaimPage({
 
 
   return (
+
     <main className="flex min-h-screen bg-[#F4F1EA] text-[#101412]">
       <Sidebar />
 
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col min-w-0 max-w-full overflow-x-hidden">
         <TopNavbar
           userName={currentUser?.full_name || "Nihar Sahu"}
           userRole={currentUser?.role || "Admin"}
           userEmail={currentUser?.email || "niharrrsahu@gmail.com"}
         />
 
+        <PageTransition>
+          <div className="flex-1 space-y-8 p-4 sm:p-6 lg:p-8 max-w-full overflow-x-hidden">
 
-        <div className="flex-1 space-y-8 p-8">
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
@@ -234,11 +238,12 @@ export default async function SingleClaimPage({
 
             {/* Right 6 cols: Full AI Explainability & Risk Panel */}
             <div className="lg:col-span-6 space-y-6">
-              <RiskResultPanel result={analysisResultData} savedClaimId={claim.id} />
             </div>
           </div>
         </div>
+        </PageTransition>
       </div>
     </main>
   );
 }
+

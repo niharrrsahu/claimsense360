@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
+
 import {
   LayoutDashboard,
   FileText,
@@ -151,36 +153,51 @@ export default function Sidebar() {
           </button>
         </div>
 
-
         {/* Navigation Links */}
+
         <nav className="flex-1 px-2.5 py-5 space-y-1.5 overflow-y-auto">
           {menu.map((item) => {
             const Icon = item.icon;
             const active = pathname === item.href;
 
             return (
-              <Link
+              <motion.div
                 key={item.title}
-                href={item.href}
-                onClick={() => setMobileOpen(false)}
-                title={collapsed ? item.title : undefined}
-                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs transition-all duration-200 active:scale-95 ${
-                  active
-                    ? "bg-[#C9FF3D] shadow-md text-[#101412] font-bold"
-                    : "text-white/80 hover:bg-white/10 hover:text-white"
-                } ${collapsed ? "justify-center px-0" : ""}`}
+                whileHover={{ scale: 1.02, x: collapsed ? 0 : 3 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
               >
-                <Icon size={18} className={active ? "text-[#101412] shrink-0" : "text-white/80 shrink-0"} />
-                
-                {!collapsed && (
-                  <span className={`font-bold tracking-tight whitespace-nowrap ${active ? "text-[#101412]" : "text-white/80"}`}>
-                    {item.title}
-                  </span>
-                )}
-              </Link>
+                <Link
+                  href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  title={collapsed ? item.title : undefined}
+                  className={`relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs transition-all duration-200 ${
+                    active
+                      ? "bg-[#C9FF3D] shadow-md text-[#101412] font-bold"
+                      : "text-white/80 hover:bg-white/10 hover:text-white"
+                  } ${collapsed ? "justify-center px-0" : ""}`}
+                >
+                  <Icon size={18} className={active ? "text-[#101412] shrink-0" : "text-white/80 shrink-0"} />
+                  
+                  {!collapsed && (
+                    <span className={`font-bold tracking-tight whitespace-nowrap ${active ? "text-[#101412]" : "text-white/80"}`}>
+                      {item.title}
+                    </span>
+                  )}
+
+                  {active && !collapsed && (
+                    <motion.span
+                      layoutId="activeDot"
+                      className="ml-auto h-2 w-2 rounded-full bg-[#101412]"
+                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                    />
+                  )}
+                </Link>
+              </motion.div>
             );
           })}
         </nav>
+
 
         {/* Bottom Logout Action */}
         <div className="border-t border-white/10 p-2.5">
