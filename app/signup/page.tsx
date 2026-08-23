@@ -31,13 +31,12 @@ export default function SignupPage() {
 
     try {
       await register(fullName, email, password);
-      router.push("/dashboard");
-      router.refresh();
+      window.location.href = "/dashboard";
     } catch (err: any) {
       setError(err?.message || "Registration failed. Email may already be in use.");
-    } finally {
       setLoading(false);
     }
+
   };
 
   return (
