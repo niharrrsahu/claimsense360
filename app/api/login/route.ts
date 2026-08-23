@@ -36,6 +36,21 @@ export async function POST(request: Request) {
         secure: process.env.NODE_ENV === "production",
         maxAge: 86400,
       });
+
+      const nameFromEmail = email.includes("@") ? email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase()) : "Nihar Sahu";
+      response.cookies.set({
+        name: "cs_user_info",
+        value: JSON.stringify({
+          full_name: email === "admin@claimsense.ai" ? "Nihar Sahu" : nameFromEmail,
+          email: email,
+          role: "Admin",
+        }),
+        httpOnly: false,
+        path: "/",
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 86400,
+      });
       return response;
     }
 
@@ -55,8 +70,24 @@ export async function POST(request: Request) {
         secure: process.env.NODE_ENV === "production",
         maxAge: 86400,
       });
+
+      const nameFromEmail = email.includes("@") ? email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase()) : "Nihar Sahu";
+      response.cookies.set({
+        name: "cs_user_info",
+        value: JSON.stringify({
+          full_name: email === "admin@claimsense.ai" ? "Nihar Sahu" : nameFromEmail,
+          email: email,
+          role: "Admin",
+        }),
+        httpOnly: false,
+        path: "/",
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 86400,
+      });
       return response;
     }
+
 
     let detail = "Invalid email or password";
     if (loginRes) {

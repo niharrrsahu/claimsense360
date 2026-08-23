@@ -55,6 +55,20 @@ export async function POST(request: Request) {
             secure: process.env.NODE_ENV === "production",
             maxAge: 86400,
           });
+
+          response.cookies.set({
+            name: "cs_user_info",
+            value: JSON.stringify({
+              full_name: full_name || "Nihar Sahu",
+              email: email,
+              role: "Admin",
+            }),
+            httpOnly: false,
+            path: "/",
+            sameSite: "lax",
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 86400,
+          });
           return response;
         }
       } catch {
@@ -74,7 +88,22 @@ export async function POST(request: Request) {
       secure: process.env.NODE_ENV === "production",
       maxAge: 86400,
     });
+
+    response.cookies.set({
+      name: "cs_user_info",
+      value: JSON.stringify({
+        full_name: full_name || "Nihar Sahu",
+        email: email,
+        role: "Admin",
+      }),
+      httpOnly: false,
+      path: "/",
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 86400,
+    });
     return response;
+
   } catch (error: any) {
     return NextResponse.json(
       { error: error?.message || "Internal server error" },

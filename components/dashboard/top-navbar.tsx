@@ -46,9 +46,26 @@ export default function TopNavbar({
     }
   };
 
-  const safeUserName = userName || "Nihar Sahu";
+  const [clientUser, setClientUser] = useState<{ full_name: string; email: string; role: string } | null>(null);
+
+  useEffect(() => {
+    try {
+      const match = document.cookie.match(new RegExp("(^| )cs_user_info=([^;]+)"));
+      if (match) {
+        const parsed = JSON.parse(decodeURIComponent(match[2]));
+        if (parsed && (parsed.full_name || parsed.email)) {
+          setClientUser(parsed);
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const safeUserName = clientUser?.full_name || userName || "Nihar Sahu";
   const initial = safeUserName.charAt(0).toUpperCase();
-  const displayEmail = userEmail || (safeUserName.toLowerCase().includes("nihar") ? "niharrrsahu@gmail.com" : `${safeUserName.toLowerCase().replace(/\s+/g, ".")}@gmail.com`);
+  const displayEmail = clientUser?.email || userEmail || (safeUserName.toLowerCase().includes("nihar") ? "niharrrsahu@gmail.com" : `${safeUserName.toLowerCase().replace(/\s+/g, ".")}@gmail.com`);
+
 
 
 
