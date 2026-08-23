@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { UserPlus, ArrowRight, AlertCircle, Loader2 } from "lucide-react";
 import { register } from "@/lib/auth";
 
@@ -47,19 +48,21 @@ export default function SignupPage() {
         {/* Left Branding Side - Desktop Only */}
         <div className="hidden lg:flex flex-col justify-between space-y-8 pr-6">
           <div>
-            <Link href="/" className="inline-flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#101412] shadow-lg">
-                <span className="text-xl font-black text-[#C9FF3D]">CS</span>
-              </div>
-              <div>
-                <p className="text-lg font-bold leading-none text-[#173B32]">
-                  ClaimSense 360
-                </p>
-                <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-[#66736D] font-semibold">
-                  Claims Intelligence Platform
-                </p>
-              </div>
-            </Link>
+            <motion.div whileHover={{ scale: 1.04, x: 4 }} className="inline-block">
+              <Link href="/" className="inline-flex items-center gap-3 group cursor-pointer">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#101412] shadow-lg group-hover:scale-110 group-hover:rotate-6 group-hover:ring-2 group-hover:ring-[#C9FF3D] transition-all duration-300">
+                  <span className="text-xl font-black text-[#C9FF3D]">CS</span>
+                </div>
+                <div>
+                  <p className="text-lg font-bold leading-none text-[#173B32] group-hover:text-[#E66A4E] transition-colors">
+                    ClaimSense 360
+                  </p>
+                  <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-[#66736D] font-semibold">
+                    Claims Intelligence Platform
+                  </p>
+                </div>
+              </Link>
+            </motion.div>
 
             <h2 className="mt-8 font-serif text-4xl font-semibold leading-tight text-[#173B32]">
               Join the Future of AI Insurance Auditing.
@@ -70,15 +73,15 @@ export default function SignupPage() {
           </div>
 
           <div className="space-y-3 pt-4">
-            <div className="flex items-center gap-3 text-xs font-semibold text-[#173B32]">
+            <div className="flex items-center gap-3 text-xs font-semibold text-[#173B32] hover:translate-x-1 transition-transform">
               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#173B32]/10 text-[#173B32]">✓</div>
               <span>Instant Claims Adjuster Account Creation</span>
             </div>
-            <div className="flex items-center gap-3 text-xs font-semibold text-[#173B32]">
+            <div className="flex items-center gap-3 text-xs font-semibold text-[#173B32] hover:translate-x-1 transition-transform">
               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#173B32]/10 text-[#173B32]">✓</div>
               <span>Role-Based Access Control & Audit Log Security</span>
             </div>
-            <div className="flex items-center gap-3 text-xs font-semibold text-[#173B32]">
+            <div className="flex items-center gap-3 text-xs font-semibold text-[#173B32] hover:translate-x-1 transition-transform">
               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#173B32]/10 text-[#173B32]">✓</div>
               <span>Real-Time Database Persistence & AI Analytics</span>
             </div>
@@ -90,13 +93,19 @@ export default function SignupPage() {
           <div className="relative w-full max-w-md rounded-3xl border border-[#173B32]/12 bg-white p-8 sm:p-10 shadow-[0_25px_70px_rgba(23,59,50,0.12)]">
             {/* Header */}
             <div>
-              <Link
-                href="/"
+              <motion.button
+                type="button"
+                whileHover={{ scale: 1.15, rotate: 8 }}
+                whileTap={{ scale: 0.9, rotate: -8 }}
+                onClick={() => {
+                  window.location.href = "/";
+                }}
                 title="Go to Homepage"
-                className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#101412] shadow-md hover:ring-2 hover:ring-[#C9FF3D] transition-all cursor-pointer"
+                className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#101412] shadow-md hover:ring-2 hover:ring-[#C9FF3D] transition-all cursor-pointer"
               >
                 <span className="text-lg font-black text-[#C9FF3D]">CS</span>
-              </Link>
+              </motion.button>
+
 
               <p className="mt-4 text-xs font-bold uppercase tracking-[0.18em] text-[#173B32]/70">
                 Create Account
