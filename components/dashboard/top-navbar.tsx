@@ -55,12 +55,21 @@ export default function TopNavbar({
         const parsed = JSON.parse(decodeURIComponent(match[2]));
         if (parsed && (parsed.full_name || parsed.email)) {
           setClientUser(parsed);
+          return;
+        }
+      }
+      const local = localStorage.getItem("cs_user_info");
+      if (local) {
+        const parsed = JSON.parse(local);
+        if (parsed && (parsed.full_name || parsed.email)) {
+          setClientUser(parsed);
         }
       }
     } catch {
       // ignore
     }
   }, []);
+
 
   const safeUserName = clientUser?.full_name || userName || "Nihar Sahu";
   const initial = safeUserName.charAt(0).toUpperCase();

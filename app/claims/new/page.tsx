@@ -2,7 +2,8 @@
 
 
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
 
 
 import Link from "next/link";
@@ -26,6 +27,30 @@ export default function NewClaimPage() {
   // Form State
   const [customerName, setCustomerName] = useState("Nihar Sahu");
   const [vehicleMakeModel, setVehicleMakeModel] = useState("Hyundai Creta 1.5 SX (2021)");
+
+  // Read logged-in account name dynamically
+  useEffect(() => {
+    try {
+      const match = document.cookie.match(new RegExp("(^| )cs_user_info=([^;]+)"));
+      if (match) {
+        const parsed = JSON.parse(decodeURIComponent(match[2]));
+        if (parsed && parsed.full_name) {
+          setCustomerName(parsed.full_name);
+          return;
+        }
+      }
+      const local = localStorage.getItem("cs_user_info");
+      if (local) {
+        const parsed = JSON.parse(local);
+        if (parsed && parsed.full_name) {
+          setCustomerName(parsed.full_name);
+        }
+      }
+    } catch {
+      // Fallback to default
+    }
+  }, []);
+
   const [age, setAge] = useState(28);
   const [vehiclePrice, setVehiclePrice] = useState(1400000);
   const [claimAmount, setClaimAmount] = useState(95000);

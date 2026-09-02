@@ -41,6 +41,19 @@ function LoginForm() {
     setLoading(true);
 
     try {
+      const nameFromEmail = email.includes("@") ? email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase()) : "Nihar Sahu";
+      const userInfo = {
+        full_name: email === "admin@claimsense.ai" ? "Nihar Sahu" : nameFromEmail,
+        email: email.trim(),
+        role: "Admin",
+      };
+      try {
+        localStorage.setItem("cs_user_info", JSON.stringify(userInfo));
+        document.cookie = `cs_user_info=${encodeURIComponent(JSON.stringify(userInfo))}; path=/; max-age=86400; SameSite=Lax`;
+      } catch {
+        // ignore
+      }
+
       await login(email, password);
       window.location.href = nextParam;
     } catch (err: any) {
@@ -57,6 +70,18 @@ function LoginForm() {
     setLoading(true);
 
     try {
+      const userInfo = {
+        full_name: "Nihar Sahu",
+        email: "admin@claimsense.ai",
+        role: "Admin",
+      };
+      try {
+        localStorage.setItem("cs_user_info", JSON.stringify(userInfo));
+        document.cookie = `cs_user_info=${encodeURIComponent(JSON.stringify(userInfo))}; path=/; max-age=86400; SameSite=Lax`;
+      } catch {
+        // ignore
+      }
+
       await login("admin@claimsense.ai", "password123");
       window.location.href = nextParam;
     } catch (err: any) {
@@ -65,6 +90,7 @@ function LoginForm() {
       setLoading(false);
     }
   };
+
 
 
   return (

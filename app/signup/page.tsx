@@ -30,12 +30,25 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
+      const userInfo = {
+        full_name: fullName.trim() || (email.includes("@") ? email.split("@")[0] : "Nihar Sahu"),
+        email: email.trim(),
+        role: "Admin",
+      };
+      try {
+        localStorage.setItem("cs_user_info", JSON.stringify(userInfo));
+        document.cookie = `cs_user_info=${encodeURIComponent(JSON.stringify(userInfo))}; path=/; max-age=86400; SameSite=Lax`;
+      } catch {
+        // ignore storage quota
+      }
+
       await register(fullName, email, password);
       window.location.href = "/dashboard";
     } catch (err: any) {
       setError(err?.message || "Registration failed. Email may already be in use.");
       setLoading(false);
     }
+
 
   };
 
