@@ -164,41 +164,46 @@ export async function getClaimById(claimId: number) {
   const result = await fetchWithAuth(`/claims/${claimId}`);
   if (result) return result;
 
+  // Check if claim exists in history
+  const history = await getClaimsHistory(100);
+  const foundInHistory = history.find((c: any) => c.id === claimId || c.claim_id === claimId);
+  if (foundInHistory) return foundInHistory;
+
   // Dynamic fallback for newly analyzed claims matching the requested claimId
   return {
     id: claimId,
-    customer_name: "Shubhans Sahu",
+    customer_name: "Nihar Sahu",
     vehicle_make_model: "Hyundai Creta 1.5 SX (2021)",
     age: 28,
     vehicle_price: 1400000,
     claim_amount: 95000,
     vehicle_age: 3,
-    past_claims: 1,
-    driver_rating: 4,
-    policy_type: "Zero-Dep",
-    fault: "Policy Holder",
-    accident_area: "Highway",
-    police_report_filed: false,
+    past_claims: 0,
+    driver_rating: 5,
+    policy_type: "Comprehensive",
+    fault: "Third Party",
+    accident_area: "Urban",
+    police_report_filed: true,
     witness_present: true,
-    incident_severity: "Minor Damage",
+    incident_severity: "Major Damage",
     incident_description: "Driving on city main road near intersection when another vehicle swerved without signaling. Heavy front left bumper crushing, grill detachment, and headlight assembly damage reported. Police report filed.",
     narrative_suspicion_score: 65.0,
-    fraud_probability: 0.486,
-    fraud_score: 48.6,
-    overall_risk_score: 48.6,
+    fraud_probability: 0.366,
+    fraud_score: 36.6,
+    overall_risk_score: 36.6,
     risk_band: "Medium risk",
     recommended_action: "Send to investigator",
-    damage_severity: "Minor Damage",
-    damage_score: 53.6,
+    damage_severity: "Major Damage",
+    damage_score: 61.1,
     top_factors: [
-      { feature: "police_report_filed", name: "Missing Police Report", contribution: 16.0, effect: "increases_risk" },
-      { feature: "past_claims", name: "Past Claims Count", contribution: 12.0, effect: "increases_risk" },
-      { feature: "incident_severity", name: "Incident Severity (Minor Damage)", contribution: 5.0, effect: "increases_risk" },
-      { feature: "claim_amount_ratio", name: "Claim vs Vehicle Price Ratio", contribution: 2.4, effect: "increases_risk" },
+      { feature: "narrative_suspicion_score", name: "High Narrative Suspicion", contribution: 18.5, effect: "increases_risk" },
+      { feature: "damage_score", name: "Visual Damage Severity Index", contribution: 12.1, effect: "increases_risk" },
+      { feature: "claim_amount", name: "Claim Value (₹95,000)", contribution: 6.0, effect: "increases_risk" },
     ],
     created_at: new Date().toISOString(),
   };
 }
+
 
 
 
