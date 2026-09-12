@@ -53,6 +53,20 @@ export default function CopilotPage() {
     scrollToBottom();
   }, [messages, loading]);
 
+  // Handle URL query parameter ?q=... from Ask Copilot links
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const initialQuery = params.get("q");
+      if (initialQuery && initialQuery.trim()) {
+        handleSend(initialQuery.trim());
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+
   const handleSend = async (textToSend?: string) => {
     const queryText = (textToSend || input).trim();
     if (!queryText || loading) return;
