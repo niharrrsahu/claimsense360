@@ -83,26 +83,27 @@ export default function TopNavbar({
 
       {/* Left Title & CS Logo Button */}
       <div className="flex items-center gap-2.5 min-w-0">
-        <motion.button
-          type="button"
-          whileHover={{ scale: 1.1, rotate: 6 }}
-          whileTap={{ scale: 0.9, rotate: -6 }}
-          onClick={() => window.location.reload()}
-          title="Click to Refresh Workspace"
-          className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-[#173B32] font-black text-[#C9FF3D] text-xs sm:text-sm shadow-md hover:ring-2 hover:ring-[#C9FF3D] transition-all cursor-pointer shrink-0"
-        >
-          CS
-        </motion.button>
+        <Link href="/" title="Go to Homepage" className="inline-block">
+          <motion.button
+            type="button"
+            whileHover={{ scale: 1.1, rotate: 6 }}
+            whileTap={{ scale: 0.9, rotate: -6 }}
+            className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-[#173B32] font-black text-[#C9FF3D] text-xs sm:text-sm shadow-md hover:ring-2 hover:ring-[#C9FF3D] transition-all cursor-pointer shrink-0"
+          >
+            CS
+          </motion.button>
+        </Link>
 
-        <div className="min-w-0">
-          <p className="text-xs sm:text-base font-sans font-bold text-[#173B32] tracking-tight truncate">
-            Insurance Claims Intelligence
+        <Link href="/dashboard" title="Go to Dashboard Workspace" className="min-w-0 group cursor-pointer">
+          <p className="text-xs sm:text-base font-sans font-bold text-[#173B32] tracking-tight truncate group-hover:text-[#E66A4E] transition-colors">
+            ClaimSense 360
           </p>
           <p className="text-[10px] sm:text-xs text-[#173B32]/70 font-medium truncate">
-            Welcome, <span className="text-[#E66A4E] font-semibold">{userName}</span> 👋
+            Welcome, <span className="text-[#E66A4E] font-semibold">{safeUserName}</span> 👋
           </p>
-        </div>
+        </Link>
       </div>
+
 
 
       {/* Right Controls */}

@@ -67,10 +67,15 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
 
           {/* LOGO */}
-          <button
-            type="button"
-            onClick={() => window.location.reload()}
-            title="Click to Refresh Site"
+          <Link
+            href="/"
+            onClick={(e) => {
+              if (window.location.pathname === "/") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
+            title="ClaimSense 360 Homepage"
             className="flex items-center gap-3 cursor-pointer group bg-transparent border-0 outline-none text-left"
           >
             <motion.div
@@ -90,7 +95,8 @@ export default function Navbar() {
                 Claims Intelligence
               </p>
             </div>
-          </button>
+          </Link>
+
 
 
           {/* NAVIGATION — desktop with Scroll Spy Highlight */}
