@@ -338,8 +338,8 @@ def analyze_and_save_claim(
         db.commit()
         db.refresh(db_claim)
         claim_id = db_claim.id
-    except Exception as exc:
-        print(f"Warning: Failed to persist claim to DB: {exc}")
+    except Exception:
+        logger.exception("Failed to persist claim to DB")
         db.rollback()
         
     return ClaimAnalysisResult(

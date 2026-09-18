@@ -1,4 +1,7 @@
+import logging
 from sqlalchemy.orm import Session
+
+logger = logging.getLogger(__name__)
 
 from app.core.security import (
     hash_password,
@@ -57,6 +60,7 @@ def authenticate_user(
             db.refresh(admin)
             user = admin
         except Exception:
+            logger.warning("Auto-creation of admin user encountered race condition", exc_info=True)
             db.rollback()
             user = (
                 db.query(User)
@@ -68,15 +72,15 @@ def authenticate_user(
         return None
 
     # Handle case where admin user already exists in DB but has outdated password hash from prior builds
-    if email == "admin@claimsense.ai" and password == "password123":
-        if not verify_password(password, user.password):
-            try:
-                user.password = hash_password("password123")
-                db.commit()
-                db.refresh(user)
-                return user
-            except Exception:
-                db.rollback()
+    if email == "admin@claimsense.ai" and password == "password123" and not verify_password(password, user.password):
+        try:
+            user.password = hash_password("password123")
+            db.commit()
+            db.refresh(user)
+            return user
+        except Exception:
+            logger.warning("Failed to refresh admin user password hash", exc_info=True)
+            db.rollback()
 
     if not verify_password(password, user.password):
         return None
