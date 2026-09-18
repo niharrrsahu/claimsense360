@@ -1,6 +1,7 @@
 import os
 import zipfile
 
+
 def extract_yolo_dataset():
     zip_path = r"C:\Users\NIHAR\Downloads\Car Damage Detection.v1i.yolov8.zip"
     target_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../data/yolo_dataset"))
@@ -34,7 +35,7 @@ def extract_yolo_dataset():
             try:
                 with z.open(member) as source, open(dest_path, "wb") as target:
                     target.write(source.read())
-            except Exception as e:
+            except Exception:
                 pass
 
     print("YOLOv8 Dataset successfully extracted!")

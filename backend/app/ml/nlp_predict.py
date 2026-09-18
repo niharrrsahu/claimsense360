@@ -2,10 +2,12 @@
 NLP Narrative Suspicion Inference & Key Phrase Analyzer
 """
 
-import os
 import functools
+import os
+
 import joblib
 import numpy as np
+
 
 @functools.lru_cache(maxsize=1)
 def load_narrative_artifacts():
@@ -35,7 +37,7 @@ def analyze_narrative(text: str | None) -> dict | None:
     coefs = model.coef_[0]
     
     # Non-zero indices in TF-IDF matrix for this text
-    row_indices, col_indices = vec_matrix.nonzero()
+    _row_indices, col_indices = vec_matrix.nonzero()
     
     flagged_phrases = []
     for col_idx in col_indices:

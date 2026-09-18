@@ -1,8 +1,7 @@
+from app.core.security import hash_password
 from app.database.database import Base, engine
 from app.database.session import SessionLocal
 from app.models.user import User
-from app.models.claim import Claim
-from app.core.security import hash_password
 
 
 def init_db():

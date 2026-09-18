@@ -1,6 +1,8 @@
 import os
 import re
+
 from sqlalchemy.orm import Session
+
 from app.models.claim import Claim
 
 try:
@@ -11,46 +13,24 @@ except ImportError:
     HAS_ANTHROPIC = False
 
 
-def generate_heuristic_copilot_response(db: Session, question: str, claim_id: int | None = None) -> str:
-    """
-    Intelligent NLP Heuristic Engine for AI Copilot.
-    Parses natural language user queries against real-time database claims,
-    extracting specific claim IDs, customer names, financial risks, and statistics.
-    """
-    q_lower = question.lower().strip()
-    
-    # 1. Direct Claim ID Audit Request
-    extracted_id = claim_id
-    if not extracted_id:
-        id_match = re.search(r'(?:claim\s*#?|#)(\d+)', q_lower)
-        if id_match:
-            extracted_id = int(id_match.group(1))
-            
-    if extracted_id:
-        c = db.query(Claim).filter(Claim.id == extracted_id).first()
-        if c:
-            return (
-                f"📋 **Claim #{c.id} Deep-Dive Audit ({c.customer_name})**:\n\n"
-                f"• **Risk Assessment**: Score **{c.overall_risk_score}/100** ({c.risk_band.upper()})\n"
-                f"• **Claim Amount**: ₹{c.claim_amount:,} (Vehicle Value: ₹{c.vehicle_price:,})\n"
-                f"• **Vehicle Model**: {c.vehicle_make_model} ({c.vehicle_age} yrs old, Driver Rating: {c.driver_rating}/5)\n"
-                f"• **Incident Location**: {c.accident_area} area • Fault: {c.fault}\n"
-                f"• **Police Report**: {'Filed ✓' if c.police_report_filed else 'Not Filed ⚠️'} • Witness: {'Present ✓' if c.witness_present else 'None ⚠️'}\n"
-                f"• **AI Recommendation**: **{c.recommended_action}**\n"
-                f"• **Damage Photo**: {c.damage_severity or 'Not uploaded'}\n\n"
-                f"📝 *Description*: \"{c.incident_description or 'N/A'}\""
-            )
-        else:
-            return f"⚠️ Claim #{extracted_id} was not found in the database directory."
+def _handle_claim_id_audit(db: Session, extracted_id: int) -> str | None:
+    c = db.query(Claim).filter(Claim.id == extracted_id).first()
+    if c:
+        return (
+            f"📋 **Claim #{c.id} Deep-Dive Audit ({c.customer_name})**:\n\n"
+            f"• **Risk Assessment**: Score **{c.overall_risk_score}/100** ({c.risk_band.upper()})\n"
+            f"• **Claim Amount**: ₹{c.claim_amount:,} (Vehicle Value: ₹{c.vehicle_price:,})\n"
+            f"• **Vehicle Model**: {c.vehicle_make_model} ({c.vehicle_age} yrs old, Driver Rating: {c.driver_rating}/5)\n"
+            f"• **Incident Location**: {c.accident_area} area • Fault: {c.fault}\n"
+            f"• **Police Report**: {'Filed ✓' if c.police_report_filed else 'Not Filed ⚠️'} • Witness: {'Present ✓' if c.witness_present else 'None ⚠️'}\n"
+            f"• **AI Recommendation**: **{c.recommended_action}**\n"
+            f"• **Damage Photo**: {c.damage_severity or 'Not uploaded'}\n\n"
+            f"📝 *Description*: \"{c.incident_description or 'N/A'}\""
+        )
+    return f"⚠️ Claim #{extracted_id} was not found in the database directory."
 
-    # Fetch all claims ordered by recency
-    recent_claims = db.query(Claim).order_by(Claim.created_at.desc()).all()
-    total_count = len(recent_claims)
-    high_risk_claims = [c for c in recent_claims if c.overall_risk_score >= 50.0 or "high" in c.risk_band.lower()]
-    medium_risk_claims = [c for c in recent_claims if 30.0 <= c.overall_risk_score < 50.0 or "medium" in c.risk_band.lower()]
-    low_risk_claims = [c for c in recent_claims if c.overall_risk_score < 30.0 or "low" in c.risk_band.lower()]
 
-    # 2. Customer Name Search in Query
+def _handle_customer_search(recent_claims: list[Claim], q_lower: str) -> str | None:
     for c in recent_claims:
         if c.customer_name and len(c.customer_name.split()) > 0:
             first_name = c.customer_name.split()[0].lower()
@@ -63,8 +43,10 @@ def generate_heuristic_copilot_response(db: Session, question: str, claim_id: in
                     f"• **Recommended Action**: {c.recommended_action}\n\n"
                     f"Visit `/claims/{c.id}` for complete SHAP & Damage analysis."
                 )
+    return None
 
-    # 3. High Risk / Fraud Audit Inquiries
+
+def _handle_high_risk_inquiry(high_risk_claims: list[Claim], q_lower: str) -> str | None:
     if any(kw in q_lower for kw in ["high", "fraud", "audit", "flag", "suspicious", "danger", "worst", "threat"]):
         if high_risk_claims:
             lines = [f"🚨 **High-Risk Claims Audit Summary ({len(high_risk_claims)} Flagged)**:\n"]
@@ -74,10 +56,11 @@ def generate_heuristic_copilot_response(db: Session, question: str, claim_id: in
                 )
             lines.append("\nView full priority queue at `/fraud` page.")
             return "\n".join(lines)
-        else:
-            return "✅ **No High-Risk Fraud Claims Detected**. All active claims are evaluated below the 50.0 risk threshold."
+        return "✅ **No High-Risk Fraud Claims Detected**. All active claims are evaluated below the 50.0 risk threshold."
+    return None
 
-    # 4. Highest Financial Value Inquiries
+
+def _handle_financial_inquiry(recent_claims: list[Claim], q_lower: str) -> str | None:
     if any(kw in q_lower for kw in ["highest", "max", "top", "financial", "expensive", "money", "cost", "value"]):
         if recent_claims:
             top_amount = max(recent_claims, key=lambda x: x.claim_amount)
@@ -88,22 +71,26 @@ def generate_heuristic_copilot_response(db: Session, question: str, claim_id: in
                 f"• **Highest Fraud Risk Claim**: Claim #{top_risk.id} ({top_risk.customer_name}) with Risk Score **{top_risk.overall_risk_score}/100**\n\n"
                 f"• **Total Portfolio Claims Value**: ₹{sum(c.claim_amount for c in recent_claims):,}"
             )
+    return None
 
-    # 5. Greetings / Help / Capabilities
+
+def _handle_greeting_inquiry(total_count: int, high_len: int, med_len: int, low_len: int, q_lower: str) -> str | None:
     if any(kw in q_lower for kw in ["hello", "hi", "hey", "help", "greet", "start", "who", "what"]):
         return (
             f"👋 **Welcome! I am your ClaimSense 360 AI Copilot.**\n\n"
             f"I monitor **{total_count} claims** currently stored in your system:\n"
-            f"• 🔴 **High Risk**: {len(high_risk_claims)} claims (Overall Score ≥ 50)\n"
-            f"• 🟡 **Medium Risk**: {len(medium_risk_claims)} claims (Score 30-49)\n"
-            f"• 🟢 **Low Risk**: {len(low_risk_claims)} claims (Score < 30)\n\n"
+            f"• 🔴 **High Risk**: {high_len} claims (Overall Score ≥ 50)\n"
+            f"• 🟡 **Medium Risk**: {med_len} claims (Score 30-49)\n"
+            f"• 🟢 **Low Risk**: {low_len} claims (Score < 30)\n\n"
             f"Try asking:\n"
             f"• *'Show high risk claims'*\n"
             f"• *'Which claim has the highest financial amount?'*\n"
             f"• *'Explain claim #11'*"
         )
+    return None
 
-    # 6. General Stats & Portfolio Overview
+
+def _handle_stats_inquiry(recent_claims: list[Claim], total_count: int, high_len: int, med_len: int, low_len: int, q_lower: str) -> str | None:
     if any(kw in q_lower for kw in ["stat", "summary", "total", "count", "avg", "average", "overview"]):
         avg_score = round(sum(c.overall_risk_score for c in recent_claims) / total_count, 1) if total_count > 0 else 0
         avg_amt = int(round(sum(c.claim_amount for c in recent_claims) / total_count)) if total_count > 0 else 0
@@ -112,18 +99,62 @@ def generate_heuristic_copilot_response(db: Session, question: str, claim_id: in
             f"• **Total Claims**: {total_count}\n"
             f"• **Average Risk Score**: {avg_score}/100\n"
             f"• **Average Claim Amount**: ₹{avg_amt:,}\n"
-            f"• **High Risk Flags**: {len(high_risk_claims)}\n"
-            f"• **Medium Risk**: {len(medium_risk_claims)} | **Low Risk**: {len(low_risk_claims)}"
+            f"• **High Risk Flags**: {high_len}\n"
+            f"• **Medium Risk**: {med_len} | **Low Risk**: {low_len}"
         )
+    return None
 
-    # 7. Generic Intelligent Fallback
+
+def generate_heuristic_copilot_response(db: Session, question: str, claim_id: int | None = None) -> str:
+    """
+    Rule-based fallback response generator, used when ANTHROPIC_API_KEY is not configured.
+    """
+    q_lower = question.lower().strip()
+    
+    extracted_id = claim_id
+    if not extracted_id:
+        id_match = re.search(r'(?:claim\s*#?|#)(\d+)', q_lower)
+        if id_match:
+            extracted_id = int(id_match.group(1))
+            
+    if extracted_id:
+        res = _handle_claim_id_audit(db, extracted_id)
+        if res:
+            return res
+
+    recent_claims = db.query(Claim).order_by(Claim.created_at.desc()).all()
+    total_count = len(recent_claims)
+    high_risk = [c for c in recent_claims if c.overall_risk_score >= 50.0 or "high" in c.risk_band.lower()]
+    medium_risk = [c for c in recent_claims if 30.0 <= c.overall_risk_score < 50.0 or "medium" in c.risk_band.lower()]
+    low_risk = [c for c in recent_claims if c.overall_risk_score < 30.0 or "low" in c.risk_band.lower()]
+
+    cust_res = _handle_customer_search(recent_claims, q_lower)
+    if cust_res:
+        return cust_res
+
+    high_res = _handle_high_risk_inquiry(high_risk, q_lower)
+    if high_res:
+        return high_res
+
+    fin_res = _handle_financial_inquiry(recent_claims, q_lower)
+    if fin_res:
+        return fin_res
+
+    greet_res = _handle_greeting_inquiry(total_count, len(high_risk), len(medium_risk), len(low_risk), q_lower)
+    if greet_res:
+        return greet_res
+
+    stats_res = _handle_stats_inquiry(recent_claims, total_count, len(high_risk), len(medium_risk), len(low_risk), q_lower)
+    if stats_res:
+        return stats_res
+
     if recent_claims:
         latest = recent_claims[0]
         return (
             f"🔍 **AI Intelligence Audit for Query: '{question}'**\n\n"
             f"Processed search across **{total_count} claims** in database:\n"
             f"• **Latest Submitted Claim**: Claim #{latest.id} ({latest.customer_name}) — ₹{latest.claim_amount:,} for {latest.vehicle_make_model} (Risk Score: {latest.overall_risk_score}/100)\n"
-            f"• **Portfolio Status**: {len(high_risk_claims)} High Risk, {len(medium_risk_claims)} Medium Risk, {len(low_risk_claims)} Low Risk.\n\n"
+            f"• **Portfolio Status**: {len(high_risk)} High Risk, {len(medium_risk)} Medium Risk, {len(low_risk)} Low Risk.\n\n"
             f"💡 *Tip*: Type a specific claim ID (e.g. `claim #11`), customer name, or keyword like `high risk` for targeted analysis!"
         )
     return "No claims available in database yet. Submit a new claim via `/claims/new` to test live AI risk scoring!"
@@ -131,11 +162,13 @@ def generate_heuristic_copilot_response(db: Session, question: str, claim_id: in
 
 def ask_copilot(db: Session, question: str, claim_id: int | None = None) -> str:
     api_key = os.getenv("ANTHROPIC_API_KEY")
-    if not HAS_ANTHROPIC or not api_key or not api_key.strip():
-        # Seamlessly fallback to built-in AI claims engine
-        return generate_heuristic_copilot_response(db=db, question=question, claim_id=claim_id)
+    fallback_tag = "\n\n_(Powered by rule-based fallback — configure ANTHROPIC_API_KEY for full AI reasoning)_"
 
-        
+    if not HAS_ANTHROPIC or not api_key or not api_key.strip():
+        # Seamlessly fallback to built-in AI claims engine with transparency tag
+        raw_resp = generate_heuristic_copilot_response(db=db, question=question, claim_id=claim_id)
+        return raw_resp + fallback_tag
+
     # Build context for Anthropic API
     if claim_id:
         c = db.query(Claim).filter(Claim.id == claim_id).first()
@@ -190,5 +223,5 @@ def ask_copilot(db: Session, question: str, claim_id: int | None = None) -> str:
         return "".join([block.text for block in response.content if hasattr(block, "text")])
     except Exception:
         # Fallback gracefully if API call encounters network error
-        return generate_heuristic_copilot_response(db=db, question=question, claim_id=claim_id)
+        return generate_heuristic_copilot_response(db=db, question=question, claim_id=claim_id) + fallback_tag
 

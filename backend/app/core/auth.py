@@ -1,9 +1,11 @@
 import os
 from datetime import datetime, timedelta, timezone
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jose import JWTError, jwt
+from jose import jwt
 from sqlalchemy.orm import Session
+
 from app.database.session import get_db
 
 SECRET_KEY = os.environ.get("JWT_SECRET_KEY") or "claimsense360_production_jwt_secret_key_2026_secure"

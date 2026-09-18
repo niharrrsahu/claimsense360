@@ -4,11 +4,13 @@ Uses Ultralytics YOLOv8 Object Detection trained on Roboflow Car Damage Detectio
 combined with PyTorch ResNet-18 feature vectors for real-world car damage inspection.
 """
 
-import os
-import io
 import functools
+import io
+import os
+
 import numpy as np
 from PIL import Image, ImageOps
+
 os.environ["YOLO_CONFIG_DIR"] = "/tmp"
 
 @functools.lru_cache(maxsize=1)
@@ -58,7 +60,7 @@ def train_custom_yolo_model(epochs: int = 50):
 def get_resnet_feature_extractor():
     try:
         import torch
-        import torchvision.models as models
+        from torchvision import models
         torch.set_num_threads(1)
         if hasattr(torch, "set_num_interop_threads"):
             try:
@@ -77,7 +79,7 @@ def get_resnet_feature_extractor():
 
 def get_pytorch_transform():
     try:
-        import torchvision.transforms as transforms
+        from torchvision import transforms
         return transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),

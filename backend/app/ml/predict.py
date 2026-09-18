@@ -2,12 +2,13 @@
 Inference & SHAP Explainer Module for Fraud Detection Model
 """
 
-import os
 import functools
+import os
 import warnings
+
 import joblib
-import numpy as np
 import pandas as pd
+
 warnings.filterwarnings("ignore")
 
 

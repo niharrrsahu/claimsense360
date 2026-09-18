@@ -7,6 +7,7 @@ with a clear, learnable logistic-regression ground truth formula to train the fr
 import numpy as np
 import pandas as pd
 
+
 def generate_synthetic_claims(n_samples: int = 8000, seed: int = 42) -> pd.DataFrame:
     np.random.seed(seed)
     

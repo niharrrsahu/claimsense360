@@ -1,6 +1,18 @@
 from datetime import datetime, timezone
-from sqlalchemy import Column, Integer, String, Float, Boolean, Text, DateTime, ForeignKey
+
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+)
+
 from app.database.database import Base
+
 
 class Claim(Base):
     __tablename__ = "claims"

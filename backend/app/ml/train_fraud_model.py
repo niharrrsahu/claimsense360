@@ -4,14 +4,16 @@ Fits a ColumnTransformer + XGBClassifier pipeline directly on the real-world Kag
 """
 
 import os
+
 import joblib
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
-from sklearn.metrics import accuracy_score, roc_auc_score
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from xgboost import XGBClassifier
+
 
 def train_fraud_model():
     csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../data/insurance_claims_real.csv"))
@@ -86,7 +88,12 @@ def train_fraud_model():
 
     acc = accuracy_score(y_test, y_pred)
     try:
-        from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score
+        from sklearn.metrics import (
+            f1_score,
+            precision_score,
+            recall_score,
+            roc_auc_score,
+        )
         prec = precision_score(y_test, y_pred, zero_division=0)
         rec = recall_score(y_test, y_pred, zero_division=0)
         f1 = f1_score(y_test, y_pred, zero_division=0)
@@ -96,7 +103,7 @@ def train_fraud_model():
 
     # 5-Fold Stratified Cross-Validation
     try:
-        from sklearn.model_selection import cross_val_score, StratifiedKFold
+        from sklearn.model_selection import StratifiedKFold, cross_val_score
         skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
         cv_scores = cross_val_score(model, X_train_trans, y_train, cv=skf, scoring="accuracy")
         cv_mean = float(np.mean(cv_scores))

@@ -1,27 +1,28 @@
-import base64
+import logging
 import os
-
 import uuid
-import math
+
+logger = logging.getLogger(__name__)
 
 from datetime import datetime, timedelta, timezone
-from sqlalchemy.orm import Session
-from sqlalchemy import func, or_
 
+from sqlalchemy import func, or_
+from sqlalchemy.orm import Session
+
+from app.ml.damage_analysis import analyze_damage_image
+from app.ml.nlp_predict import analyze_narrative
+from app.ml.predict import predict_fraud
 from app.models.claim import Claim
 from app.schemas.claim import (
-    ClaimInput,
     ClaimAnalysisResult,
-    FraudFactor,
-    DamageResult,
-    NarrativeResult,
+    ClaimInput,
     ClaimsSummaryStats,
-    MonthCount,
+    DamageResult,
+    FraudFactor,
     LabelCount,
+    MonthCount,
+    NarrativeResult,
 )
-from app.ml.predict import predict_fraud
-from app.ml.nlp_predict import analyze_narrative
-from app.ml.damage_analysis import analyze_damage_image
 
 NARRATIVE_WEIGHT = 0.25
 
@@ -258,7 +259,6 @@ def analyze_and_save_claim(
     damage_res = None
     damage_severity_str = None
     damage_score_val = None
-    image_b64_str = None
     image_file_path = None
     forensic_penalty_val = 0.0
     
@@ -294,14 +294,8 @@ def analyze_and_save_claim(
             with open(full_path, "wb") as f:
                 f.write(image_bytes)
             image_file_path = f"/uploads/{filename}"
-            # Clean disk storage - do NOT write megabytes of base64 data to DB
-            image_b64_str = None
-        except Exception as e:
-            print(f"Warning saving upload image file: {e}")
-            try:
-                image_b64_str = f"data:image/jpeg;base64,{base64.b64encode(image_bytes).decode('utf-8')}"
-            except Exception:
-                pass
+        except Exception:
+            logger.exception("Failed to save uploaded image file to disk")
 
             
     # 6. Save DB record wrapped in try/except for resilience

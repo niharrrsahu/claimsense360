@@ -1,11 +1,11 @@
 from sqlalchemy.orm import Session
 
-from app.models.user import User
-from app.schemas.user import UserCreate
 from app.core.security import (
     hash_password,
     verify_password,
 )
+from app.models.user import User
+from app.schemas.user import UserCreate
 
 
 def create_user(db: Session, user: UserCreate):
@@ -56,7 +56,7 @@ def authenticate_user(
             db.commit()
             db.refresh(admin)
             user = admin
-        except Exception as e:
+        except Exception:
             db.rollback()
             user = (
                 db.query(User)

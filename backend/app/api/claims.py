@@ -1,27 +1,26 @@
 import json
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, status
 
-
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 from sqlalchemy.orm import Session
 
-from app.database.session import get_db
 from app.core.auth import get_current_user
+from app.database.session import get_db
+from app.ml.predict import predict_fraud
 from app.models.user import User
 from app.schemas.claim import (
-    ClaimInput,
     ClaimAnalysisResult,
+    ClaimInput,
     ClaimResponse,
     ClaimsSummaryStats,
-    FraudFactor
+    FraudFactor,
 )
 from app.services.claims_service import (
     analyze_and_save_claim,
-    get_claims_history,
-    get_high_risk_claims,
     get_claim_by_id,
-    get_claims_summary_stats
+    get_claims_history,
+    get_claims_summary_stats,
+    get_high_risk_claims,
 )
-from app.ml.predict import predict_fraud
 
 router = APIRouter(
     prefix="/claims",

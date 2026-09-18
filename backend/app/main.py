@@ -1,5 +1,4 @@
 import os
-import sys
 
 # Memory optimization for 512MB RAM cloud instances
 os.environ["MALLOC_TRIM_THRESHOLD_"] = "100000"
@@ -9,16 +8,13 @@ os.environ["OPENBLAS_NUM_THREADS"] = "1"
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 
-
+import app.models  # load models
 from app.api.auth import router as auth_router
 from app.api.claims import router as claims_router
 from app.api.copilot import router as copilot_router
-
-from app.database.database import engine, Base
-import app.models  # load models
-
-from sqlalchemy import text
+from app.database.database import Base, engine
 
 # Create database tables automatically
 Base.metadata.create_all(bind=engine)
@@ -64,6 +60,7 @@ app.add_middleware(
 
 
 import os
+
 from fastapi.staticfiles import StaticFiles
 
 app.include_router(auth_router)

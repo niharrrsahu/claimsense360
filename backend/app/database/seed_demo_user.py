@@ -4,12 +4,13 @@ import sys
 # Ensure root directory is on PYTHONPATH when executed as script
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
-from app.database.session import SessionLocal
+from app.core.security import hash_password
 from app.database.init_db import init_db
+from app.database.session import SessionLocal
+from app.models.user import User
 from app.schemas.user import UserCreate
 from app.services.auth_service import create_user
-from app.core.security import hash_password
-from app.models.user import User
+
 
 def seed_demo_user():
     init_db()

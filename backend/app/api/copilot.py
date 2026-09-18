@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from app.database.session import get_db
 from app.core.auth import get_current_user
+from app.database.session import get_db
 from app.models.user import User
 from app.services.copilot_service import ask_copilot
 

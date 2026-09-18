@@ -5,6 +5,7 @@ in insurance claims (hedging, urgency, vagueness, lack of details vs specific ti
 """
 
 import random
+
 import pandas as pd
 
 GENUINE_TEMPLATES = [

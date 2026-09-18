@@ -4,11 +4,12 @@ Train Deception Detection NLP Model on Synthetic Claims Narratives
 
 import os
 import sys
+
 import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, roc_auc_score
+from sklearn.model_selection import train_test_split
 
 # Ensure backend directory is in sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
@@ -45,7 +46,7 @@ def train_narrative_model():
     acc = accuracy_score(y_test, y_pred)
     roc_auc = roc_auc_score(y_test, y_proba)
     
-    print(f"Narrative Model Training Completed.")
+    print("Narrative Model Training Completed.")
     print(f"Accuracy: {acc:.4f}")
     print(f"ROC-AUC:  {roc_auc:.4f}")
     

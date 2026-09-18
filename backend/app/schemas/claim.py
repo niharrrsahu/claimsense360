@@ -1,6 +1,8 @@
 from datetime import datetime
-from typing import Literal, Any
+from typing import Any, Literal
+
 from pydantic import BaseModel, Field
+
 
 class ClaimInput(BaseModel):
     customer_name: str | None = None
