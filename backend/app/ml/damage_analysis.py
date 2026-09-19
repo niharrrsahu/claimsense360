@@ -6,12 +6,12 @@ combined with PyTorch ResNet-18 feature vectors for real-world car damage inspec
 
 import functools
 import io
+import logging
 import os
 
 import numpy as np
 from PIL import Image, ImageOps
 
-import logging
 logger = logging.getLogger(__name__)
 
 os.environ["YOLO_CONFIG_DIR"] = "/tmp"
@@ -48,7 +48,7 @@ def train_custom_yolo_model(epochs: int = 50):
         data_yaml = os.path.join(os.path.dirname(__file__), "..", "data", "yolo_dataset", "data.yaml")
         if os.path.exists(data_yaml):
             model = YOLO("yolov8n.pt")
-            results = model.train(data=data_yaml, epochs=epochs, imgsz=640, project=os.path.dirname(data_yaml))
+            _results = model.train(data=data_yaml, epochs=epochs, imgsz=640, project=os.path.dirname(data_yaml))
             best_dest = os.path.join(os.path.dirname(__file__), "..", "data", "best.pt")
             if hasattr(model, "save"):
                 model.save(best_dest)
@@ -112,7 +112,7 @@ def analyze_damage_image(image_bytes: bytes) -> dict | None:
         has_camera_exif = bool(exif_data and len(exif_data) > 0)
         
         # Check image format & info headers for web downloader artifacts
-        info_keys = [str(k).lower() for k in raw_pil.info.keys()]
+        info_keys = [str(k).lower() for k in raw_pil.info]
         is_web_asset = (not has_camera_exif) or any(k in info_keys for k in ["jfif", "adobe", "icc_profile"]) or (raw_pil.format in ["WEBP", "GIF"])
 
         forensic_status = "PASSED_ORIGINAL_CAMERA_TELEMETRY" if has_camera_exif else "MISSING_CAMERA_EXIF_METADATA"

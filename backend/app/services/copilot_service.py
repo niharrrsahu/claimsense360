@@ -61,16 +61,15 @@ def _handle_high_risk_inquiry(high_risk_claims: list[Claim], q_lower: str) -> st
 
 
 def _handle_financial_inquiry(recent_claims: list[Claim], q_lower: str) -> str | None:
-    if any(kw in q_lower for kw in ["highest", "max", "top", "financial", "expensive", "money", "cost", "value"]):
-        if recent_claims:
-            top_amount = max(recent_claims, key=lambda x: x.claim_amount)
-            top_risk = max(recent_claims, key=lambda x: x.overall_risk_score)
-            return (
-                f"💰 **Financial Portfolio Insights**:\n\n"
-                f"• **Largest Financial Claim**: Claim #{top_amount.id} ({top_amount.customer_name}) for **₹{top_amount.claim_amount:,}** ({top_amount.vehicle_make_model})\n"
-                f"• **Highest Fraud Risk Claim**: Claim #{top_risk.id} ({top_risk.customer_name}) with Risk Score **{top_risk.overall_risk_score}/100**\n\n"
-                f"• **Total Portfolio Claims Value**: ₹{sum(c.claim_amount for c in recent_claims):,}"
-            )
+    if any(kw in q_lower for kw in ["highest", "max", "top", "financial", "expensive", "money", "cost", "value"]) and recent_claims:
+        top_amount = max(recent_claims, key=lambda x: x.claim_amount)
+        top_risk = max(recent_claims, key=lambda x: x.overall_risk_score)
+        return (
+            f"💰 **Financial Portfolio Insights**:\n\n"
+            f"• **Largest Financial Claim**: Claim #{top_amount.id} ({top_amount.customer_name}) for **₹{top_amount.claim_amount:,}** ({top_amount.vehicle_make_model})\n"
+            f"• **Highest Fraud Risk Claim**: Claim #{top_risk.id} ({top_risk.customer_name}) with Risk Score **{top_risk.overall_risk_score}/100**\n\n"
+            f"• **Total Portfolio Claims Value**: ₹{sum(c.claim_amount for c in recent_claims):,}"
+        )
     return None
 
 
@@ -93,7 +92,7 @@ def _handle_greeting_inquiry(total_count: int, high_len: int, med_len: int, low_
 def _handle_stats_inquiry(recent_claims: list[Claim], total_count: int, high_len: int, med_len: int, low_len: int, q_lower: str) -> str | None:
     if any(kw in q_lower for kw in ["stat", "summary", "total", "count", "avg", "average", "overview"]):
         avg_score = round(sum(c.overall_risk_score for c in recent_claims) / total_count, 1) if total_count > 0 else 0
-        avg_amt = int(round(sum(c.claim_amount for c in recent_claims) / total_count)) if total_count > 0 else 0
+        avg_amt = round(sum(c.claim_amount for c in recent_claims) / total_count) if total_count > 0 else 0
         return (
             f"📊 **System Portfolio Statistics**:\n\n"
             f"• **Total Claims**: {total_count}\n"
