@@ -1,3 +1,4 @@
+import base64
 import logging
 import os
 import uuid
@@ -260,6 +261,7 @@ def analyze_and_save_claim(
     damage_severity_str = None
     damage_score_val = None
     image_file_path = None
+    image_b64_fallback = None
     forensic_penalty_val = 0.0
     
     if image_bytes:
@@ -295,7 +297,11 @@ def analyze_and_save_claim(
                 f.write(image_bytes)
             image_file_path = f"/uploads/{filename}"
         except Exception:
-            logger.exception("Failed to save uploaded image file to disk")
+            logger.exception("Disk write failed for uploaded image; encoding to base64 DB fallback")
+            try:
+                image_b64_fallback = f"data:image/jpeg;base64,{base64.b64encode(image_bytes).decode('utf-8')}"
+            except Exception:
+                logger.exception("Failed base64 encoding fallback for uploaded image")
 
             
     # 6. Save DB record wrapped in try/except for resilience
@@ -329,7 +335,7 @@ def analyze_and_save_claim(
             recommended_action=recommended_action,
             damage_severity=damage_severity_str,
             damage_score=damage_score_val,
-            image_data=None,
+            image_data=image_b64_fallback,
             image_path=image_file_path,
             is_seed=False,
             forensic_penalty=forensic_penalty_val,

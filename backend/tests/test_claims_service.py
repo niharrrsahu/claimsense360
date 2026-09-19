@@ -88,3 +88,39 @@ def test_get_claim_by_id(db_session):
 
     not_found = get_claim_by_id(db=db_session, claim_id=99999)
     assert not_found is None
+
+
+def test_image_disk_save_failure_fallback_to_base64(db_session):
+    """Test that when disk write fails, image_b64_fallback is stored in db_claim.image_data."""
+    from unittest.mock import patch
+    from app.schemas.claim import ClaimInput
+    from app.services.claims_service import analyze_and_save_claim
+
+    claim_input = ClaimInput(
+        customer_name="Fallback Test User",
+        vehicle_make_model="Honda Accord",
+        age=30,
+        vehicle_price=1200000,
+        claim_amount=40000,
+        vehicle_age=2,
+        past_claims=0,
+        driver_rating=4,
+        policy_type="Comprehensive",
+        fault="Policy Holder",
+        accident_area="Urban",
+        police_report_filed=True,
+        witness_present=True,
+        incident_severity="Minor Damage",
+        incident_description="Minor bumper dent."
+    )
+    dummy_image = b"fake_jpeg_data_bytes"
+    
+    with patch("app.services.claims_service.open", side_effect=OSError("Disk write permission denied")):
+        res = analyze_and_save_claim(db=db_session, claim_input=claim_input, image_bytes=dummy_image)
+        
+    assert res.claim_id is not None
+    saved_claim = get_claim_by_id(db=db_session, claim_id=res.claim_id)
+    assert saved_claim is not None
+    assert saved_claim.image_path is None
+    assert saved_claim.image_data is not None
+    assert saved_claim.image_data.startswith("data:image/jpeg;base64,")
