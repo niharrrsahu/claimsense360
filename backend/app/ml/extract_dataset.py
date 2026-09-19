@@ -1,5 +1,8 @@
+import logging
 import os
 import zipfile
+
+logger = logging.getLogger(__name__)
 
 
 def extract_yolo_dataset():
@@ -36,7 +39,7 @@ def extract_yolo_dataset():
                 with z.open(member) as source, open(dest_path, "wb") as target:
                     target.write(source.read())
             except Exception:
-                pass
+                logger.warning("Failed to extract dataset member: %s", member.filename, exc_info=True)
 
     print("YOLOv8 Dataset successfully extracted!")
     print(f"Contents in {target_dir}: {os.listdir(target_dir)}")

@@ -11,6 +11,9 @@ import os
 import numpy as np
 from PIL import Image, ImageOps
 
+import logging
+logger = logging.getLogger(__name__)
+
 os.environ["YOLO_CONFIG_DIR"] = "/tmp"
 
 @functools.lru_cache(maxsize=1)
@@ -66,7 +69,7 @@ def get_resnet_feature_extractor():
             try:
                 torch.set_num_interop_threads(1)
             except Exception:
-                pass
+                logger.debug("Torch interop threads configuration skipped")
         model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
         feature_extractor = torch.nn.Sequential(*list(model.children())[:-1])
         feature_extractor.to("cpu")

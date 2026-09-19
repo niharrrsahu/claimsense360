@@ -26,12 +26,16 @@ migrations = [
     "ALTER TABLE claims ADD COLUMN forensic_penalty FLOAT DEFAULT 0.0;",
     "ALTER TABLE claims ADD COLUMN incident_severity VARCHAR DEFAULT 'Minor Damage';"
 ]
+import logging
+
+logger = logging.getLogger(__name__)
+
 for query in migrations:
     try:
         with engine.begin() as conn:
             conn.execute(text(query))
     except Exception:
-        pass
+        logger.debug("Column migration skipped or already exists for query: %s", query)
 
 
 
