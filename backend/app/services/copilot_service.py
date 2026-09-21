@@ -202,35 +202,70 @@ def _build_claim_context(db: Session, claim_id: int | None = None) -> str:
 
 
 def _ask_gemini(context: str, question: str, api_key: str) -> str | None:
-    if not HAS_GEMINI or not api_key or not api_key.strip():
+    if not api_key or not api_key.strip():
         return None
 
-    try:
-        genai.configure(api_key=api_key.strip())
-        system_prompt = (
-            "You are ClaimSense 360 AI Copilot — an expert insurance claims intelligence & fraud forensics assistant "
-            "built for Nihar Sahu's platform. Respond naturally, intelligently, and conversationally to ANY user prompt "
-            "(greetings, general chat, claims audit, financial risk, fraud analysis, technical concepts). "
-            "Use markdown formatting with bullet points, bold text, and professional emojis. "
-            "Base your domain answers on the provided database claims context when relevant."
-        )
+    clean_key = api_key.strip()
+    system_prompt = (
+        "You are ClaimSense 360 AI Copilot — an expert insurance claims intelligence & fraud forensics assistant "
+        "built for Nihar Sahu's platform. Respond naturally, intelligently, and conversationally to ANY user prompt "
+        "(greetings, general chat, claims audit, financial risk, fraud analysis, technical concepts). "
+        "Use markdown formatting with bullet points, bold text, and professional emojis. "
+        "Base your domain answers on the provided database claims context when relevant."
+    )
 
-        model_candidates = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-pro", "gemini-pro"]
-        for model_name in model_candidates:
-            try:
-                g_model = genai.GenerativeModel(
-                    model_name=model_name,
-                    system_instruction=system_prompt
-                )
-                prompt_content = f"DATABASE CLAIM CONTEXT:\n{context}\n\nUSER QUESTION / PROMPT:\n{question}"
-                response = g_model.generate_content(prompt_content)
-                if response and hasattr(response, "text") and response.text:
-                    return response.text.strip()
-            except Exception as exc:
-                logger.debug(f"Gemini model {model_name} invocation failed: {exc}")
-                continue
+    # Method 1: Google Generative AI Python SDK
+    if HAS_GEMINI and genai:
+        try:
+            genai.configure(api_key=clean_key)
+            model_candidates = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-flash-latest", "gemini-1.5-pro", "gemini-pro"]
+            for model_name in model_candidates:
+                try:
+                    g_model = genai.GenerativeModel(
+                        model_name=model_name,
+                        system_instruction=system_prompt
+                    )
+                    prompt_content = f"DATABASE CLAIM CONTEXT:\n{context}\n\nUSER QUESTION / PROMPT:\n{question}"
+                    response = g_model.generate_content(prompt_content)
+                    if response and hasattr(response, "text") and response.text:
+                        return response.text.strip()
+                except Exception as exc:
+                    logger.debug(f"Gemini model {model_name} invocation failed: {exc}")
+                    continue
+        except Exception as exc:
+            logger.warning(f"Google Gemini API SDK initialization error: {exc}")
+
+    # Method 2: Direct REST API Fallback
+    try:
+        import json
+        import urllib.request
+
+        rest_models = ["gemini-flash-latest", "gemini-2.5-flash", "gemini-1.5-flash"]
+        for m_name in rest_models:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{m_name}:generateContent"
+            headers = {
+                "Content-Type": "application/json",
+                "X-goog-api-key": clean_key
+            }
+            payload = {
+                "contents": [
+                    {
+                        "parts": [
+                            {"text": f"System Instruction: {system_prompt}\n\nDatabase Context:\n{context}\n\nUser Question: {question}"}
+                        ]
+                    }
+                ]
+            }
+            req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                candidates = data.get("candidates", [])
+                if candidates:
+                    parts = candidates[0].get("content", {}).get("parts", [])
+                    if parts and "text" in parts[0]:
+                        return parts[0]["text"].strip()
     except Exception as exc:
-        logger.warning(f"Google Gemini API initialization error: {exc}")
+        logger.warning(f"Gemini REST API fallback error: {exc}")
 
     return None
 
@@ -245,7 +280,7 @@ def _ask_anthropic(context: str, question: str, api_key: str) -> str | None:
         "If the context does not contain sufficient details to answer the question, state that clearly."
     )
     try:
-        client = anthropic.Anthropic(api_key=api_key.strip())
+        client = anthropic.Anthropic(api_key=clean_key)
         response = client.messages.create(
             model="claude-3-5-sonnet-20241022",
             max_tokens=1024,
