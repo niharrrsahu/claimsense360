@@ -1,9 +1,19 @@
+import logging
 import os
 import re
 
 from sqlalchemy.orm import Session
 
 from app.models.claim import Claim
+
+logger = logging.getLogger(__name__)
+
+try:
+    import google.generativeai as genai
+    HAS_GEMINI = True
+except ImportError:
+    genai = None
+    HAS_GEMINI = False
 
 try:
     import anthropic
@@ -106,16 +116,16 @@ def _handle_stats_inquiry(recent_claims: list[Claim], total_count: int, high_len
 
 def generate_heuristic_copilot_response(db: Session, question: str, claim_id: int | None = None) -> str:
     """
-    Rule-based fallback response generator, used when ANTHROPIC_API_KEY is not configured.
+    Rule-based fallback response generator, used when GEMINI_API_KEY is not configured.
     """
     q_lower = question.lower().strip()
-    
+
     extracted_id = claim_id
     if not extracted_id:
         id_match = re.search(r'(?:claim\s*#?|#)(\d+)', q_lower)
         if id_match:
             extracted_id = int(id_match.group(1))
-            
+
     if extracted_id:
         res = _handle_claim_id_audit(db, extracted_id)
         if res:
@@ -159,20 +169,11 @@ def generate_heuristic_copilot_response(db: Session, question: str, claim_id: in
     return "No claims available in database yet. Submit a new claim via `/claims/new` to test live AI risk scoring!"
 
 
-def ask_copilot(db: Session, question: str, claim_id: int | None = None) -> str:
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    fallback_tag = "\n\n_(Powered by rule-based fallback — configure ANTHROPIC_API_KEY for full AI reasoning)_"
-
-    if not HAS_ANTHROPIC or not api_key or not api_key.strip():
-        # Seamlessly fallback to built-in AI claims engine with transparency tag
-        raw_resp = generate_heuristic_copilot_response(db=db, question=question, claim_id=claim_id)
-        return raw_resp + fallback_tag
-
-    # Build context for Anthropic API
+def _build_claim_context(db: Session, claim_id: int | None = None) -> str:
     if claim_id:
         c = db.query(Claim).filter(Claim.id == claim_id).first()
         if c:
-            context = (
+            return (
                 f"CLAIM DETAILS (Claim #{c.id}):\n"
                 f"- Customer Name: {c.customer_name}\n"
                 f"- Vehicle: {c.vehicle_make_model} (Age: {c.vehicle_age} yrs, Price: ₹{c.vehicle_price:,})\n"
@@ -185,29 +186,66 @@ def ask_copilot(db: Session, question: str, claim_id: int | None = None) -> str:
                 f"- Recommended Action: {c.recommended_action}\n"
                 f"- Damage Severity: {c.damage_severity or 'Not uploaded'}\n"
             )
-        else:
-            context = f"Claim #{claim_id} was requested but not found in database."
-    else:
-        recent_claims = db.query(Claim).order_by(Claim.created_at.desc()).limit(15).all()
-        if not recent_claims:
-            context = "No claims recorded in database yet."
-        else:
-            context_lines = [f"SUMMARY OF RECENT {len(recent_claims)} CLAIMS:"]
-            for c in recent_claims:
-                context_lines.append(
-                    f"- Claim #{c.id} ({c.customer_name}): Vehicle {c.vehicle_make_model}, Amount ₹{c.claim_amount:,}, "
-                    f"Risk Score {c.overall_risk_score}/100 ({c.risk_band}), Action: '{c.recommended_action}'"
+        return f"Claim #{claim_id} was requested but not found in database."
+
+    recent_claims = db.query(Claim).order_by(Claim.created_at.desc()).limit(20).all()
+    if not recent_claims:
+        return "No claims recorded in database yet."
+
+    lines = [f"SUMMARY OF RECENT {len(recent_claims)} CLAIMS IN DATABASE:"]
+    for c in recent_claims:
+        lines.append(
+            f"- Claim #{c.id} ({c.customer_name}): Vehicle {c.vehicle_make_model}, Amount ₹{c.claim_amount:,}, "
+            f"Risk Score {c.overall_risk_score}/100 ({c.risk_band}), Action: '{c.recommended_action}'"
+        )
+    return "\n".join(lines)
+
+
+def _ask_gemini(context: str, question: str, api_key: str) -> str | None:
+    if not HAS_GEMINI or not api_key or not api_key.strip():
+        return None
+
+    try:
+        genai.configure(api_key=api_key.strip())
+        system_prompt = (
+            "You are ClaimSense 360 AI Copilot — an expert insurance claims intelligence & fraud forensics assistant "
+            "built for Nihar Sahu's platform. Respond naturally, intelligently, and conversationally to ANY user prompt "
+            "(greetings, general chat, claims audit, financial risk, fraud analysis, technical concepts). "
+            "Use markdown formatting with bullet points, bold text, and professional emojis. "
+            "Base your domain answers on the provided database claims context when relevant."
+        )
+
+        model_candidates = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-pro", "gemini-pro"]
+        for model_name in model_candidates:
+            try:
+                g_model = genai.GenerativeModel(
+                    model_name=model_name,
+                    system_instruction=system_prompt
                 )
-            context = "\n".join(context_lines)
-            
+                prompt_content = f"DATABASE CLAIM CONTEXT:\n{context}\n\nUSER QUESTION / PROMPT:\n{question}"
+                response = g_model.generate_content(prompt_content)
+                if response and hasattr(response, "text") and response.text:
+                    return response.text.strip()
+            except Exception as exc:
+                logger.debug(f"Gemini model {model_name} invocation failed: {exc}")
+                continue
+    except Exception as exc:
+        logger.warning(f"Google Gemini API initialization error: {exc}")
+
+    return None
+
+
+def _ask_anthropic(context: str, question: str, api_key: str) -> str | None:
+    if not HAS_ANTHROPIC or not api_key or not api_key.strip():
+        return None
+
     system_prompt = (
         "You are ClaimSense 360 AI Copilot — an expert insurance claims intelligence assistant. "
         "Answer the user's questions based STRICTLY on the provided claim context. "
         "If the context does not contain sufficient details to answer the question, state that clearly."
     )
-    
     try:
-        client = anthropic.Anthropic(api_key=api_key)
+        client = anthropic.Anthropic(api_key=api_key.strip())
         response = client.messages.create(
             model="claude-3-5-sonnet-20241022",
             max_tokens=1024,
@@ -219,8 +257,32 @@ def ask_copilot(db: Session, question: str, claim_id: int | None = None) -> str:
                 }
             ]
         )
-        return "".join([block.text for block in response.content if hasattr(block, "text")])
-    except Exception:
-        # Fallback gracefully if API call encounters network error
-        return generate_heuristic_copilot_response(db=db, question=question, claim_id=claim_id) + fallback_tag
+        text = "".join([block.text for block in response.content if hasattr(block, "text")])
+        return text.strip() if text else None
+    except Exception as exc:
+        logger.warning(f"Anthropic API call failed: {exc}")
+        return None
 
+
+def ask_copilot(db: Session, question: str, claim_id: int | None = None) -> str:
+    gemini_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    anthropic_key = os.getenv("ANTHROPIC_API_KEY")
+
+    context = _build_claim_context(db=db, claim_id=claim_id)
+
+    # 1. Primary AI Provider: Google Gemini API (Free Tier)
+    if gemini_key and gemini_key.strip():
+        gemini_response = _ask_gemini(context=context, question=question, api_key=gemini_key)
+        if gemini_response:
+            return gemini_response
+
+    # 2. Secondary AI Provider: Anthropic Claude API
+    if anthropic_key and anthropic_key.strip():
+        claude_response = _ask_anthropic(context=context, question=question, api_key=anthropic_key)
+        if claude_response:
+            return claude_response
+
+    # 3. Transparent Fallback: Built-in Heuristic AI Engine
+    fallback_tag = "\n\n_(Powered by rule-based fallback — configure GEMINI_API_KEY for full AI reasoning)_"
+    raw_resp = generate_heuristic_copilot_response(db=db, question=question, claim_id=claim_id)
+    return raw_resp + fallback_tag

@@ -1,12 +1,21 @@
+from unittest.mock import MagicMock, patch
 import pytest
-from app.services.copilot_service import ask_copilot, generate_heuristic_copilot_response
+
+from app.services.copilot_service import (
+    _ask_gemini,
+    _build_claim_context,
+    ask_copilot,
+    generate_heuristic_copilot_response,
+)
 from tests.conftest import make_claim
 
+
 def test_copilot_fallback_tag_presence(db_session):
-    """Test that ask_copilot appends transparent fallback notice when Anthropic API key is unconfigured."""
-    response = ask_copilot(db=db_session, question="Hello copilot")
-    assert "Powered by rule-based fallback" in response
-    assert "ANTHROPIC_API_KEY" in response
+    """Test that ask_copilot appends transparent fallback notice when API keys are unconfigured."""
+    with patch.dict("os.environ", {}, clear=True):
+        response = ask_copilot(db=db_session, question="Hello copilot")
+        assert "Powered by rule-based fallback" in response
+        assert "GEMINI_API_KEY" in response
 
 
 def test_copilot_claim_id_lookup(db_session):
@@ -47,3 +56,15 @@ def test_copilot_high_risk_query(db_session):
     assert "High-Risk Claims Audit Summary" in resp
     assert "Anita Roy" in resp
     assert "Score: **72.0/100**" in resp
+
+
+def test_copilot_gemini_integration(db_session):
+    """Test that ask_copilot invokes Google Gemini API when GEMINI_API_KEY is configured."""
+    expected_ai_text = "Gemini AI Response: Claim #1 has been analyzed. Fraud probability is low."
+    
+    with patch("app.services.copilot_service._ask_gemini", return_value=expected_ai_text) as mock_gemini, \
+         patch.dict("os.environ", {"GEMINI_API_KEY": "AIzaSy_test_key_123"}, clear=True):
+        
+        res = ask_copilot(db=db_session, question="Analyze claim #1")
+        assert res == expected_ai_text
+        mock_gemini.assert_called_once()
