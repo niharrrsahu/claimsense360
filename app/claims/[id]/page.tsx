@@ -19,6 +19,7 @@ import TopNavbar from "@/components/dashboard/top-navbar";
 import RiskResultPanel, { ClaimAnalysisResultData } from "@/components/shared/risk-result-panel";
 import PageTransition from "@/components/shared/page-transition";
 import { getSingleClaim, getDashboardData } from "@/lib/server-data";
+import { resolveClaimImageUrl } from "@/lib/image-utils";
 
 
 export const dynamic = "force-dynamic";
@@ -48,6 +49,7 @@ export default async function SingleClaimPage({
     (f: { feature?: string; name?: string }) => f.feature === "image_forensics" || f.name?.toLowerCase().includes("exif")
   );
 
+  const resolvedPhotoUrl = resolveClaimImageUrl(claim.image_path, claim.image_data);
 
   const analysisResultData: ClaimAnalysisResultData = {
     claim_id: claim.id,
@@ -57,11 +59,11 @@ export default async function SingleClaimPage({
     risk_band: claim.risk_band || "Low risk",
     recommended_action: claim.recommended_action || "Proceed to approval",
     top_factors: claim.top_factors || [],
-    image_data: claim.image_data || null,
-    damage: claim.damage_score != null || claim.image_data != null
+    image_data: resolvedPhotoUrl,
+    damage: (claim.damage_score != null || resolvedPhotoUrl != null || claim.damage_severity != null)
       ? {
           damage_score: claim.damage_score || 40.0,
-          damage_severity: claim.damage_severity || "Low",
+          damage_severity: claim.damage_severity || "Minor Damage",
           method: "Ultralytics YOLOv8 + PyTorch ResNet-18",
           has_exif: !isForensicFlagged,
           is_web_asset: isForensicFlagged,
@@ -76,6 +78,7 @@ export default async function SingleClaimPage({
         }
       : null,
   };
+
 
 
   return (
@@ -213,7 +216,7 @@ export default async function SingleClaimPage({
               </div>
 
               {/* Uploaded Damage Photo Evidence Card */}
-              {(claim.image_data || claim.image_path) && (
+              {resolvedPhotoUrl && (
                 <div className="rounded-3xl border border-[#173B32]/12 bg-white p-6 shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-serif font-bold text-[#173B32]">
@@ -225,7 +228,7 @@ export default async function SingleClaimPage({
                   </div>
                   <div className="overflow-hidden rounded-2xl border border-[#173B32]/15 shadow-sm max-h-64">
                     <img
-                      src={claim.image_data || claim.image_path}
+                      src={resolvedPhotoUrl}
                       alt="Uploaded Damage Photo Evidence"
                       className="w-full object-cover max-h-64 hover:scale-105 transition-transform duration-300"
                     />
@@ -238,6 +241,7 @@ export default async function SingleClaimPage({
 
             {/* Right 6 cols: Full AI Explainability & Risk Panel */}
             <div className="lg:col-span-6 space-y-6">
+              <RiskResultPanel result={analysisResultData} savedClaimId={claim.id} />
             </div>
           </div>
         </div>
@@ -246,4 +250,5 @@ export default async function SingleClaimPage({
     </main>
   );
 }
+
 

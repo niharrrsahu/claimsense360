@@ -15,7 +15,7 @@ export async function POST(request: Request) {
 
     let regRes: Response | null = null;
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 800);
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
 
     try {
       regRes = await fetch(`${API_BASE_URL}/auth/register`, {
@@ -31,7 +31,11 @@ export async function POST(request: Request) {
       clearTimeout(timeoutId);
     } catch (fetchErr: any) {
       clearTimeout(timeoutId);
-      console.warn("Backend signup unreachable or timed out, executing resilient signup fallback");
+      console.error("Backend signup unreachable or timed out:", fetchErr);
+      return NextResponse.json(
+        { error: "Authentication server is currently unreachable. Please ensure the backend is running and try again." },
+        { status: 503 }
+      );
     }
 
     if (regRes && regRes.ok) {
@@ -59,9 +63,9 @@ export async function POST(request: Request) {
           response.cookies.set({
             name: "cs_user_info",
             value: JSON.stringify({
-              full_name: full_name || "Nihar Sahu",
+              full_name: full_name || "Claims Adjuster",
               email: email,
-              role: "Admin",
+              role: "User",
             }),
             httpOnly: false,
             path: "/",
@@ -71,38 +75,27 @@ export async function POST(request: Request) {
           });
           return response;
         }
+      } catch (loginErr) {
+        console.error("Auto-login after registration failed:", loginErr);
+      }
+
+      // Registration succeeded, redirect user to login
+      return NextResponse.json({ ok: true, redirect: "/login", message: "Account created successfully. Please log in." });
+    }
+
+    let detail = "Registration failed. An account with this email may already exist.";
+    let status = 400;
+    if (regRes) {
+      status = regRes.status;
+      try {
+        const errData = await regRes.json();
+        detail = errData.detail || detail;
       } catch {
-        // Fallback below
+        // ignore
       }
     }
 
-    // 100% Resilient Registration Fallback for zero-downtime signup
-    const fallbackToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ${btoa(email || "user")}IiwiaWQiOjEsImV4cCI6OTk5OTk5OTk5OX0.claimsense_secure_token`;
-    const response = NextResponse.json({ ok: true, redirect: "/dashboard" });
-    response.cookies.set({
-      name: "cs_token",
-      value: fallbackToken,
-      httpOnly: true,
-      path: "/",
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 86400,
-    });
-
-    response.cookies.set({
-      name: "cs_user_info",
-      value: JSON.stringify({
-        full_name: full_name || "Nihar Sahu",
-        email: email,
-        role: "Admin",
-      }),
-      httpOnly: false,
-      path: "/",
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 86400,
-    });
-    return response;
+    return NextResponse.json({ error: detail }, { status });
 
   } catch (error: any) {
     return NextResponse.json(

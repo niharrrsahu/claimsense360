@@ -51,7 +51,11 @@ app = FastAPI(
 _frontend_origins = os.environ.get("FRONTEND_ORIGIN", "").split(",")
 _frontend_origins = [o.strip() for o in _frontend_origins if o.strip()]
 if not _frontend_origins:
-    _frontend_origins = ["https://claimsense360.vercel.app", "http://localhost:3000", "*"]
+    _frontend_origins = [
+        "https://claimsense360.vercel.app",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ]
 
 app.add_middleware(
     CORSMiddleware,

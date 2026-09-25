@@ -125,43 +125,70 @@ export default function NewClaimPage() {
 
     try {
       const res = await analyzeClaim(claimInput, imageFile);
-      const exactUploadedPhoto = base64Image || imagePreview || res.image_data || res.image_path;
+      const exactUploadedPhoto = base64Image || imagePreview || res.image_data || res.image_path || null;
       if (exactUploadedPhoto) {
         res.image_data = exactUploadedPhoto;
-
-        const { registerSubmittedClaim } = await import("@/lib/submitted-claims");
-
-        registerSubmittedClaim({
-          id: res.claim_id,
-          claim_id: res.claim_id,
-          customer_name: customerName,
-          vehicle_make_model: vehicleMakeModel,
-          age: Number(age),
-          vehicle_price: Number(vehiclePrice),
-          claim_amount: Number(claimAmount),
-          vehicle_age: Number(vehicleAge),
-          past_claims: Number(pastClaims),
-          driver_rating: Number(driverRating),
-          policy_type: policyType,
-          fault: fault,
-          accident_area: accidentArea,
-          police_report_filed: policeReportFiled,
-          witness_present: witnessPresent,
-          incident_severity: incidentSeverity,
-          incident_description: incidentDescription,
-          overall_risk_score: res.overall_risk_score,
-          risk_band: res.risk_band,
-          recommended_action: res.recommended_action,
-          damage_severity: res.damage?.damage_severity || incidentSeverity,
-          damage_score: res.damage?.damage_score || 50.0,
-          image_data: exactUploadedPhoto,
-          image_path: exactUploadedPhoto,
-          top_factors: res.top_factors,
-          created_at: new Date().toISOString(),
-        });
       }
+
+      const claimId = res.claim_id || Date.now();
+      const claimRecord = {
+        id: claimId,
+        claim_id: claimId,
+        customer_name: customerName,
+        vehicle_make_model: vehicleMakeModel,
+        age: Number(age),
+        vehicle_price: Number(vehiclePrice),
+        claim_amount: Number(claimAmount),
+        vehicle_age: Number(vehicleAge),
+        past_claims: Number(pastClaims),
+        driver_rating: Number(driverRating),
+        policy_type: policyType,
+        fault: fault,
+        accident_area: accidentArea,
+        police_report_filed: policeReportFiled,
+        witness_present: witnessPresent,
+        incident_severity: incidentSeverity,
+        incident_description: incidentDescription,
+        overall_risk_score: res.overall_risk_score,
+        risk_band: res.risk_band,
+        recommended_action: res.recommended_action,
+        damage_severity: res.damage?.damage_severity || incidentSeverity,
+        damage_score: res.damage?.damage_score ?? 50.0,
+        image_data: exactUploadedPhoto,
+        image_path: res.image_path || exactUploadedPhoto,
+        top_factors: res.top_factors || [],
+        created_at: new Date().toISOString(),
+      };
+
+      // 1. In-memory register
+      try {
+        const { registerSubmittedClaim } = await import("@/lib/submitted-claims");
+        registerSubmittedClaim(claimRecord);
+      } catch {}
+
+      // 2. Persist in localStorage
+      try {
+        const existingRaw = localStorage.getItem("cs_local_claims");
+        let list: any[] = existingRaw ? JSON.parse(existingRaw) : [];
+        if (!Array.isArray(list)) list = [];
+        list = list.filter((item: any) => item.id !== claimId);
+        list.unshift(claimRecord);
+        localStorage.setItem("cs_local_claims", JSON.stringify(list.slice(0, 50)));
+      } catch {}
+
+      // 3. Set cookie for SSR hydration
+      try {
+        document.cookie = `cs_claim_${claimId}=${encodeURIComponent(JSON.stringify(claimRecord))}; path=/; max-age=86400; SameSite=Lax`;
+      } catch {}
+
+      // 4. Dispatch live event
+      try {
+        window.dispatchEvent(new CustomEvent("claimsense:new_claim", { detail: claimRecord }));
+      } catch {}
+
       setAnalysisResult(res);
     } catch (err: any) {
+
 
 
       const msg = err?.message || "Failed to analyze claim.";

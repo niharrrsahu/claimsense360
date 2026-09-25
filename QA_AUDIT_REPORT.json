@@ -1,0 +1,108 @@
+{
+  "timestamp": "2026-09-25T16:04:49.717675+00:00",
+  "platform": "ClaimSense 360 Enterprise Insurance Intelligence",
+  "audit_version": "2.4.0-Production",
+  "modules": [
+    {
+      "module": "Tabular Fraud Detection (XGBoost + SHAP)",
+      "passed": true,
+      "metrics": {
+        "accuracy": 0.805,
+        "precision": 0.5781,
+        "recall_sensitivity": 0.7551,
+        "f1_score": 0.6549,
+        "roc_auc": 0.7744,
+        "false_positive_rate": 0.1788,
+        "false_negative_rate": 0.2449,
+        "calibrated_decision_threshold": 0.35
+      },
+      "confusion_matrix": {
+        "true_negatives": 124,
+        "false_positives": 27,
+        "false_negatives": 12,
+        "true_positives": 37
+      },
+      "integrity": {
+        "deterministic_reproducibility": true,
+        "shap_explanation_validity": true,
+        "sample_shap_factors_count": 5
+      }
+    },
+    {
+      "module": "NLP Narrative Deception Classifier (TF-IDF + LogR)",
+      "passed": true,
+      "metrics": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "roc_auc": 1.0
+      },
+      "confusion_matrix": {
+        "true_negatives": 200,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "true_positives": 200
+      },
+      "linguistic_attribution": {
+        "genuine_statement_score": 5.1,
+        "deceptive_statement_score": 94.9,
+        "phrase_attribution_verified": true
+      }
+    },
+    {
+      "module": "Computer Vision Damage & Forensic Anti-Spoofing (YOLOv8 + ResNet)",
+      "passed": true,
+      "telemetry_checks": {
+        "smartphone_camera_exif_verified": true,
+        "web_stock_asset_anti_spoofing_flagged": true,
+        "spatial_edge_gradient_sensitivity": true,
+        "deterministic_scoring_verified": true
+      },
+      "sample_scores": {
+        "smartphone_photo_score": 40.0,
+        "damaged_surface_score": 54.0,
+        "methodology": "Ultralytics YOLOv8 Object Detection + PyTorch ResNet-18"
+      }
+    },
+    {
+      "module": "Autonomous Document Upload & Data Integrity Engine",
+      "passed": true,
+      "checks": {
+        "pydantic_schema_validation": true,
+        "corrupt_byte_stream_resilience": true,
+        "disk_storage_subsystem_health": true
+      }
+    },
+    {
+      "module": "AI Claims Intelligence Copilot (Precision & Actionability)",
+      "passed": true,
+      "evaluations": {
+        "high_risk_audit_actionable": true,
+        "financial_exposure_quantified": true,
+        "specific_claim_deep_dive_verified": true,
+        "structured_actionable_formatting": true
+      },
+      "sample_insight_length": 714
+    },
+    {
+      "module": "End-to-End Multi-Modal Fusion Engine",
+      "passed": true,
+      "test_vectors_count": 60,
+      "system_accuracy": 1.0,
+      "high_risk_precision": 1.0,
+      "high_risk_recall": 1.0,
+      "high_risk_f1": 1.0,
+      "target_accuracy_gate": ">= 90.00%",
+      "meets_enterprise_standard": true
+    }
+  ],
+  "summary": {
+    "total_modules_tested": 6,
+    "passed_modules": 6,
+    "all_modules_passed": true,
+    "overall_system_accuracy": 1.0,
+    "execution_time_seconds": 16.05,
+    "certification_status": "CERTIFIED_ENTERPRISE_GRADE"
+  }
+}

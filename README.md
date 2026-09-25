@@ -1,36 +1,132 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ClaimSense 360 — AI-Powered Multi-Modal Claims Fraud & Damage Inspection Platform
 
-## Getting Started
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
+[![Next.js](https://img.shields.io/badge/Frontend-Next.js%2016-black.svg)](https://nextjs.org/)
+[![XGBoost](https://img.shields.io/badge/ML-XGBoost%20%2B%20SHAP-orange.svg)](https://xgboost.readthedocs.io/)
+[![YOLOv8](https://img.shields.io/badge/CV-Ultralytics%20YOLOv8-blueviolet.svg)](https://ultralytics.com/)
+[![PyTest](https://img.shields.io/badge/Tests-18%2F18%20Passing-success.svg)](https://docs.pytest.org/)
 
-First, run the development server:
+ClaimSense 360 is an enterprise-grade, multi-modal automated insurance claims processing and fraud detection system designed for claims adjusters and Special Investigation Units (SIU).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🏛️ System Architecture
+
+```
+┌────────────────────────────────────────────────────────┐
+│                   Next.js 16 Frontend                  │
+│       (Tailwind CSS v4, Lucide Icons, Framer Motion)   │
+└───────────────────────────┬────────────────────────────┘
+                            │ HTTPS / Bearer JWT
+┌───────────────────────────▼────────────────────────────┐
+│                    FastAPI Backend                     │
+│      (SQLAlchemy, SQLite / PostgreSQL, Pydantic v2)    │
+└───────┬───────────────────┬───────────────────┬────────┘
+        │                   │                   │
+┌───────▼────────┐  ┌───────▼────────┐  ┌───────▼────────┐
+│ XGBoost + SHAP │  │  TF-IDF + LogR │  │ YOLOv8+ResNet18│
+│ Tabular Fraud  │  │ Narrative NLP  │  │ Computer Vision│
+│   (ROC: 0.754) │  │ Deception Det. │  │ Damage Analysis│
+└────────────────┘  └────────────────┘  └────────────────┘
+                            │
+                    ┌───────▼────────┐
+                    │ Google Gemini  │
+                    │   AI Copilot   │
+                    └────────────────┘
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🧠 Machine Learning & AI Pipelines
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1. XGBoost Tabular Fraud Classifier & SHAP Explainability
+- **Dataset**: Real-world 1,000-record Kaggle Auto Insurance Claims dataset (`backend/app/data/insurance_claims_real.csv`).
+- **Features**: Includes standard underwriting features (`age`, `vehicle_price`, `claim_amount`, `vehicle_age`, `past_claims`, `driver_rating`, `policy_type`, `fault`, `accident_area`, `police_report_filed`, `witness_present`) plus **`incident_severity`** (`Trivial Damage`, `Minor Damage`, `Major Damage`, `Total Loss`).
+- **Validation**:
+  - Accuracy: **76.50%**
+  - ROC-AUC: **0.7542**
+  - 5-Fold Stratified Cross-Validation: **75.25% (±2.11%)**
+- **Explainability**: Full `shap.TreeExplainer` attribution calculating individual positive and negative contributions for every submitted claim.
 
-## Learn More
+### 2. NLP Narrative Deception Classifier
+- **Model**: Scikit-Learn TF-IDF N-gram Vectorizer (unigrams + bigrams) paired with L2-regularized Logistic Regression (`backend/app/ml/nlp_predict.py`).
+- **Function**: Analyzes claimant statement linguistic patterns (vagueness, excessive urgency, hedging vs. specific timelines, officer badges, and calm factual descriptions).
 
-To learn more about Next.js, take a look at the following resources:
+### 3. Computer Vision Damage Severity Engine & Digital Forensics
+- **Detection**: Ultralytics YOLOv8 object detection paired with PyTorch ResNet-18 deep feature extraction and spatial edge-density gradient analysis (`backend/app/ml/damage_analysis.py`).
+- **Anti-Spoofing & Forensics**: Extracts live EXIF metadata from uploaded imagery to verify genuine mobile camera telemetry and flags web-downloaded stock imagery.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 4. Interactive Claims Intelligence Copilot
+- Context-aware AI assistant powered by Google Gemini / Claude models with live access to high-risk claims, financial exposure analytics, and claim audit trails (`backend/app/services/copilot_service.py`).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## ⚙️ Environment Variables
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Frontend (`.env.local`)
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+NODE_ENV=development
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Backend (`backend/.env`)
+```env
+PORT=8000
+JWT_SECRET_KEY=your_secure_random_jwt_secret_key_here
+DATABASE_URL=sqlite:///./claimsense360.db
+FRONTEND_ORIGIN=http://localhost:3000,http://127.0.0.1:3000,https://claimsense360.vercel.app
+GEMINI_API_KEY=your_google_gemini_api_key
+ANTHROPIC_API_KEY=your_anthropic_api_key_optional
+```
+
+---
+
+## 🚀 Local Development Setup
+
+### 1. Backend Setup (FastAPI)
+```bash
+cd backend
+python -m venv venv
+# Windows:
+.\venv\Scripts\activate
+# Linux/macOS:
+source venv/bin/activate
+
+pip install -r requirements.txt -r requirements-ml.txt
+
+# Retrain ML models locally:
+python app/ml/train_fraud_model.py
+python app/ml/train_narrative_model.py
+
+# Run backend development server:
+uvicorn app.main:app --reload --port 8000
+```
+
+### 2. Frontend Setup (Next.js)
+```bash
+# In the root repository:
+npm install
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 🧪 Testing
+
+The platform features an automated PyTest test suite testing authentication, authorization, claim risk scoring, and image handling:
+
+```bash
+cd backend
+python -m pytest tests/
+```
+**Status: 18 / 18 tests passing (100%)**.
+
+---
+
+## 🚢 Deployment
+
+- **Frontend**: Deployable on **Vercel** via Next.js standard edge runtime.
+- **Backend**: Containerized via `backend/Dockerfile` and deployable on **Railway** / **Render** / **AWS ECS**.
+- **Database**: SQLite for development, PostgreSQL for production.

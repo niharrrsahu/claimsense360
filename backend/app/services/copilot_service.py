@@ -274,6 +274,7 @@ def _ask_anthropic(context: str, question: str, api_key: str) -> str | None:
     if not HAS_ANTHROPIC or not api_key or not api_key.strip():
         return None
 
+    clean_key = api_key.strip()
     system_prompt = (
         "You are ClaimSense 360 AI Copilot — an expert insurance claims intelligence assistant. "
         "Answer the user's questions based STRICTLY on the provided claim context. "

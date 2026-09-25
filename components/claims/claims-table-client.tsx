@@ -1,7 +1,7 @@
 "use client";
 
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -26,8 +26,56 @@ export default function ClaimsTableClient({
 }) {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState(initialQuery);
+  const [claims, setClaims] = useState<ClaimRowProps[]>(initialClaims);
 
-  const filteredClaims = initialClaims.filter((claim) => {
+  // Sync state if initialClaims changes from SSR
+  useEffect(() => {
+    setClaims((prev) => {
+      const merged = [...initialClaims];
+      for (const item of prev) {
+        if (!merged.some((m) => m.id === item.id)) {
+          merged.push(item);
+        }
+      }
+      return merged;
+    });
+  }, [initialClaims]);
+
+  // Hydrate submitted claims from localStorage and listen for live claim submissions
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("cs_local_claims");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setClaims((prev) => {
+            const merged = [...parsed];
+            for (const item of prev) {
+              if (!merged.some((m) => m.id === item.id)) {
+                merged.push(item);
+              }
+            }
+            return merged;
+          });
+        }
+      }
+    } catch {}
+
+    const handleNewClaim = (e: any) => {
+      const newClaim = e.detail;
+      if (newClaim && newClaim.id) {
+        setClaims((prev) => {
+          if (prev.some((c) => c.id === newClaim.id)) return prev;
+          return [newClaim, ...prev];
+        });
+      }
+    };
+
+    window.addEventListener("claimsense:new_claim", handleNewClaim);
+    return () => window.removeEventListener("claimsense:new_claim", handleNewClaim);
+  }, []);
+
+  const filteredClaims = claims.filter((claim) => {
     if (!searchTerm.trim()) return true;
     const q = searchTerm.toLowerCase();
     const idStr = `clm-${String(claim.id).padStart(5, "0")}`.toLowerCase();
@@ -35,6 +83,7 @@ export default function ClaimsTableClient({
     const vehicle = (claim.vehicle_make_model || "").toLowerCase();
     return idStr.includes(q) || name.includes(q) || vehicle.includes(q);
   });
+
 
   return (
     <div className="space-y-6 max-w-full overflow-hidden">

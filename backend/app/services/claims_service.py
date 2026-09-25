@@ -370,7 +370,7 @@ def get_claims_history(db: Session, limit: int = 50, query: str | None = None, e
         q = q.filter(
             (Claim.customer_name.ilike(term)) | (Claim.vehicle_make_model.ilike(term)) | (Claim.incident_description.ilike(term))
         )
-    return q.order_by(Claim.created_at.desc()).limit(limit).all()
+    return q.order_by(Claim.id.desc()).limit(limit).all()
 
 def get_high_risk_claims(db: Session, limit: int = 50, exclude_seed: bool = False):
     seed_initial_claims_if_empty(db)

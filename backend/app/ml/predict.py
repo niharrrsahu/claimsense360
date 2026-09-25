@@ -9,8 +9,9 @@ import warnings
 import joblib
 import pandas as pd
 
-warnings.filterwarnings("ignore")
+from app.ml.train_fraud_model import engineer_claim_features
 
+warnings.filterwarnings("ignore")
 
 
 @functools.lru_cache(maxsize=1)
@@ -33,17 +34,22 @@ def load_fraud_artifacts():
 
 FEATURE_NAME_MAP = {
     "age": "Driver Age",
-    "vehicle_price": "Vehicle Price",
+    "vehicle_price": "Vehicle Market Price",
     "claim_amount": "Claim Amount",
     "vehicle_age": "Vehicle Age",
     "past_claims": "Past Claims History",
-    "driver_rating": "Driver Rating",
-    "policy_type": "Policy Type",
+    "driver_rating": "Driver Safety Rating",
+    "policy_type": "Policy Coverage Tier",
     "fault": "Fault Allocation",
-    "accident_area": "Accident Area",
-    "police_report_filed": "Police Report Filed",
-    "witness_present": "Witness Present",
-    "incident_severity": "Incident Severity"
+    "accident_area": "Accident Location Area",
+    "police_report_filed": "Police Report Verification",
+    "witness_present": "Eyewitness Present",
+    "incident_severity": "Incident Severity Grade",
+    "claim_to_price_ratio": "Claim-to-Vehicle Value Ratio",
+    "claim_per_vehicle_age": "Claim Intensity per Vehicle Year",
+    "driver_risk_index": "Composite Driver Risk Index",
+    "severe_unreported": "Severe Impact Missing Police Report",
+    "unwitnessed_high_claim": "High Financial Claim Without Witnesses",
 }
 
 def predict_fraud(claim_dict: dict) -> tuple[float, float, list[dict]]:
@@ -53,11 +59,12 @@ def predict_fraud(claim_dict: dict) -> tuple[float, float, list[dict]]:
     """
     model, preprocessor, feature_names, explainer = load_fraud_artifacts()
     
-    df_input = pd.DataFrame([claim_dict])
+    df_raw = pd.DataFrame([claim_dict])
+    df_input = engineer_claim_features(df_raw)
     X_trans = preprocessor.transform(df_input)
     
     proba = float(model.predict_proba(X_trans)[0, 1])
-    fraud_score = round(proba * 100, 1)
+    fraud_score = round(proba * 100.0, 1)
     
     # Compute SHAP values
     shap_vals = explainer.shap_values(X_trans)[0]

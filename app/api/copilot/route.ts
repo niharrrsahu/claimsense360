@@ -95,11 +95,13 @@ export async function POST(request: Request) {
       return NextResponse.json(data, { status: 200 });
     }
 
-    // High-quality in-process fallback if cloud backend API is building/rebuilding
+    // Transparent offline fallback if cloud backend API is cold-starting/unreachable
     const fallbackData = getInProcessCopilotResponse(question);
+    fallbackData.answer = `⚠️ *[Offline Heuristic Mode — Backend AI Service Unreachable]*\n\n` + fallbackData.answer;
     return NextResponse.json(fallbackData, { status: 200 });
   } catch (error: any) {
     const fallbackData = getInProcessCopilotResponse("help");
+    fallbackData.answer = `⚠️ *[Offline Heuristic Mode — Backend AI Service Unreachable]*\n\n` + fallbackData.answer;
     return NextResponse.json(fallbackData, { status: 200 });
   }
 }

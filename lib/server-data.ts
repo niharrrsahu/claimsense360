@@ -15,8 +15,8 @@ async function fetchWithAuth(endpoint: string) {
 
   try {
     const controller = new AbortController();
-    // Ultra-fast 300ms timeout for instant 0.3s lightning-fast page transitions
-    const timeoutId = setTimeout(() => controller.abort(), 300);
+    // 10s resilient timeout to accommodate Railway backend cold starts and network latency
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
 
 
     const res = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -94,42 +94,111 @@ export async function getClaimsHistory(limit: number = 50, query?: string | null
     claimsList = result;
   }
 
-  const combined = [...globalSubmittedClaims];
+  const combined: any[] = [];
+
+  // 1. Read any session cookies matching cs_claim_*
+  try {
+    const cookieStore = await cookies();
+    const allCookies = cookieStore.getAll();
+    for (const c of allCookies) {
+      if (c.name.startsWith("cs_claim_")) {
+        try {
+          const parsed = JSON.parse(decodeURIComponent(c.value));
+          if (parsed && (parsed.id || parsed.claim_id)) {
+            const normalized = { ...parsed, id: parsed.id || parsed.claim_id };
+            if (!combined.some((item) => item.id === normalized.id)) {
+              combined.push(normalized);
+            }
+          }
+        } catch {}
+      }
+    }
+  } catch {}
+
+  // 2. Add in-memory globalSubmittedClaims
+  for (const sc of globalSubmittedClaims) {
+    if (!combined.some((item) => item.id === sc.id)) {
+      combined.push(sc);
+    }
+  }
+
+  // 3. Add backend claims
   for (const c of claimsList) {
     if (!combined.some((item) => item.id === c.id)) {
       combined.push(c);
     }
   }
 
-  // Ensure submitted claim #06488 always renders in directory if empty
+  // 4. Fallback: Only if completely empty (e.g. fresh environment without backend)
   if (combined.length === 0) {
-    combined.push({
-      id: 6488,
-      customer_name: "Nihar Sahu",
-      vehicle_make_model: "Hyundai Creta 1.5 SX (2021)",
-      age: 28,
-      vehicle_price: 1400000,
-      claim_amount: 95000,
-      vehicle_age: 3,
-      past_claims: 0,
-      driver_rating: 5,
-      policy_type: "Comprehensive",
-      fault: "Third Party",
-      accident_area: "Urban",
-      police_report_filed: true,
-      witness_present: true,
-      incident_severity: "Major Damage",
-      incident_description: "Driving on city main road near intersection when another vehicle swerved without signaling. Heavy front left bumper crushing, grill detachment, and headlight assembly damage reported. Police report filed.",
-      narrative_suspicion_score: 65.0,
-      fraud_probability: 0.366,
-      fraud_score: 36.6,
-      overall_risk_score: 36.6,
-      risk_band: "Medium risk",
-      recommended_action: "Send to investigator",
-      damage_severity: "Major Damage",
-      damage_score: 61.1,
-      created_at: new Date().toISOString(),
-    });
+    combined.push(
+      {
+        id: 6488,
+        customer_name: "Nihar Sahu",
+        vehicle_make_model: "Hyundai Creta 1.5 SX (2021)",
+        age: 28,
+        vehicle_price: 1400000,
+        claim_amount: 95000,
+        vehicle_age: 3,
+        past_claims: 0,
+        driver_rating: 5,
+        policy_type: "Comprehensive",
+        fault: "Third Party",
+        accident_area: "Urban",
+        police_report_filed: true,
+        witness_present: true,
+        incident_severity: "Major Damage",
+        incident_description: "Driving on city main road near intersection when another vehicle swerved without signaling. Heavy front left bumper crushing, grill detachment, and headlight assembly damage reported. Police report filed.",
+        narrative_suspicion_score: 65.0,
+        fraud_probability: 0.366,
+        fraud_score: 36.6,
+        overall_risk_score: 36.6,
+        risk_band: "Medium risk",
+        recommended_action: "Send to investigator",
+        damage_severity: "Major Damage",
+        damage_score: 61.1,
+        created_at: new Date().toISOString(),
+      },
+      {
+        id: 6487,
+        customer_name: "Divanshu",
+        vehicle_make_model: "Honda City 1.5 V (2020)",
+        age: 32,
+        vehicle_price: 1200000,
+        claim_amount: 45000,
+        vehicle_age: 4,
+        past_claims: 1,
+        driver_rating: 4,
+        policy_type: "Comprehensive",
+        fault: "Policy Holder",
+        accident_area: "Urban",
+        police_report_filed: true,
+        witness_present: false,
+        incident_severity: "Minor Damage",
+        incident_description: "Rear bumper scuffed and minor taillight crack while reversing into parking slot.",
+        narrative_suspicion_score: 18.0,
+        fraud_probability: 0.15,
+        fraud_score: 15.0,
+        overall_risk_score: 15.0,
+        risk_band: "Low risk",
+        recommended_action: "Approve automatically",
+        damage_severity: "Minor Damage",
+        damage_score: 22.0,
+        created_at: new Date(Date.now() - 3600000).toISOString(),
+      }
+    );
+  }
+
+  // Filter if query is provided
+  if (query && query.trim()) {
+    const q = query.trim().toLowerCase();
+    return combined.filter((c) => {
+      const name = (c.customer_name || "").toLowerCase();
+      const veh = (c.vehicle_make_model || "").toLowerCase();
+      const desc = (c.incident_description || "").toLowerCase();
+      const ref = `clm-${String(c.id).padStart(5, "0")}`.toLowerCase();
+      return name.includes(q) || veh.includes(q) || desc.includes(q) || ref.includes(q);
+    }).slice(0, limit);
   }
 
   return combined.slice(0, limit);
@@ -146,14 +215,16 @@ export async function getHighRiskClaims(limit: number = 50, excludeSeed: boolean
 }
 
 export async function getClaimById(claimId: number) {
+  // 1. Check in-memory submitted claims
   const submitted = globalSubmittedClaims.find((c) => c.id === claimId || c.claim_id === claimId);
   if (submitted) return submitted;
 
+  // 2. Check cookies
   try {
     const cookieStore = await cookies();
     const claimCookie = cookieStore.get(`cs_claim_${claimId}`)?.value;
     if (claimCookie) {
-      const parsed = JSON.parse(claimCookie);
+      const parsed = JSON.parse(decodeURIComponent(claimCookie));
       registerSubmittedClaim(parsed);
       return parsed;
     }
@@ -161,48 +232,18 @@ export async function getClaimById(claimId: number) {
     // ignore
   }
 
+  // 3. Query backend directly
   const result = await fetchWithAuth(`/claims/${claimId}`);
   if (result) return result;
 
-  // Check if claim exists in history
+  // 4. Check if claim exists in history
   const history = await getClaimsHistory(100);
   const foundInHistory = history.find((c: any) => c.id === claimId || c.claim_id === claimId);
   if (foundInHistory) return foundInHistory;
 
-  // Dynamic fallback for newly analyzed claims matching the requested claimId
-  return {
-    id: claimId,
-    customer_name: "Nihar Sahu",
-    vehicle_make_model: "Hyundai Creta 1.5 SX (2021)",
-    age: 28,
-    vehicle_price: 1400000,
-    claim_amount: 95000,
-    vehicle_age: 3,
-    past_claims: 0,
-    driver_rating: 5,
-    policy_type: "Comprehensive",
-    fault: "Third Party",
-    accident_area: "Urban",
-    police_report_filed: true,
-    witness_present: true,
-    incident_severity: "Major Damage",
-    incident_description: "Driving on city main road near intersection when another vehicle swerved without signaling. Heavy front left bumper crushing, grill detachment, and headlight assembly damage reported. Police report filed.",
-    narrative_suspicion_score: 65.0,
-    fraud_probability: 0.366,
-    fraud_score: 36.6,
-    overall_risk_score: 36.6,
-    risk_band: "Medium risk",
-    recommended_action: "Send to investigator",
-    damage_severity: "Major Damage",
-    damage_score: 61.1,
-    top_factors: [
-      { feature: "narrative_suspicion_score", name: "High Narrative Suspicion", contribution: 18.5, effect: "increases_risk" },
-      { feature: "damage_score", name: "Visual Damage Severity Index", contribution: 12.1, effect: "increases_risk" },
-      { feature: "claim_amount", name: "Claim Value (₹95,000)", contribution: 6.0, effect: "increases_risk" },
-    ],
-    created_at: new Date().toISOString(),
-  };
+  return null;
 }
+
 
 
 

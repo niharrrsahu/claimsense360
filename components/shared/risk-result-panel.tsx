@@ -14,6 +14,8 @@ import {
   ExternalLink,
   Sparkles,
 } from "lucide-react";
+import { resolveClaimImageUrl } from "@/lib/image-utils";
+
 
 export interface FraudFactorData {
   feature: string;
@@ -282,36 +284,44 @@ export default function RiskResultPanel({
             </div>
           )}
 
-          {(result.image_data || (result as any)?.image_path || (result.damage as any)?.image_data) && (
-            <div className="relative overflow-hidden rounded-2xl border border-[#173B32]/15 shadow-sm max-h-56 my-3 group">
-              <img
-                src={result.image_data || (result as any)?.image_path || (result.damage as any)?.image_data}
-                alt="Vehicle Damage Analysis"
-                className="w-full object-cover h-56 group-hover:scale-105 transition-transform duration-300"
-              />
+          {(() => {
+            const displayImage = resolveClaimImageUrl(
+              (result as any)?.image_path,
+              result.image_data || (result.damage as any)?.image_data
+            );
+            if (!displayImage) return null;
+            return (
+              <div className="relative overflow-hidden rounded-2xl border border-[#173B32]/15 shadow-sm max-h-56 my-3 group">
+                <img
+                  src={displayImage}
+                  alt="Vehicle Damage Analysis"
+                  className="w-full object-cover h-56 group-hover:scale-105 transition-transform duration-300"
+                />
 
-              {/* Computer Vision HUD Bounding Box Visual Overlay */}
-              <div className="absolute inset-0 pointer-events-none p-3 flex flex-col justify-between border-2 border-dashed border-[#C9FF3D]/60 m-2 rounded-xl bg-black/10">
-                <div className="flex items-center justify-between">
-                  <span className="bg-[#101412]/80 text-[#C9FF3D] px-2.5 py-1 rounded-md text-[10px] font-mono font-bold tracking-wider uppercase backdrop-blur-xs flex items-center gap-1">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#C9FF3D] animate-ping" />
-                    CV Bounding Box: Front Left Crushing Detected (96.4%)
-                  </span>
-                  <span className="bg-[#101412]/80 text-white px-2 py-0.5 rounded-md text-[10px] font-mono backdrop-blur-xs">
-                    PyTorch ResNet-18
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-[10px] font-mono text-white/90">
-                  <span className="bg-black/60 px-2 py-0.5 rounded-md backdrop-blur-xs">
-                    Edge Contrast Density: High
-                  </span>
-                  <span className="bg-black/60 px-2 py-0.5 rounded-md backdrop-blur-xs text-[#C9FF3D]">
-                    Severity Score: {result.damage.damage_score}/100
-                  </span>
+                {/* Computer Vision HUD Bounding Box Visual Overlay */}
+                <div className="absolute inset-0 pointer-events-none p-3 flex flex-col justify-between border-2 border-dashed border-[#C9FF3D]/60 m-2 rounded-xl bg-black/10">
+                  <div className="flex items-center justify-between">
+                    <span className="bg-[#101412]/80 text-[#C9FF3D] px-2.5 py-1 rounded-md text-[10px] font-mono font-bold tracking-wider uppercase backdrop-blur-xs flex items-center gap-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#C9FF3D] animate-ping" />
+                      CV Bounding Box: Front Left Crushing Detected (96.4%)
+                    </span>
+                    <span className="bg-[#101412]/80 text-white px-2 py-0.5 rounded-md text-[10px] font-mono backdrop-blur-xs">
+                      PyTorch ResNet-18
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-[10px] font-mono text-white/90">
+                    <span className="bg-black/60 px-2 py-0.5 rounded-md backdrop-blur-xs">
+                      Edge Contrast Density: High
+                    </span>
+                    <span className="bg-black/60 px-2 py-0.5 rounded-md backdrop-blur-xs text-[#C9FF3D]">
+                      Severity Score: {result.damage.damage_score}/100
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
+
 
           <div className="flex items-center justify-between text-xs text-[#173B32]/70 font-medium">
             <span>CV Method: {result.damage.method}</span>

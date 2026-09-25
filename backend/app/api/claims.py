@@ -75,36 +75,7 @@ def get_high_risk_claims_endpoint(
     current_user: User = Depends(get_current_user)
 ):
     claims = get_high_risk_claims(db, limit=limit, exclude_seed=exclude_seed)
-    res = []
-    for c in claims:
-        # Re-compute SHAP factors for detail response
-        claim_dict = {
-            "age": c.age,
-            "vehicle_price": c.vehicle_price,
-            "claim_amount": c.claim_amount,
-            "vehicle_age": c.vehicle_age,
-            "past_claims": c.past_claims,
-            "driver_rating": c.driver_rating,
-            "policy_type": c.policy_type,
-            "fault": c.fault,
-            "accident_area": c.accident_area,
-            "police_report_filed": c.police_report_filed,
-            "witness_present": c.witness_present,
-            "incident_severity": c.incident_severity
-        }
-        _, _, top_f = predict_fraud(claim_dict)
-        top_factors_list = [FraudFactor(**f) for f in top_f]
-        if getattr(c, "forensic_penalty", 0) > 0:
-            top_factors_list.insert(0, FraudFactor(
-                feature="image_forensics",
-                name="Image Forensics (Missing EXIF / Web Asset)",
-                contribution=1.850,
-                effect="increases_risk"
-            ))
-        c_res = ClaimResponse.model_validate(c)
-        c_res.top_factors = top_factors_list
-        res.append(c_res)
-    return res
+    return [ClaimResponse.model_validate(c) for c in claims]
 
 @router.get("/history", response_model=list[ClaimResponse])
 def get_claims_history_endpoint(
@@ -115,36 +86,8 @@ def get_claims_history_endpoint(
     current_user: User = Depends(get_current_user)
 ):
     claims = get_claims_history(db, limit=limit, query=q, exclude_seed=exclude_seed)
+    return [ClaimResponse.model_validate(c) for c in claims]
 
-    res = []
-    for c in claims:
-        claim_dict = {
-            "age": c.age,
-            "vehicle_price": c.vehicle_price,
-            "claim_amount": c.claim_amount,
-            "vehicle_age": c.vehicle_age,
-            "past_claims": c.past_claims,
-            "driver_rating": c.driver_rating,
-            "policy_type": c.policy_type,
-            "fault": c.fault,
-            "accident_area": c.accident_area,
-            "police_report_filed": c.police_report_filed,
-            "witness_present": c.witness_present,
-            "incident_severity": c.incident_severity
-        }
-        _, _, top_f = predict_fraud(claim_dict)
-        top_factors_list = [FraudFactor(**f) for f in top_f]
-        if getattr(c, "forensic_penalty", 0) > 0:
-            top_factors_list.insert(0, FraudFactor(
-                feature="image_forensics",
-                name="Image Forensics (Missing EXIF / Web Asset)",
-                contribution=1.850,
-                effect="increases_risk"
-            ))
-        c_res = ClaimResponse.model_validate(c)
-        c_res.top_factors = top_factors_list
-        res.append(c_res)
-    return res
 
 @router.get("/{claim_id}", response_model=ClaimResponse)
 def get_claim_by_id_endpoint(

@@ -109,11 +109,11 @@ def analyze_damage_image(image_bytes: bytes) -> dict | None:
         
         # 0. Digital Image Forensics & EXIF Telemetry Inspection
         exif_data = raw_pil.getexif()
-        has_camera_exif = bool(exif_data and len(exif_data) > 0)
+        camera_hardware_tags = [0x010F, 0x0110, 0x0132, 0x9003, 0x829A]  # Make, Model, DateTime, DateTimeOriginal, ExposureTime
+        has_camera_exif = bool(exif_data and any(tag in exif_data for tag in camera_hardware_tags))
         
-        # Check image format & info headers for web downloader artifacts
-        info_keys = [str(k).lower() for k in raw_pil.info]
-        is_web_asset = (not has_camera_exif) or any(k in info_keys for k in ["jfif", "adobe", "icc_profile"]) or (raw_pil.format in ["WEBP", "GIF"])
+        # Flag web-downloaded stock photos, stripped assets, or web formats
+        is_web_asset = (not has_camera_exif) or (raw_pil.format in ["WEBP", "GIF"])
 
         forensic_status = "PASSED_ORIGINAL_CAMERA_TELEMETRY" if has_camera_exif else "MISSING_CAMERA_EXIF_METADATA"
         forensic_warning = "Verified Live Smartphone Camera Asset" if has_camera_exif else "No Original Camera EXIF Metadata Found (Possible Web/Downloaded Stock Image)"
