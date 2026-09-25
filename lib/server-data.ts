@@ -228,6 +228,18 @@ export async function getClaimById(claimId: number) {
       registerSubmittedClaim(parsed);
       return parsed;
     }
+    const all = cookieStore.getAll();
+    for (const c of all) {
+      if (c.name.startsWith("cs_claim_")) {
+        try {
+          const parsed = JSON.parse(decodeURIComponent(c.value));
+          if (parsed && (Number(parsed.id) === Number(claimId) || Number(parsed.claim_id) === Number(claimId))) {
+            registerSubmittedClaim(parsed);
+            return parsed;
+          }
+        } catch {}
+      }
+    }
   } catch (e) {
     // ignore
   }

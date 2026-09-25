@@ -176,9 +176,13 @@ export default function NewClaimPage() {
         localStorage.setItem("cs_local_claims", JSON.stringify(list.slice(0, 50)));
       } catch {}
 
-      // 3. Set cookie for SSR hydration
+      // 3. Set cookie for SSR hydration (strip bulky base64 to respect 4KB limit)
       try {
-        document.cookie = `cs_claim_${claimId}=${encodeURIComponent(JSON.stringify(claimRecord))}; path=/; max-age=86400; SameSite=Lax`;
+        const cookieRecord = { ...claimRecord };
+        if (cookieRecord.image_data && typeof cookieRecord.image_data === "string" && cookieRecord.image_data.startsWith("data:")) {
+          delete cookieRecord.image_data;
+        }
+        document.cookie = `cs_claim_${claimId}=${encodeURIComponent(JSON.stringify(cookieRecord))}; path=/; max-age=86400; SameSite=Lax`;
       } catch {}
 
       // 4. Dispatch live event
