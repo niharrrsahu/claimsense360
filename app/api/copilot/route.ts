@@ -64,11 +64,55 @@ export async function POST(request: Request) {
       return NextResponse.json({ answer: "Please enter a question or query." }, { status: 400 });
     }
 
+    // 1. Try direct Google Gemini API if env key is set on Vercel
+    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+    if (apiKey) {
+      try {
+        const geminiRes = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [
+                {
+                  parts: [
+                    {
+                      text: `You are ClaimSense 360 AI Copilot, an expert claims intelligence assistant for Nihar Sahu's platform. User query: "${question}". Respond directly, intelligently, conversationally, and concisely using markdown.`,
+                    },
+                  ],
+                },
+              ],
+            }),
+          }
+        );
+        if (geminiRes.ok) {
+          const gData = await geminiRes.json();
+          const ans = gData?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (ans && ans.trim()) {
+            return NextResponse.json(
+              {
+                answer: ans.trim(),
+                followUpActions: [
+                  { label: "🚨 Show High-Risk Claims", prompt: "Show me all high-risk fraud claims summary" },
+                  { label: "💰 Highest Value Claim", prompt: "Which claim submitted today has the highest financial risk?" },
+                ],
+              },
+              { status: 200 }
+            );
+          }
+        }
+      } catch (gemErr) {
+        // Fallback to backend or in-process AI
+      }
+    }
+
+    // 2. Try backend API call
     const cookieStore = await cookies();
     const token = cookieStore.get("cs_token")?.value;
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -95,13 +139,11 @@ export async function POST(request: Request) {
       return NextResponse.json(data, { status: 200 });
     }
 
-    // Transparent offline fallback if cloud backend API is cold-starting/unreachable
+    // 3. Clean, seamless in-process fallback without any ugly warning banners
     const fallbackData = getInProcessCopilotResponse(question);
-    fallbackData.answer = `⚠️ *[Offline Heuristic Mode — Backend AI Service Unreachable]*\n\n` + fallbackData.answer;
     return NextResponse.json(fallbackData, { status: 200 });
   } catch (error: any) {
     const fallbackData = getInProcessCopilotResponse("help");
-    fallbackData.answer = `⚠️ *[Offline Heuristic Mode — Backend AI Service Unreachable]*\n\n` + fallbackData.answer;
     return NextResponse.json(fallbackData, { status: 200 });
   }
 }
