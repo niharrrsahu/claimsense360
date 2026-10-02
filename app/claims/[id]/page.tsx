@@ -105,11 +105,11 @@ export default async function SingleClaimPage({
               >
                 <ArrowLeft className="h-4 w-4" /> Back to Claims Directory
               </Link>
-              <div className="mt-2 flex items-center gap-3">
-                <h1 className="text-3xl font-serif font-bold text-[#173B32]">
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <h1 className="text-2xl sm:text-3xl font-sans font-extrabold text-[#173B32] tracking-tight">
                   Claim CLM-{String(claim.id).padStart(5, "0")}
                 </h1>
-                <span className="rounded-full bg-[#173B32] px-3.5 py-1 text-xs font-bold text-[#C9FF3D]">
+                <span className="rounded-full bg-[#173B32] px-3.5 py-1 text-xs font-extrabold text-[#C9FF3D] border border-[#C9FF3D]/30 shadow-xs">
                   {claim.risk_band}
                 </span>
               </div>
@@ -117,9 +117,10 @@ export default async function SingleClaimPage({
 
             <Link
               href={`/copilot?q=${encodeURIComponent(`Explain claim #${claim.id} for ${claim.customer_name}`)}`}
-              className="flex items-center gap-2 rounded-2xl bg-[#173B32] hover:bg-[#23584b] px-5 py-3 text-xs font-bold text-[#C9FF3D] shadow-md transition active:scale-95"
+              className="flex items-center gap-2 rounded-2xl bg-[#173B32] hover:bg-[#23584b] px-5 py-3 text-xs font-extrabold shadow-md transition active:scale-95 border border-[#C9FF3D]/20 cursor-pointer shrink-0"
             >
-              <Brain className="h-4 w-4 text-[#C9FF3D]" /> Ask Copilot About Claim #{claim.id}
+              <Brain className="h-4 w-4 text-[#C9FF3D] shrink-0" />
+              <span className="text-[#C9FF3D] font-extrabold">Ask Copilot About Claim #{claim.id}</span>
             </Link>
 
           </div>
