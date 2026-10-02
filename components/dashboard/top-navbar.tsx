@@ -149,7 +149,7 @@ export default function TopNavbar({
             </div>
             <div className="hidden sm:block text-left">
               <h3 className="text-xs font-bold text-[#173B32] leading-none">
-                {userName}
+                {safeUserName}
               </h3>
               <p className="text-[10px] text-[#173B32]/60 mt-0.5 capitalize font-medium">
                 {userRole}

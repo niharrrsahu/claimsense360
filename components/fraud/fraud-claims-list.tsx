@@ -129,7 +129,7 @@ export default function FraudClaimsList({ highRiskClaims }: FraudClaimsListProps
                 </Link>
 
                 <Link
-                  href={`/copilot?copilot_claim=${claim.id}`}
+                  href={`/copilot?q=${encodeURIComponent(`Explain high risk claim #${claim.id} for ${claim.customer_name}`)}`}
                   className="flex items-center gap-1.5 rounded-xl bg-[#173B32] hover:bg-[#23584b] px-4 py-2.5 text-xs font-bold text-[#C9FF3D] shadow-sm transition active:scale-95 group-hover:scale-105"
                 >
                   <span className="text-[#C9FF3D] font-bold">🤖 AI Copilot Query</span>

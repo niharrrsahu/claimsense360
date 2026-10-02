@@ -116,7 +116,7 @@ export default async function SingleClaimPage({
             </div>
 
             <Link
-              href={`/copilot?copilot_claim=${claim.id}`}
+              href={`/copilot?q=${encodeURIComponent(`Explain claim #${claim.id} for ${claim.customer_name}`)}`}
               className="flex items-center gap-2 rounded-2xl bg-[#173B32] hover:bg-[#23584b] px-5 py-3 text-xs font-bold text-[#C9FF3D] shadow-md transition active:scale-95"
             >
               <Brain className="h-4 w-4 text-[#C9FF3D]" /> Ask Copilot About Claim #{claim.id}
