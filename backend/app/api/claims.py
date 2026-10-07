@@ -21,6 +21,9 @@ from app.services.claims_service import (
     get_claims_summary_stats,
     get_high_risk_claims,
 )
+from app.services.graph_fraud import detect_fraud_rings
+from app.services.fairness_monitor import audit_algorithmic_fairness
+from app.services.ocr_service import extract_text_from_claim_document
 
 router = APIRouter(
     prefix="/claims",
@@ -88,6 +91,27 @@ def get_claims_history_endpoint(
     claims = get_claims_history(db, limit=limit, query=q, exclude_seed=exclude_seed)
     return [ClaimResponse.model_validate(c) for c in claims]
 
+@router.get("/graph/fraud-rings")
+def get_fraud_rings_graph_endpoint(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return detect_fraud_rings(db)
+
+@router.get("/fairness/audit")
+def get_fairness_audit_endpoint(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return audit_algorithmic_fairness(db)
+
+@router.post("/ocr/scan")
+async def scan_claim_document_ocr_endpoint(
+    document: UploadFile = File(...),
+    current_user: User = Depends(get_current_user)
+):
+    file_bytes = await document.read()
+    return extract_text_from_claim_document(document.filename, file_bytes)
 
 @router.get("/{claim_id}", response_model=ClaimResponse)
 def get_claim_by_id_endpoint(
@@ -128,4 +152,3 @@ def get_claim_by_id_endpoint(
     c_res = ClaimResponse.model_validate(c)
     c_res.top_factors = top_factors_list
     return c_res
-
