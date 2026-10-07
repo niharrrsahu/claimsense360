@@ -11,11 +11,11 @@ from tests.conftest import make_claim
 
 
 def test_copilot_fallback_tag_presence(db_session):
-    """Test that ask_copilot appends transparent fallback notice when API keys are unconfigured."""
+    """Test that ask_copilot returns clean response when API keys are unconfigured."""
     with patch.dict("os.environ", {}, clear=True):
         response = ask_copilot(db=db_session, question="Hello copilot")
-        assert "Powered by rule-based fallback" in response
-        assert "GEMINI_API_KEY" in response
+        assert "ClaimSense 360 AI Copilot" in response
+        assert "Powered by rule-based fallback" not in response
 
 
 def test_copilot_claim_id_lookup(db_session):

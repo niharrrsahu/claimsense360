@@ -84,7 +84,14 @@ def _handle_financial_inquiry(recent_claims: list[Claim], q_lower: str) -> str |
 
 
 def _handle_greeting_inquiry(total_count: int, high_len: int, med_len: int, low_len: int, q_lower: str) -> str | None:
-    if any(kw in q_lower for kw in ["hello", "hi", "hey", "help", "greet", "start", "who", "what"]):
+    # Casual Greetings & Farewell Handlers
+    if any(kw in q_lower for kw in ["bye", "goodbye", "cya", "see ya", "exit", "quit"]):
+        return "👋 **Goodbye! Have a great day.** Feel free to return anytime for claim audits or fraud intelligence insights."
+
+    if any(kw in q_lower for kw in ["thank", "thanks", "thankyou", "thx"]):
+        return "😊 **You're welcome!** Happy to assist with your insurance claims intelligence and fraud audit queries."
+
+    if any(kw in q_lower for kw in ["hello", "hi", "hey", "help", "greet", "start", "who", "what", "ky", "kya", "kaise", "batao", "bata", "tell"]):
         return (
             f"👋 **Welcome! I am your ClaimSense 360 AI Copilot.**\n\n"
             f"I monitor **{total_count} claims** currently stored in your system:\n"
@@ -318,7 +325,5 @@ def ask_copilot(db: Session, question: str, claim_id: int | None = None) -> str:
         if claude_response:
             return claude_response
 
-    # 3. Transparent Fallback: Built-in Heuristic AI Engine
-    fallback_tag = "\n\n_(Powered by rule-based fallback — configure GEMINI_API_KEY for full AI reasoning)_"
-    raw_resp = generate_heuristic_copilot_response(db=db, question=question, claim_id=claim_id)
-    return raw_resp + fallback_tag
+    # 3. Clean Fallback: Built-in Heuristic AI Engine without ugly tags
+    return generate_heuristic_copilot_response(db=db, question=question, claim_id=claim_id)
