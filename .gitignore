@@ -59,3 +59,7 @@ __pycache__/
 yolov8n.pt
 .cache/
 
+
+# Python coverage files
+.coverage
+htmlcov/
