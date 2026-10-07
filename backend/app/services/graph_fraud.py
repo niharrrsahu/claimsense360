@@ -4,7 +4,7 @@ Analyzes relationships between claims (shared policy types, accident areas, driv
 to detect potential fraud rings using network graph analysis.
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict
 from sqlalchemy.orm import Session
 from app.models.claim import Claim
 
@@ -26,8 +26,8 @@ def detect_fraud_rings(db: Session) -> Dict[str, Any]:
             "id": f"claim_{c.id}",
             "label": f"Claim #{c.id}",
             "claim_amount": c.claim_amount,
-            "risk_score": round(float(c.risk_score), 3),
-            "risk_level": c.risk_level,
+            "risk_score": round(float(getattr(c, "overall_risk_score", getattr(c, "fraud_score", 50.0))), 3),
+            "risk_level": getattr(c, "risk_band", "High risk"),
             "policy_type": c.policy_type,
             "accident_area": c.accident_area,
             "incident_severity": c.incident_severity,
@@ -46,7 +46,10 @@ def detect_fraud_rings(db: Session) -> Dict[str, Any]:
             if c1.incident_severity == c2.incident_severity and c1.incident_severity in ["Major Damage", "Total Loss"]:
                 shared_attrs.append("high_severity")
 
-            if len(shared_attrs) >= 2 and (c1.risk_level == "HIGH" or c2.risk_level == "HIGH"):
+            is_c1_high = getattr(c1, "risk_band", "").lower().startswith("high") or getattr(c1, "fraud_score", 0) >= 50.0
+            is_c2_high = getattr(c2, "risk_band", "").lower().startswith("high") or getattr(c2, "fraud_score", 0) >= 50.0
+
+            if len(shared_attrs) >= 2 and (is_c1_high or is_c2_high):
                 edge_id = f"claim_{c1.id}-claim_{c2.id}"
                 if edge_id not in edge_set:
                     edge_set.add(edge_id)
@@ -58,7 +61,10 @@ def detect_fraud_rings(db: Session) -> Dict[str, Any]:
                     })
 
     # Group connected high risk nodes into clusters
-    high_risk_ids = {f"claim_{c.id}" for c in claims if c.risk_level == "HIGH"}
+    high_risk_ids = {
+        f"claim_{c.id}" for c in claims
+        if getattr(c, "risk_band", "").lower().startswith("high") or getattr(c, "fraud_score", 0) >= 50.0
+    }
     fraud_rings = []
     visited = set()
 

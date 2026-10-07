@@ -22,7 +22,6 @@ def audit_algorithmic_fairness(db: Session) -> Dict[str, Any]:
             "bias_mitigation_status": "Passed (Default Baseline)"
         }
 
-    # Group high risk rates by Policy Type
     policy_counts = {}
     policy_high_risk = {}
 
@@ -32,12 +31,13 @@ def audit_algorithmic_fairness(db: Session) -> Dict[str, Any]:
     for c in claims:
         pt = c.policy_type or "Standard"
         policy_counts[pt] = policy_counts.get(pt, 0) + 1
-        if c.risk_level == "HIGH":
+        is_high = getattr(c, "risk_band", "").lower().startswith("high") or getattr(c, "fraud_score", 0) >= 50.0
+        if is_high:
             policy_high_risk[pt] = policy_high_risk.get(pt, 0) + 1
 
         dr = f"Rating_{c.driver_rating}"
         driver_counts[dr] = driver_counts.get(dr, 0) + 1
-        if c.risk_level == "HIGH":
+        if is_high:
             driver_high_risk[dr] = driver_high_risk.get(dr, 0) + 1
 
     policy_rates = {
@@ -50,7 +50,6 @@ def audit_algorithmic_fairness(db: Session) -> Dict[str, Any]:
         for dr, count in driver_counts.items()
     }
 
-    # Disparate Impact Ratio (80% Rule of Fairness)
     max_policy_rate = max(policy_rates.values()) if policy_rates else 1.0
     min_policy_rate = min(policy_rates.values()) if policy_rates else 1.0
     disparate_impact_policy = round(min_policy_rate / max_policy_rate, 3) if max_policy_rate > 0 else 1.0

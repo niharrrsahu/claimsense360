@@ -372,11 +372,13 @@ def validate_copilot_module() -> dict:
     Validates that the AI Copilot delivers deep, mathematically grounded,
     actionable insights rather than generic descriptions.
     """
+    from app.database.init_db import init_db
     from app.database.database import SessionLocal
     from app.models.claim import Claim
     from app.services.copilot_service import ask_copilot, generate_heuristic_copilot_response
     from app.services.claims_service import seed_initial_claims_if_empty
 
+    init_db()
     db = SessionLocal()
     try:
         seed_initial_claims_if_empty(db)
