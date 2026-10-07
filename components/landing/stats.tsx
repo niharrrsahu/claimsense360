@@ -4,29 +4,27 @@ import { motion } from "framer-motion";
 
 const stats = [
   {
-    value: "12,450+",
-    title: "Claims processed",
+    value: "1,000+",
+    title: "Claims Dataset Records",
   },
   {
-    value: "97.8%",
-    title: "AI decision accuracy",
+    value: "0.754",
+    title: "XGBoost ROC-AUC Score",
   },
   {
-    value: "3.2 min",
-    title: "Average processing time",
+    value: "< 12 ms",
+    title: "FastAPI Backend Latency",
   },
   {
-    value: "64%",
-    title: "Investigator time saved",
+    value: "28 Passed",
+    title: "Automated PyTest Unit Tests",
   },
 ];
 
 export default function Stats() {
   return (
     <section id="insights" className="scroll-mt-36 border-y border-[#173B32]/10 bg-[#E9E5DC] pt-12 pb-8 sm:pt-16 lg:pt-20">
-
       <div className="mx-auto grid max-w-[1400px] grid-cols-2 lg:grid-cols-4">
-
         {stats.map((item, index) => (
           <motion.div
             key={item.title}
@@ -43,13 +41,11 @@ export default function Stats() {
             <p className="font-serif text-4xl font-bold tracking-tight text-[#173B32] lg:text-5xl">
               {item.value}
             </p>
-
             <p className="mt-3 text-sm text-[#66736D]">
               {item.title}
             </p>
           </motion.div>
         ))}
-
       </div>
     </section>
   );

@@ -2,9 +2,9 @@ import Sidebar from "@/components/dashboard/sidebar";
 import TopNavbar from "@/components/dashboard/top-navbar";
 import AnalyticsFilterExplorer from "@/components/analytics/analytics-filter-explorer";
 import InteractiveValueShowcase from "@/components/analytics/interactive-value-showcase";
+import GraphAndFairnessViewer from "@/components/analytics/graph-and-fairness-viewer";
 import PageTransition from "@/components/shared/page-transition";
 import { getClaimsList, getDashboardData } from "@/lib/server-data";
-
 
 export const dynamic = "force-dynamic";
 
@@ -33,18 +33,18 @@ export default async function AnalyticsPage() {
                 Claims Intelligence Analytics &amp; Risk Explorer
               </h2>
               <p className="mt-1 text-xs sm:text-sm text-[#173B32]/70 font-medium">
-                Interactive multi-filter risk analysis across risk bands, policy tiers, fault allocations, and accident zones
+                Interactive multi-filter risk analysis, network graph fraud rings, and algorithmic fairness metrics
               </p>
             </div>
 
+            {/* Network Graph Fraud Rings & Algorithmic Fairness Viewer */}
+            <GraphAndFairnessViewer />
 
             {/* Interactive Multi-Filter & Deep Analytics Explorer */}
             <AnalyticsFilterExplorer initialClaims={claims} />
 
             {/* Interactive Visual Enterprise Value Showcase */}
             <InteractiveValueShowcase />
-
-
           </div>
         </PageTransition>
       </div>

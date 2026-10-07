@@ -31,12 +31,10 @@ export async function POST(request: Request) {
       clearTimeout(timeoutId);
     } catch (fetchErr: any) {
       clearTimeout(timeoutId);
-      console.warn("Backend signup unreachable, using fallback session:", fetchErr);
+      console.warn("Backend signup request failed:", fetchErr);
     }
 
     if (regRes && regRes.ok) {
-
-      // Try backend auto-login
       try {
         const loginRes = await fetch(`${API_BASE_URL}/auth/login`, {
           method: "POST",
@@ -76,38 +74,7 @@ export async function POST(request: Request) {
         console.error("Auto-login after registration failed:", loginErr);
       }
 
-      // Registration succeeded, redirect user to login
       return NextResponse.json({ ok: true, redirect: "/login", message: "Account created successfully. Please log in." });
-    }
-
-    // If backend is unavailable, cold-starting, or 404, provide smooth client session
-    if (!regRes?.ok && email && password && password.length >= 8) {
-      const fallbackToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ${Buffer.from(email).toString("base64")}IiwiaWQiOjEsImV4cCI6OTk5OTk5OTk5OX0.claimsense_secure_token`;
-      const response = NextResponse.json({ ok: true, redirect: "/dashboard" });
-      response.cookies.set({
-        name: "cs_token",
-        value: fallbackToken,
-        httpOnly: true,
-        path: "/",
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 86400,
-      });
-
-      response.cookies.set({
-        name: "cs_user_info",
-        value: JSON.stringify({
-          full_name: full_name || "Claims Adjuster",
-          email: email,
-          role: "User",
-        }),
-        httpOnly: false,
-        path: "/",
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 86400,
-      });
-      return response;
     }
 
     let detail = "Registration failed. An account with this email may already exist.";
@@ -123,8 +90,6 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ error: detail }, { status });
-
-
   } catch (error: any) {
     return NextResponse.json(
       { error: error?.message || "Internal server error" },
@@ -132,4 +97,3 @@ export async function POST(request: Request) {
     );
   }
 }
-
