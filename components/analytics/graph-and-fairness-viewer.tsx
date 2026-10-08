@@ -69,11 +69,11 @@ export default function GraphAndFairnessViewer() {
               <span className="text-[#E66A4E]">High Exposure</span>
             </div>
             <div className="flex flex-wrap gap-2">
-              <span className="rounded-md bg-[#173B32] text-white px-2.5 py-1 text-[11px] font-bold">
-                Claim #1 (High Risk - ₹4,50,000)
+              <span className="rounded-md bg-[#173B32] text-white px-2.5 py-1 text-[11px] font-bold font-sans">
+                CLM-06488 (High Risk - ₹4,50,000)
               </span>
-              <span className="rounded-md bg-[#173B32] text-white px-2.5 py-1 text-[11px] font-bold">
-                Claim #4 (High Risk - ₹6,20,000)
+              <span className="rounded-md bg-[#173B32] text-white px-2.5 py-1 text-[11px] font-bold font-sans">
+                CLM-06489 (High Risk - ₹6,20,000)
               </span>
             </div>
             <p className="mt-2 text-[11px] text-[#66736D] font-sans">

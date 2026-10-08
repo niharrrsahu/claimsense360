@@ -129,9 +129,9 @@ export async function getClaimsHistory(limit: number = 50, query?: string | null
     }
   }
 
-  // 4. Fallback: Only if completely empty (e.g. fresh environment without backend)
-  if (combined.length === 0) {
-    combined.push(
+  // 4. Fallback: Populate realistic diverse claims if array lacks variety
+  if (combined.length < 5) {
+    const defaultSeeds = [
       {
         id: 6488,
         customer_name: "Nihar Sahu",
@@ -149,14 +149,14 @@ export async function getClaimsHistory(limit: number = 50, query?: string | null
         witness_present: true,
         incident_severity: "Major Damage",
         incident_description: "Driving on city main road near intersection when another vehicle swerved without signaling. Heavy front left bumper crushing, grill detachment, and headlight assembly damage reported. Police report filed.",
-        narrative_suspicion_score: 65.0,
-        fraud_probability: 0.366,
-        fraud_score: 36.6,
-        overall_risk_score: 36.6,
-        risk_band: "Medium risk",
-        recommended_action: "Send to investigator",
+        narrative_suspicion_score: 29.8,
+        fraud_probability: 0.298,
+        fraud_score: 29.8,
+        overall_risk_score: 29.8,
+        risk_band: "Low risk",
+        recommended_action: "Approve automatically",
         damage_severity: "Major Damage",
-        damage_score: 61.1,
+        damage_score: 45.0,
         created_at: new Date().toISOString(),
       },
       {
@@ -180,13 +180,100 @@ export async function getClaimsHistory(limit: number = 50, query?: string | null
         fraud_probability: 0.15,
         fraud_score: 15.0,
         overall_risk_score: 15.0,
-        risk_band: "Low risk",
+        risk_band: "Ultra-Low risk",
         recommended_action: "Approve automatically",
         damage_severity: "Minor Damage",
         damage_score: 22.0,
         created_at: new Date(Date.now() - 3600000).toISOString(),
+      },
+      {
+        id: 6489,
+        customer_name: "Shatakshi Verma",
+        vehicle_make_model: "Mahindra XUV700 AX7 (2022)",
+        age: 30,
+        vehicle_price: 2100000,
+        claim_amount: 180000,
+        vehicle_age: 2,
+        past_claims: 2,
+        driver_rating: 3,
+        policy_type: "Comprehensive",
+        fault: "Policy Holder",
+        accident_area: "Highway",
+        police_report_filed: true,
+        witness_present: false,
+        incident_severity: "Major Damage",
+        incident_description: "Highway rollover collision late at night with delayed FIR filing. Suspicious narrative mismatch.",
+        narrative_suspicion_score: 74.5,
+        fraud_probability: 0.745,
+        fraud_score: 74.5,
+        overall_risk_score: 74.5,
+        risk_band: "High risk",
+        recommended_action: "Send to SIU Investigator",
+        damage_severity: "Major Damage",
+        damage_score: 82.0,
+        created_at: new Date(Date.now() - 7200000).toISOString(),
+      },
+      {
+        id: 6490,
+        customer_name: "Shaun D'Souza",
+        vehicle_make_model: "Kia Seltos GTX+ (2021)",
+        age: 29,
+        vehicle_price: 1600000,
+        claim_amount: 62000,
+        vehicle_age: 3,
+        past_claims: 0,
+        driver_rating: 5,
+        policy_type: "Comprehensive",
+        fault: "Third Party",
+        accident_area: "Urban",
+        police_report_filed: true,
+        witness_present: true,
+        incident_severity: "Minor Damage",
+        incident_description: "Side mirror broken by passing cyclist in traffic congestion.",
+        narrative_suspicion_score: 12.0,
+        fraud_probability: 0.12,
+        fraud_score: 12.0,
+        overall_risk_score: 12.0,
+        risk_band: "Ultra-Low risk",
+        recommended_action: "Approve automatically",
+        damage_severity: "Minor Damage",
+        damage_score: 18.0,
+        created_at: new Date(Date.now() - 10800000).toISOString(),
+      },
+      {
+        id: 6491,
+        customer_name: "Rahul Sharma",
+        vehicle_make_model: "Tata Nexon EV Max (2023)",
+        age: 35,
+        vehicle_price: 1750000,
+        claim_amount: 110000,
+        vehicle_age: 1,
+        past_claims: 0,
+        driver_rating: 4,
+        policy_type: "Zero-Dep",
+        fault: "Third Party",
+        accident_area: "Urban",
+        police_report_filed: true,
+        witness_present: true,
+        incident_severity: "Moderate Damage",
+        incident_description: "Front right fender dented during parking entry.",
+        narrative_suspicion_score: 22.5,
+        fraud_probability: 0.225,
+        fraud_score: 22.5,
+        overall_risk_score: 22.5,
+        risk_band: "Low risk",
+        recommended_action: "Approve automatically",
+        damage_severity: "Moderate Damage",
+        damage_score: 35.0,
+        created_at: new Date(Date.now() - 14400000).toISOString(),
+      },
+    ];
+
+    for (const seed of defaultSeeds) {
+      if (!combined.some((item) => item.id === seed.id)) {
+        combined.push(seed);
       }
-    );
+    }
   }
 
   // Filter if query is provided

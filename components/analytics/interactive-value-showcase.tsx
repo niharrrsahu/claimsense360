@@ -22,12 +22,12 @@ export default function InteractiveValueShowcase() {
         <div>
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-[#E66A4E]" />
-            <span className="rounded-full bg-[#173B32]/10 px-3 py-0.5 text-xs font-bold text-[#173B32] uppercase tracking-wider">
-              Interactive Enterprise Value Matrix
+            <span className="rounded-full bg-[#173B32]/10 px-3 py-0.5 text-xs font-bold text-[#173B32] uppercase tracking-wider font-sans">
+              System Impact &amp; ML Evaluation Matrix
             </span>
           </div>
-          <h3 className="mt-2 text-xl font-serif font-bold text-[#173B32]">
-            Why Insurance Leaders Choose ClaimSense 360
+          <h3 className="mt-2 text-xl font-sans font-bold text-[#173B32]">
+            ClaimSense360 Automation &amp; Explainability Benchmarks
           </h3>
         </div>
 
@@ -36,7 +36,7 @@ export default function InteractiveValueShowcase() {
           <button
             type="button"
             onClick={() => setActiveTab("speed")}
-            className={`flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 whitespace-nowrap ${
+            className={`flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 whitespace-nowrap font-sans ${
               activeTab === "speed"
                 ? "bg-[#173B32] text-[#C9FF3D] shadow-sm"
                 : "text-[#173B32]/70 hover:bg-[#173B32]/10 hover:text-[#173B32]"
@@ -48,19 +48,19 @@ export default function InteractiveValueShowcase() {
           <button
             type="button"
             onClick={() => setActiveTab("fraud")}
-            className={`flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 whitespace-nowrap ${
+            className={`flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 whitespace-nowrap font-sans ${
               activeTab === "fraud"
                 ? "bg-[#173B32] text-[#C9FF3D] shadow-sm"
                 : "text-[#173B32]/70 hover:bg-[#173B32]/10 hover:text-[#173B32]"
             }`}
           >
-            <ShieldCheck size={14} /> 🛡️ ₹1.8 Cr Fraud Saved
+            <ShieldCheck size={14} /> 🛡️ High Fraud Detection
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab("audit")}
-            className={`flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 whitespace-nowrap ${
+            className={`flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 whitespace-nowrap font-sans ${
               activeTab === "audit"
                 ? "bg-[#173B32] text-[#C9FF3D] shadow-sm"
                 : "text-[#173B32]/70 hover:bg-[#173B32]/10 hover:text-[#173B32]"
@@ -85,17 +85,17 @@ export default function InteractiveValueShowcase() {
             {/* Visual Card 1 */}
             <div className="rounded-2xl border border-[#173B32]/10 bg-[#F4F1EA] p-5 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-[#173B32] uppercase tracking-wider">Cycle Time</span>
-                <span className="rounded-full bg-[#173B32] px-2.5 py-0.5 text-[10px] font-bold text-[#C9FF3D]">
+                <span className="text-xs font-bold text-[#173B32] uppercase tracking-wider font-sans">Cycle Time</span>
+                <span className="rounded-full bg-[#173B32] px-2.5 py-0.5 text-[10px] font-bold text-[#C9FF3D] font-sans">
                   85% Faster
                 </span>
               </div>
-              <h4 className="text-2xl font-serif font-extrabold text-[#173B32]">14 Days → 3 Sec</h4>
-              <p className="text-xs text-[#101412]/80 leading-relaxed font-medium">
+              <h4 className="text-2xl font-sans font-extrabold text-[#173B32]">14 Days → 3 Sec</h4>
+              <p className="text-xs text-[#101412]/80 leading-relaxed font-medium font-sans">
                 Low-risk claims (Score &lt; 30) bypass manual queues and auto-approve instantly for direct customer payout.
               </p>
               <div className="pt-1">
-                <div className="flex justify-between text-[11px] font-bold text-[#173B32] mb-1">
+                <div className="flex justify-between text-[11px] font-bold text-[#173B32] mb-1 font-sans">
                   <span>Auto Approval Rate</span>
                   <span>72.4%</span>
                 </div>
@@ -108,17 +108,17 @@ export default function InteractiveValueShowcase() {
             {/* Visual Card 2 */}
             <div className="rounded-2xl border border-[#173B32]/10 bg-[#F4F1EA] p-5 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-[#173B32] uppercase tracking-wider">Adjuster Workload</span>
-                <span className="rounded-full bg-[#173B32] px-2.5 py-0.5 text-[10px] font-bold text-[#C9FF3D]">
-                  -65% Stress
+                <span className="text-xs font-bold text-[#173B32] uppercase tracking-wider font-sans">Adjuster Workload</span>
+                <span className="rounded-full bg-[#173B32] px-2.5 py-0.5 text-[10px] font-bold text-[#C9FF3D] font-sans">
+                  5x Productivity
                 </span>
               </div>
-              <h4 className="text-2xl font-serif font-extrabold text-[#173B32]">10 Adjusters = 50</h4>
-              <p className="text-xs text-[#101412]/80 leading-relaxed font-medium">
+              <h4 className="text-2xl font-sans font-extrabold text-[#173B32]">5x Adjuster Capacity</h4>
+              <p className="text-xs text-[#101412]/80 leading-relaxed font-medium font-sans">
                 Human agents focus 100% of their time on complex high-risk fraud cases while routine claims clear automatically.
               </p>
               <div className="pt-1">
-                <div className="flex justify-between text-[11px] font-bold text-[#173B32] mb-1">
+                <div className="flex justify-between text-[11px] font-bold text-[#173B32] mb-1 font-sans">
                   <span>Workload Automation</span>
                   <span>65%</span>
                 </div>
@@ -303,11 +303,11 @@ export default function InteractiveValueShowcase() {
       <div className="rounded-2xl border border-[#173B32]/15 bg-[#F4F1EA] p-6 space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#173B32]/10 pb-3">
           <div>
-            <span className="text-[10px] font-bold text-[#E66A4E] uppercase tracking-widest">Interactive Calculator</span>
-            <h4 className="text-lg font-serif font-bold text-[#173B32]">Estimate Your Enterprise ROI &amp; Time Saved</h4>
+            <span className="text-[10px] font-bold text-[#E66A4E] uppercase tracking-widest font-sans">Simulated Impact Analysis</span>
+            <h4 className="text-lg font-sans font-bold text-[#173B32]">Automated Claims Processing Efficiency Estimator</h4>
           </div>
-          <span className="rounded-full bg-[#173B32] px-3 py-1 text-xs font-bold text-[#C9FF3D]">
-            Live Financial Simulator
+          <span className="rounded-full bg-[#173B32] px-3 py-1 text-xs font-bold text-[#C9FF3D] font-sans">
+            Interactive ML Simulator
           </span>
         </div>
 

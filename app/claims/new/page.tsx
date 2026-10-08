@@ -248,9 +248,61 @@ export default function NewClaimPage() {
               className="lg:col-span-7 space-y-6 rounded-3xl border border-[#173B32]/12 bg-white p-4 sm:p-6 lg:p-8 shadow-sm"
             >
 
-              <h3 className="text-xl font-serif font-bold text-[#173B32] border-b border-[#173B32]/10 pb-4 flex items-center gap-2">
-                <FileCheck className="h-5 w-5 text-[#173B32]" /> Claim Intake Details
-              </h3>
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#173B32]/10 pb-4">
+                <h3 className="text-xl font-sans font-bold text-[#173B32] flex items-center gap-2">
+                  <FileCheck className="h-5 w-5 text-[#173B32]" /> Claim Intake Details
+                </h3>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCustomerName("Vikram Malhotra");
+                      setVehicleMakeModel("Kia Seltos GTX+ (2022)");
+                      setClaimAmount(35000);
+                      setVehiclePrice(1650000);
+                      setAge(34);
+                      setVehicleAge(2);
+                      setPastClaims(0);
+                      setDriverRating(5);
+                      setPolicyType("Comprehensive");
+                      setFault("Third Party");
+                      setAccidentArea("Urban");
+                      setIncidentSeverity("Minor Damage");
+                      setPoliceReportFiled(true);
+                      setWitnessPresent(true);
+                      setIncidentDescription("Rear bumper scratched while stationary at traffic light signal when another car tapped from behind. FIR filed.");
+                    }}
+                    className="rounded-xl bg-[#173B32]/10 hover:bg-[#173B32]/20 px-2.5 py-1 text-[11px] font-bold text-[#173B32] transition font-sans"
+                  >
+                    ⚡ Preset: Low Risk
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCustomerName("Ananya Verma");
+                      setVehicleMakeModel("Mahindra XUV700 AX7 (2023)");
+                      setClaimAmount(280000);
+                      setVehiclePrice(2200000);
+                      setAge(26);
+                      setVehicleAge(1);
+                      setPastClaims(3);
+                      setDriverRating(2);
+                      setPolicyType("Comprehensive");
+                      setFault("Policy Holder");
+                      setAccidentArea("Highway");
+                      setIncidentSeverity("Major Damage");
+                      setPoliceReportFiled(false);
+                      setWitnessPresent(false);
+                      setIncidentDescription("Late night highway rollover collision near isolated bypass. Delay in reporting incident by 5 days. No witnesses or police report.");
+                    }}
+                    className="rounded-xl bg-[#E66A4E]/10 hover:bg-[#E66A4E]/20 px-2.5 py-1 text-[11px] font-bold text-[#E66A4E] transition font-sans"
+                  >
+                    🚨 Preset: High Risk
+                  </button>
+                </div>
+              </div>
 
               {error && (
                 <div className="rounded-2xl border border-red-500/20 bg-[#FDF0ED] p-4 text-sm text-red-700">
