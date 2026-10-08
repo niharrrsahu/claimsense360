@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { UserPlus, ArrowRight, AlertCircle, Loader2, FileText, UserCheck, ShieldAlert } from "lucide-react";
+import { ArrowRight, AlertCircle, Loader2 } from "lucide-react";
 import { register } from "@/lib/auth";
 import PageTransition from "@/components/shared/page-transition";
 
@@ -14,7 +14,6 @@ export default function SignupPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"Policyholder" | "Adjuster" | "Admin">("Adjuster");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,20 +32,18 @@ export default function SignupPage() {
       const userInfo = {
         full_name: fullName.trim() || (email.includes("@") ? email.split("@")[0] : "Nihar Sahu"),
         email: email.trim(),
-        role: role,
+        role: "Admin",
       };
 
       try {
         localStorage.setItem("cs_user_info", JSON.stringify(userInfo));
         document.cookie = `cs_user_info=${encodeURIComponent(JSON.stringify(userInfo))}; path=/; max-age=86400; SameSite=Lax`;
       } catch {
-        // ignore storage quota
+        // ignore
       }
 
       await register(fullName, email, password);
-
-      const redirectPath = role === "Policyholder" ? "/claims/new" : role === "Adjuster" ? "/claims" : "/dashboard";
-      window.location.href = redirectPath;
+      window.location.href = "/dashboard";
     } catch (err: any) {
       setError(err?.message || "Registration failed. Email may already be in use.");
       setLoading(false);
@@ -83,111 +80,64 @@ export default function SignupPage() {
                 Join the Future of AI Insurance Auditing.
               </h2>
               <p className="mt-4 text-base leading-7 text-[#66736D]">
-                Create your Role-Based Account to access machine learning fraud prediction, SHAP risk insights, and real-time damage analysis.
+                Create your Claims Intelligence workspace account to access machine learning fraud prediction, SHAP risk insights, and real-time damage analysis.
               </p>
             </div>
 
             <div className="space-y-3 pt-4">
               <div className="flex items-center gap-3 text-xs font-semibold text-[#173B32]">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#173B32]/10 text-[#173B32]">👤</div>
-                <span>Policyholder Account for claim intake &amp; status tracking</span>
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#173B32]/10 text-[#173B32]">✓</div>
+                <span>Instant Claims Adjuster Account Creation</span>
               </div>
               <div className="flex items-center gap-3 text-xs font-semibold text-[#173B32]">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#173B32]/10 text-[#173B32]">🔍</div>
-                <span>Claims Adjuster Account for automated risk verification</span>
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#173B32]/10 text-[#173B32]">✓</div>
+                <span>Role-Based Access Control &amp; Audit Log Security</span>
               </div>
               <div className="flex items-center gap-3 text-xs font-semibold text-[#173B32]">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#173B32]/10 text-[#173B32]">🛡️</div>
-                <span>SIU Admin Account for high-risk fraud investigation</span>
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#173B32]/10 text-[#173B32]">✓</div>
+                <span>Real-Time Database Persistence &amp; AI Analytics</span>
               </div>
             </div>
           </div>
 
           {/* Right Form Card */}
           <div className="flex justify-center w-full">
-            <div className="relative w-full max-w-md rounded-3xl border border-[#173B32]/12 bg-white p-6 sm:p-8 shadow-[0_25px_70px_rgba(23,59,50,0.12)]">
+            <div className="relative w-full max-w-md rounded-3xl border border-[#173B32]/12 bg-white p-8 sm:p-10 shadow-[0_25px_70px_rgba(23,59,50,0.12)]">
               <div>
                 <Link href="/" title="Go to Homepage" className="inline-block">
                   <motion.button
                     type="button"
                     whileHover={{ scale: 1.15, rotate: 8 }}
                     whileTap={{ scale: 0.9, rotate: -8 }}
-                    className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#101412] shadow-md hover:ring-2 hover:ring-[#C9FF3D] transition-all cursor-pointer"
+                    className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#101412] shadow-md hover:ring-2 hover:ring-[#C9FF3D] transition-all cursor-pointer"
                   >
-                    <span className="text-base font-black text-[#C9FF3D]">CS</span>
+                    <span className="text-lg font-black text-[#C9FF3D]">CS</span>
                   </motion.button>
                 </Link>
 
-                <p className="mt-3 text-[11px] font-bold uppercase tracking-[0.18em] text-[#173B32]/70">
+                <p className="mt-4 text-xs font-bold uppercase tracking-[0.18em] text-[#173B32]/70">
                   Create Account
                 </p>
                 <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#173B32]">
                   Get Started with ClaimSense 360
                 </h1>
-                <p className="mt-1 text-xs text-[#66736D] font-medium leading-relaxed">
-                  Select your role and enter your details to create an account.
+                <p className="mt-1.5 text-xs text-[#66736D] font-medium leading-relaxed">
+                  Enter your details to create your AI claims workspace account.
                 </p>
-              </div>
-
-              {/* Role Selection Toggle */}
-              <div className="mt-4">
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#173B32]/70 mb-1.5">
-                  Account Role
-                </label>
-                <div className="grid grid-cols-3 gap-1 rounded-2xl bg-[#F4F1EA] p-1 border border-[#173B32]/10">
-                  <button
-                    type="button"
-                    onClick={() => setRole("Policyholder")}
-                    className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl text-[10px] font-bold transition-all ${
-                      role === "Policyholder"
-                        ? "bg-[#173B32] text-[#C9FF3D] shadow-sm"
-                        : "text-[#66736D] hover:text-[#173B32]"
-                    }`}
-                  >
-                    <FileText size={13} className="mb-0.5" />
-                    Policyholder
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setRole("Adjuster")}
-                    className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl text-[10px] font-bold transition-all ${
-                      role === "Adjuster"
-                        ? "bg-[#173B32] text-[#C9FF3D] shadow-sm"
-                        : "text-[#66736D] hover:text-[#173B32]"
-                    }`}
-                  >
-                    <UserCheck size={13} className="mb-0.5" />
-                    Adjuster
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setRole("Admin")}
-                    className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl text-[10px] font-bold transition-all ${
-                      role === "Admin"
-                        ? "bg-[#173B32] text-[#C9FF3D] shadow-sm"
-                        : "text-[#66736D] hover:text-[#173B32]"
-                    }`}
-                  >
-                    <ShieldAlert size={13} className="mb-0.5" />
-                    SIU Admin
-                  </button>
-                </div>
               </div>
 
               {/* Error Banner */}
               {error && (
-                <div className="mt-4 flex items-center gap-2.5 rounded-2xl border border-red-500/20 bg-red-500/10 p-3 text-xs text-red-700 font-medium">
+                <div className="mt-6 flex items-center gap-3 rounded-2xl border border-red-500/20 bg-red-500/10 p-4 text-xs text-red-700 font-medium">
                   <AlertCircle className="h-4 w-4 shrink-0 text-red-600" />
                   <span>{error}</span>
                 </div>
               )}
 
               {/* Form */}
-              <form onSubmit={handleSubmit} className="mt-4 space-y-3">
+              <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#173B32]/70">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#173B32]/70">
                     Full Name
                   </label>
                   <input
@@ -196,12 +146,12 @@ export default function SignupPage() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Priya Sharma"
-                    className="mt-1 w-full rounded-2xl border border-[#173B32]/15 bg-[#F4F1EA] px-3.5 py-2.5 text-sm text-[#101412] placeholder-gray-400 outline-none transition focus:border-[#173B32] focus:bg-white"
+                    className="mt-2 w-full rounded-2xl border border-[#173B32]/15 bg-[#F4F1EA] px-4 py-3.5 text-sm text-[#101412] placeholder-gray-400 outline-none transition focus:border-[#173B32] focus:bg-white focus:ring-1 focus:ring-[#173B32]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#173B32]/70">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#173B32]/70">
                     Email Address
                   </label>
                   <input
@@ -210,12 +160,12 @@ export default function SignupPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="priya@claimsense.ai"
-                    className="mt-1 w-full rounded-2xl border border-[#173B32]/15 bg-[#F4F1EA] px-3.5 py-2.5 text-sm text-[#101412] placeholder-gray-400 outline-none transition focus:border-[#173B32] focus:bg-white"
+                    className="mt-2 w-full rounded-2xl border border-[#173B32]/15 bg-[#F4F1EA] px-4 py-3.5 text-sm text-[#101412] placeholder-gray-400 outline-none transition focus:border-[#173B32] focus:bg-white focus:ring-1 focus:ring-[#173B32]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#173B32]/70">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#173B32]/70">
                     Password (min 8 chars)
                   </label>
                   <input
@@ -225,20 +175,20 @@ export default function SignupPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="mt-1 w-full rounded-2xl border border-[#173B32]/15 bg-[#F4F1EA] px-3.5 py-2.5 text-sm text-[#101412] placeholder-gray-400 outline-none transition focus:border-[#173B32] focus:bg-white"
+                    className="mt-2 w-full rounded-2xl border border-[#173B32]/15 bg-[#F4F1EA] px-4 py-3.5 text-sm text-[#101412] placeholder-gray-400 outline-none transition focus:border-[#173B32] focus:bg-white focus:ring-1 focus:ring-[#173B32]"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#E66A4E] hover:bg-[#d5593d] py-3 font-bold text-white shadow-md transition active:scale-95 disabled:opacity-50 mt-2"
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#E66A4E] hover:bg-[#d5593d] py-3.5 font-bold text-white shadow-md transition active:scale-95 disabled:opacity-50 mt-2"
                 >
                   {loading ? (
                     <Loader2 className="h-5 w-5 animate-spin" />
                   ) : (
                     <>
-                      Create {role} Account
+                      Register &amp; Sign In
                       <ArrowRight className="h-4 w-4" />
                     </>
                   )}
@@ -246,7 +196,7 @@ export default function SignupPage() {
               </form>
 
               {/* Footer Link */}
-              <p className="mt-4 text-center text-xs text-[#66736D] font-medium">
+              <p className="mt-6 text-center text-xs text-[#66736D] font-medium">
                 Already have an account?{" "}
                 <Link
                   href="/login"

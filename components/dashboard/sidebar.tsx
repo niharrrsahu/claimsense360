@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
@@ -12,114 +12,44 @@ import {
   BarChart3,
   Brain,
   LogOut,
-  PlusCircle,
   Menu,
   X,
   PanelLeftClose,
 } from "lucide-react";
 import { logout } from "@/lib/auth";
 
+const menu = [
+  {
+    title: "Dashboard",
+    icon: LayoutDashboard,
+    href: "/dashboard",
+  },
+  {
+    title: "Claims",
+    icon: FileText,
+    href: "/claims",
+  },
+  {
+    title: "Fraud Detection",
+    icon: ShieldAlert,
+    href: "/fraud",
+  },
+  {
+    title: "Analytics",
+    icon: BarChart3,
+    href: "/analytics",
+  },
+  {
+    title: "AI Copilot",
+    icon: Brain,
+    href: "/copilot",
+  },
+];
+
 export default function Sidebar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-  const [userRole, setUserRole] = useState<string>("Admin");
-
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem("cs_user_info");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed?.role) {
-          setUserRole(parsed.role);
-        }
-      } else {
-        const cookies = document.cookie.split("; ");
-        const userCookie = cookies.find((row) => row.startsWith("cs_user_info="));
-        if (userCookie) {
-          const val = decodeURIComponent(userCookie.split("=")[1]);
-          const parsed = JSON.parse(val);
-          if (parsed?.role) setUserRole(parsed.role);
-        }
-      }
-    } catch {
-      // Default to Admin
-    }
-  }, []);
-
-  // Filter menu strictly according to role
-  const getMenuForRole = () => {
-    if (userRole === "Policyholder") {
-      return [
-        {
-          title: "Submit Claim",
-          icon: PlusCircle,
-          href: "/claims/new",
-        },
-        {
-          title: "My Claims",
-          icon: FileText,
-          href: "/claims",
-        },
-      ];
-    }
-
-    if (userRole === "Adjuster") {
-      return [
-        {
-          title: "Dashboard",
-          icon: LayoutDashboard,
-          href: "/dashboard",
-        },
-        {
-          title: "Claims Directory",
-          icon: FileText,
-          href: "/claims",
-        },
-        {
-          title: "Submit Claim",
-          icon: PlusCircle,
-          href: "/claims/new",
-        },
-        {
-          title: "Analytics",
-          icon: BarChart3,
-          href: "/analytics",
-        },
-      ];
-    }
-
-    // SIU Admin (Full System Access)
-    return [
-      {
-        title: "Dashboard",
-        icon: LayoutDashboard,
-        href: "/dashboard",
-      },
-      {
-        title: "Claims Directory",
-        icon: FileText,
-        href: "/claims",
-      },
-      {
-        title: "Fraud Detection",
-        icon: ShieldAlert,
-        href: "/fraud",
-      },
-      {
-        title: "Analytics",
-        icon: BarChart3,
-        href: "/analytics",
-      },
-      {
-        title: "AI Copilot",
-        icon: Brain,
-        href: "/copilot",
-      },
-    ];
-  };
-
-  const menu = getMenuForRole();
 
   const handleLogout = async () => {
     try {
@@ -170,8 +100,14 @@ export default function Sidebar() {
           ) : (
             <>
               <Link
-                href={userRole === "Policyholder" ? "/claims/new" : "/dashboard"}
-                title="Go to Workspace"
+                href="/dashboard"
+                onClick={(e) => {
+                  if (pathname === "/dashboard") {
+                    e.preventDefault();
+                    window.location.reload();
+                  }
+                }}
+                title="Go to Dashboard Workspace"
                 className="flex items-center gap-3 group cursor-pointer"
               >
                 <div className="flex h-10 w-10 aspect-square shrink-0 items-center justify-center rounded-full bg-[#101412] font-extrabold text-[#C9FF3D] shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
@@ -183,11 +119,7 @@ export default function Sidebar() {
                     ClaimSense 360
                   </p>
                   <p className="mt-1 text-[9px] uppercase tracking-[0.14em] text-[#C9FF3D] font-semibold">
-                    {userRole === "Policyholder"
-                      ? "Customer Portal"
-                      : userRole === "Adjuster"
-                      ? "Adjuster Portal"
-                      : "SIU Command Center"}
+                    Claims Intelligence
                   </p>
                 </div>
               </Link>
@@ -214,7 +146,7 @@ export default function Sidebar() {
           </button>
         </div>
 
-        {/* Navigation Links (Strictly Filtered by Role) */}
+        {/* Navigation Links */}
         <nav className="flex-1 px-2.5 py-5 space-y-1.5 overflow-y-auto">
           {menu.map((item) => {
             const Icon = item.icon;
@@ -274,7 +206,7 @@ export default function Sidebar() {
         </div>
       </aside>
 
-      {/* Spacer to push main content right according to sidebar state */}
+      {/* Spacer */}
       <div
         className={`hidden lg:block shrink-0 transition-all duration-300 ${
           collapsed ? "w-16" : "w-60"
