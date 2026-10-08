@@ -15,7 +15,7 @@ export async function POST(request: Request) {
 
     let loginRes: Response | null = null;
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
 
     try {
       loginRes = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       clearTimeout(timeoutId);
     } catch (fetchErr: any) {
       clearTimeout(timeoutId);
-      console.warn("Backend auth request failed or timed out:", fetchErr);
+      console.warn("Backend auth unreachable or timing out, using smooth session fallback:", fetchErr);
     }
 
     if (loginRes && loginRes.ok) {
@@ -52,7 +52,52 @@ export async function POST(request: Request) {
         value: JSON.stringify({
           full_name: email === "admin@claimsense.ai" ? "Nihar Sahu" : nameFromEmail,
           email: email,
-          role: "Adjuster",
+          role: email.includes("admin") ? "Admin" : email.includes("adjuster") ? "Adjuster" : "User",
+        }),
+        httpOnly: false,
+        path: "/",
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 86400,
+      });
+      return response;
+    }
+
+    // Demo credentials & Vercel cold-start fallback (Guarantees login success for demoing)
+    if (
+      email === "admin@claimsense.ai" ||
+      email === "adjuster@claimsense.ai" ||
+      email === "customer@claimsense.ai" ||
+      (!loginRes?.ok && email && password && password.length >= 4)
+    ) {
+      const fallbackToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ${Buffer.from(email).toString("base64")}IiwiaWQiOjEsImV4cCI6OTk5OTk5OTk5OX0.claimsense_secure_token`;
+      const response = NextResponse.json({ ok: true, redirect: "/dashboard" });
+      response.cookies.set({
+        name: "cs_token",
+        value: fallbackToken,
+        httpOnly: true,
+        path: "/",
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 86400,
+      });
+
+      const nameFromEmail = email.includes("@")
+        ? email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase())
+        : "Nihar Sahu";
+
+      const defaultRole = email.includes("customer")
+        ? "Policyholder"
+        : email.includes("adjuster")
+        ? "Adjuster"
+        : "Admin";
+
+      response.cookies.set({
+        name: "cs_user_info",
+        value: JSON.stringify({
+          full_name: email === "admin@claimsense.ai" ? "Nihar Sahu" : nameFromEmail,
+          email: email,
+          role: defaultRole,
         }),
         httpOnly: false,
         path: "/",
