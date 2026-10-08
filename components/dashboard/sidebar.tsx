@@ -12,48 +12,114 @@ import {
   BarChart3,
   Brain,
   LogOut,
-  Sparkles,
+  PlusCircle,
   Menu,
   X,
-  ChevronLeft,
-  ChevronRight,
   PanelLeftClose,
-  PanelLeftOpen,
 } from "lucide-react";
 import { logout } from "@/lib/auth";
-
-const menu = [
-  {
-    title: "Dashboard",
-    icon: LayoutDashboard,
-    href: "/dashboard",
-  },
-  {
-    title: "Claims",
-    icon: FileText,
-    href: "/claims",
-  },
-  {
-    title: "Fraud Detection",
-    icon: ShieldAlert,
-    href: "/fraud",
-  },
-  {
-    title: "Analytics",
-    icon: BarChart3,
-    href: "/analytics",
-  },
-  {
-    title: "AI Copilot",
-    icon: Brain,
-    href: "/copilot",
-  },
-];
 
 export default function Sidebar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [userRole, setUserRole] = useState<string>("Admin");
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("cs_user_info");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed?.role) {
+          setUserRole(parsed.role);
+        }
+      } else {
+        const cookies = document.cookie.split("; ");
+        const userCookie = cookies.find((row) => row.startsWith("cs_user_info="));
+        if (userCookie) {
+          const val = decodeURIComponent(userCookie.split("=")[1]);
+          const parsed = JSON.parse(val);
+          if (parsed?.role) setUserRole(parsed.role);
+        }
+      }
+    } catch {
+      // Default to Admin
+    }
+  }, []);
+
+  // Filter menu strictly according to role
+  const getMenuForRole = () => {
+    if (userRole === "Policyholder") {
+      return [
+        {
+          title: "Submit Claim",
+          icon: PlusCircle,
+          href: "/claims/new",
+        },
+        {
+          title: "My Claims",
+          icon: FileText,
+          href: "/claims",
+        },
+      ];
+    }
+
+    if (userRole === "Adjuster") {
+      return [
+        {
+          title: "Dashboard",
+          icon: LayoutDashboard,
+          href: "/dashboard",
+        },
+        {
+          title: "Claims Directory",
+          icon: FileText,
+          href: "/claims",
+        },
+        {
+          title: "Submit Claim",
+          icon: PlusCircle,
+          href: "/claims/new",
+        },
+        {
+          title: "Analytics",
+          icon: BarChart3,
+          href: "/analytics",
+        },
+      ];
+    }
+
+    // SIU Admin (Full System Access)
+    return [
+      {
+        title: "Dashboard",
+        icon: LayoutDashboard,
+        href: "/dashboard",
+      },
+      {
+        title: "Claims Directory",
+        icon: FileText,
+        href: "/claims",
+      },
+      {
+        title: "Fraud Detection",
+        icon: ShieldAlert,
+        href: "/fraud",
+      },
+      {
+        title: "Analytics",
+        icon: BarChart3,
+        href: "/analytics",
+      },
+      {
+        title: "AI Copilot",
+        icon: Brain,
+        href: "/copilot",
+      },
+    ];
+  };
+
+  const menu = getMenuForRole();
 
   const handleLogout = async () => {
     try {
@@ -73,8 +139,6 @@ export default function Sidebar() {
       >
         <Menu size={22} />
       </button>
-
-
 
       {/* Mobile Drawer Backdrop */}
       {mobileOpen && (
@@ -106,17 +170,11 @@ export default function Sidebar() {
           ) : (
             <>
               <Link
-                href="/dashboard"
-                onClick={(e) => {
-                  if (pathname === "/dashboard") {
-                    e.preventDefault();
-                    window.location.reload();
-                  }
-                }}
-                title="Go to Dashboard Workspace"
+                href={userRole === "Policyholder" ? "/claims/new" : "/dashboard"}
+                title="Go to Workspace"
                 className="flex items-center gap-3 group cursor-pointer"
               >
-                <div className="flex h-10 w-10 aspect-square shrink-0 items-center justify-center rounded-full bg-[#101412] font-extrabold text-[#C9FF3D] shadow-lg group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-[#C9FF3D]/40 group-hover:ring-2 group-hover:ring-[#C9FF3D]/60 transition-all duration-300">
+                <div className="flex h-10 w-10 aspect-square shrink-0 items-center justify-center rounded-full bg-[#101412] font-extrabold text-[#C9FF3D] shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                   <span className="text-sm font-black text-[#C9FF3D]">CS</span>
                 </div>
 
@@ -125,7 +183,11 @@ export default function Sidebar() {
                     ClaimSense 360
                   </p>
                   <p className="mt-1 text-[9px] uppercase tracking-[0.14em] text-[#C9FF3D] font-semibold">
-                    Claims Intelligence
+                    {userRole === "Policyholder"
+                      ? "Customer Portal"
+                      : userRole === "Adjuster"
+                      ? "Adjuster Portal"
+                      : "SIU Command Center"}
                   </p>
                 </div>
               </Link>
@@ -142,7 +204,6 @@ export default function Sidebar() {
             </>
           )}
 
-
           {/* Mobile Close Button */}
           <button
             type="button"
@@ -153,8 +214,7 @@ export default function Sidebar() {
           </button>
         </div>
 
-        {/* Navigation Links */}
-
+        {/* Navigation Links (Strictly Filtered by Role) */}
         <nav className="flex-1 px-2.5 py-5 space-y-1.5 overflow-y-auto">
           {menu.map((item) => {
             const Icon = item.icon;
@@ -178,7 +238,7 @@ export default function Sidebar() {
                   } ${collapsed ? "justify-center px-0" : ""}`}
                 >
                   <Icon size={18} className={active ? "text-[#101412] shrink-0" : "text-white/80 shrink-0"} />
-                  
+
                   {!collapsed && (
                     <span className={`font-bold tracking-tight whitespace-nowrap ${active ? "text-[#101412]" : "text-white/80"}`}>
                       {item.title}
@@ -197,7 +257,6 @@ export default function Sidebar() {
             );
           })}
         </nav>
-
 
         {/* Bottom Logout Action */}
         <div className="border-t border-white/10 p-2.5">
