@@ -39,6 +39,14 @@ for query in migrations:
 
 
 
+# Pre-warm ML models in memory for zero-latency demo presentation
+try:
+    from app.ml.predict import load_fraud_artifacts
+    load_fraud_artifacts()
+    logger.info("XGBoost and SHAP explainer successfully warmed up in memory.")
+except Exception as e:
+    logger.warning("ML warm-up skipped: %s", e)
+
 app = FastAPI(
     title="ClaimSense360 API",
     version="1.0.0",

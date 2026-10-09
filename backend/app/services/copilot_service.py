@@ -225,7 +225,7 @@ def _ask_gemini(context: str, question: str, api_key: str) -> str | None:
     if HAS_GEMINI and genai:
         try:
             genai.configure(api_key=clean_key)
-            model_candidates = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-flash-latest", "gemini-1.5-pro", "gemini-pro"]
+            model_candidates = ["gemini-3.8-flash", "gemini-2.0-flash", "gemini-1.5-flash", "gemini-flash-latest"]
             for model_name in model_candidates:
                 try:
                     g_model = genai.GenerativeModel(
