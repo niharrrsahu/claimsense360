@@ -225,7 +225,7 @@ def _ask_gemini(context: str, question: str, api_key: str) -> str | None:
     if HAS_GEMINI and genai:
         try:
             genai.configure(api_key=clean_key)
-            model_candidates = ["gemini-3.8-flash", "gemini-2.0-flash", "gemini-1.5-flash", "gemini-flash-latest"]
+            model_candidates = ["gemini-3.8-flash", "gemini-2.0-flash"]
             for model_name in model_candidates:
                 try:
                     g_model = genai.GenerativeModel(
@@ -233,7 +233,10 @@ def _ask_gemini(context: str, question: str, api_key: str) -> str | None:
                         system_instruction=system_prompt
                     )
                     prompt_content = f"DATABASE CLAIM CONTEXT:\n{context}\n\nUSER QUESTION / PROMPT:\n{question}"
-                    response = g_model.generate_content(prompt_content)
+                    response = g_model.generate_content(
+                        prompt_content,
+                        request_options={"timeout": 10.0}
+                    )
                     if response and hasattr(response, "text") and response.text:
                         return response.text.strip()
                 except Exception as exc:
@@ -247,7 +250,7 @@ def _ask_gemini(context: str, question: str, api_key: str) -> str | None:
         import json
         import urllib.request
 
-        rest_models = ["gemini-flash-latest", "gemini-2.5-flash", "gemini-1.5-flash"]
+        rest_models = ["gemini-3.8-flash", "gemini-2.0-flash"]
         for m_name in rest_models:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{m_name}:generateContent"
             headers = {
@@ -264,7 +267,7 @@ def _ask_gemini(context: str, question: str, api_key: str) -> str | None:
                 ]
             }
             req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
-            with urllib.request.urlopen(req, timeout=30) as resp:
+            with urllib.request.urlopen(req, timeout=10) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
                 candidates = data.get("candidates", [])
                 if candidates:
