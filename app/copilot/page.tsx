@@ -183,7 +183,7 @@ export default function CopilotPage() {
       <Sidebar />
 
       <div className="flex flex-1 flex-col h-screen overflow-hidden min-w-0 max-w-full">
-        <TopNavbar userName="Nihar Sahu" userRole="Admin" userEmail="niharrrsahu@gmail.com" />
+        <TopNavbar />
 
         <PageTransition>
           <div className="flex-1 flex flex-col p-4 sm:p-6 overflow-hidden max-w-6xl w-full mx-auto space-y-4 h-[calc(100vh-80px)]">

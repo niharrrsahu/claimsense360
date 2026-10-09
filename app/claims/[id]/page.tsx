@@ -18,7 +18,7 @@ import Sidebar from "@/components/dashboard/sidebar";
 import TopNavbar from "@/components/dashboard/top-navbar";
 import RiskResultPanel, { ClaimAnalysisResultData } from "@/components/shared/risk-result-panel";
 import PageTransition from "@/components/shared/page-transition";
-import { getSingleClaim, getDashboardData } from "@/lib/server-data";
+import { getSingleClaim, getCurrentUser } from "@/lib/server-data";
 import { resolveClaimImageUrl } from "@/lib/image-utils";
 
 
@@ -36,9 +36,9 @@ export default async function SingleClaimPage({
     notFound();
   }
 
-  const [claim, { currentUser }] = await Promise.all([
+  const [claim, currentUser] = await Promise.all([
     getSingleClaim(claimId),
-    getDashboardData(),
+    getCurrentUser(),
   ]);
 
   if (!claim) {

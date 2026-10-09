@@ -213,11 +213,7 @@ export default function NewClaimPage() {
       <Sidebar />
 
       <div className="flex flex-1 flex-col min-w-0 max-w-full overflow-x-hidden">
-        <TopNavbar
-          userName="Nihar Sahu"
-          userRole="Admin"
-          userEmail="niharrrsahu@gmail.com"
-        />
+        <TopNavbar />
 
         <PageTransition>
           <div className="flex-1 space-y-6 sm:space-y-8 p-4 sm:p-6 lg:p-8 max-w-full overflow-x-hidden">

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
 interface ItemData {
@@ -18,6 +19,20 @@ export default function BreakdownBarChart({
   emptyText = "No data recorded.",
   colors = ["#173B32", "#E66A4E", "#D99A24", "#3D9B62", "#8B5CF6"],
 }: BreakdownBarChartProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="h-56 w-full rounded-2xl bg-[#F4F1EA]/50 animate-pulse flex items-center justify-center text-xs text-[#173B32]/40 font-medium">
+        Loading chart data...
+      </div>
+    );
+  }
+
   if (!data || data.length === 0) {
     return (
       <div className="flex h-48 flex-col items-center justify-center rounded-2xl border border-dashed border-[#173B32]/20 bg-[#F4F1EA]/50 p-4 text-center text-xs text-[#173B32]/70 font-medium">
@@ -27,7 +42,7 @@ export default function BreakdownBarChart({
   }
 
   return (
-    <div className="h-56 w-full">
+    <div className="h-56 w-full min-w-0">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 15, right: 15, left: -10, bottom: 20 }}>
           <XAxis dataKey="label" stroke="#6b7280" fontSize={11} tickLine={false} axisLine={false} dy={5} />

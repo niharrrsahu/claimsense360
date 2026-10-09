@@ -114,6 +114,8 @@ export default async function DashboardPage() {
 
           {/* Row 4: Live Computer Vision Damage Inspector & Automated AI System Feed */}
           <div className="grid gap-8 lg:grid-cols-2">
+            <DamageCard latestDamage={latestDamage} />
+            <ActivityFeed activities={activityFeed} />
           </div>
         </div>
         </PageTransition>

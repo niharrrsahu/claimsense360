@@ -72,6 +72,7 @@ export default function TopNavbar({
 
 
   const safeUserName = clientUser?.full_name || userName || "Nihar Sahu";
+  const safeUserRole = clientUser?.role || userRole || "SIU Lead & Admin";
   const initial = safeUserName.charAt(0).toUpperCase();
   const displayEmail = clientUser?.email || userEmail || (safeUserName.toLowerCase().includes("nihar") ? "niharrrsahu@gmail.com" : `${safeUserName.toLowerCase().replace(/\s+/g, ".")}@gmail.com`);
 
@@ -152,7 +153,7 @@ export default function TopNavbar({
                 {safeUserName}
               </h3>
               <p className="text-[10px] text-[#173B32]/60 mt-0.5 capitalize font-medium">
-                {userRole}
+                {safeUserRole}
               </p>
             </div>
             <ChevronDown size={14} className={`text-[#173B32]/60 transition-transform duration-300 ${isProfileOpen ? "rotate-180 text-[#173B32]" : ""}`} />
