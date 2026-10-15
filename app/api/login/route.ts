@@ -1,6 +1,34 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import crypto from "crypto";
 import { API_BASE_URL } from "@/lib/config";
+
+function generateSignedJwt(email: string) {
+  const secret = process.env.JWT_SECRET_KEY || process.env.SECRET_KEY || "claimsense360_super_secret_key";
+  const header = { alg: "HS256", typ: "JWT" };
+  const payload = {
+    sub: email,
+    id: 1,
+    exp: Math.floor(Date.now() / 1000) + 86400 * 30, // 30 days
+  };
+  const base64Url = (str: string) =>
+    Buffer.from(str)
+      .toString("base64")
+      .replace(/=/g, "")
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_");
+  const encodedHeader = base64Url(JSON.stringify(header));
+  const encodedPayload = base64Url(JSON.stringify(payload));
+  const data = `${encodedHeader}.${encodedPayload}`;
+  const signature = crypto
+    .createHmac("sha256", secret)
+    .update(data)
+    .digest("base64")
+    .replace(/=/g, "")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_");
+  return `${data}.${signature}`;
+}
 
 export async function POST(request: Request) {
   try {
@@ -16,7 +44,7 @@ export async function POST(request: Request) {
 
     let loginRes: Response | null = null;
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
 
     try {
       loginRes = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -91,7 +119,7 @@ export async function POST(request: Request) {
     }
 
     if (isAuthorizedEnterpriseAccount || isMatchingRegisteredSession) {
-      const fallbackToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ${Buffer.from(email).toString("base64")}IiwiaWQiOjEsImV4cCI6OTk5OTk5OTk5OX0.claimsense_secure_token`;
+      const fallbackToken = generateSignedJwt(email.trim().toLowerCase());
       const response = NextResponse.json({ ok: true, redirect: "/dashboard" });
       response.cookies.set({
         name: "cs_token",
