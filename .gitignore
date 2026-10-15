@@ -58,6 +58,7 @@ __pycache__/
 # AI model weights cache (auto-downloads on first run)
 yolov8n.pt
 .cache/
+backend/app/uploads/
 
 
 # Python coverage files
