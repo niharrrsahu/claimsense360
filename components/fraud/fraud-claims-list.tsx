@@ -43,6 +43,7 @@ export default function FraudClaimsList({ highRiskClaims }: FraudClaimsListProps
       <div className="flex flex-wrap items-center gap-2 border-b border-[#173B32]/10 pb-4">
         <button
           type="button"
+          suppressHydrationWarning
           onClick={() => setFilterSeverity("all")}
           className={`rounded-xl px-4 py-2 text-xs font-bold transition active:scale-95 ${
             filterSeverity === "all"
@@ -55,6 +56,7 @@ export default function FraudClaimsList({ highRiskClaims }: FraudClaimsListProps
 
         <button
           type="button"
+          suppressHydrationWarning
           onClick={() => setFilterSeverity("critical")}
           className={`rounded-xl px-4 py-2 text-xs font-bold transition active:scale-95 ${
             filterSeverity === "critical"
@@ -67,6 +69,7 @@ export default function FraudClaimsList({ highRiskClaims }: FraudClaimsListProps
 
         <button
           type="button"
+          suppressHydrationWarning
           onClick={() => setFilterSeverity("major")}
           className={`rounded-xl px-4 py-2 text-xs font-bold transition active:scale-95 ${
             filterSeverity === "major"

@@ -101,6 +101,7 @@ export default function DashboardPreview() {
               <motion.button
                 key={sc.id}
                 type="button"
+                suppressHydrationWarning
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.96 }}
                 onClick={() => handleSelect(sc.id)}

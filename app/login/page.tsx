@@ -104,6 +104,7 @@ function LoginForm() {
         <Link href="/" title="Go to Homepage" className="inline-block">
           <motion.button
             type="button"
+            suppressHydrationWarning
             whileHover={{ scale: 1.15, rotate: 8 }}
             whileTap={{ scale: 0.9, rotate: -8 }}
             className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#101412] shadow-md hover:ring-2 hover:ring-[#C9FF3D] transition-all cursor-pointer"
@@ -140,6 +141,7 @@ function LoginForm() {
           <input
             type="email"
             required
+            suppressHydrationWarning
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="admin@claimsense.ai"
@@ -154,6 +156,7 @@ function LoginForm() {
           <input
             type="password"
             required
+            suppressHydrationWarning
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
@@ -163,6 +166,7 @@ function LoginForm() {
 
         <button
           type="submit"
+          suppressHydrationWarning
           disabled={loading}
           className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#E66A4E] hover:bg-[#d5593d] py-3.5 font-bold text-white shadow-md transition active:scale-95 disabled:opacity-50 mt-2"
         >
@@ -181,6 +185,7 @@ function LoginForm() {
       <div className="mt-4 pt-4 border-t border-[#173B32]/10">
         <button
           type="button"
+          suppressHydrationWarning
           onClick={handleDemoLogin}
           disabled={loading}
           className="w-full rounded-2xl border border-[#173B32]/25 bg-[#173B32]/5 py-3 text-xs font-bold text-[#173B32] transition hover:bg-[#173B32]/10 active:scale-95 disabled:opacity-50"

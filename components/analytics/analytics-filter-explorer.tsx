@@ -125,6 +125,7 @@ export default function AnalyticsFilterExplorer({ initialClaims = [] }: Analytic
           {isFiltered && (
             <button
               type="button"
+              suppressHydrationWarning
               onClick={resetFilters}
               className="flex items-center gap-1.5 rounded-xl border border-[#E66A4E]/30 bg-[#FDF0ED] px-3.5 py-1.5 text-xs font-bold text-[#E66A4E] hover:bg-[#E66A4E] hover:text-white transition active:scale-95 shrink-0 self-start sm:self-auto"
             >

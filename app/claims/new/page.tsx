@@ -252,6 +252,7 @@ export default function NewClaimPage() {
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
+                    suppressHydrationWarning
                     onClick={() => {
                       setCustomerName("Vikram Malhotra");
                       setVehicleMakeModel("Kia Seltos GTX+ (2022)");
@@ -276,6 +277,7 @@ export default function NewClaimPage() {
 
                   <button
                     type="button"
+                    suppressHydrationWarning
                     onClick={() => {
                       setCustomerName("Ananya Verma");
                       setVehicleMakeModel("Mahindra XUV700 AX7 (2023)");
@@ -315,6 +317,7 @@ export default function NewClaimPage() {
                   <input
                     type="text"
                     required
+                    suppressHydrationWarning
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     className="mt-1.5 w-full rounded-2xl border border-[#173B32]/15 bg-[#F4F1EA] px-4 py-3 text-sm text-[#101412] outline-none focus:border-[#173B32]"
@@ -328,6 +331,7 @@ export default function NewClaimPage() {
                   <input
                     type="text"
                     required
+                    suppressHydrationWarning
                     value={vehicleMakeModel}
                     onChange={(e) => setVehicleMakeModel(e.target.value)}
                     className="mt-1.5 w-full rounded-2xl border border-[#173B32]/15 bg-[#F4F1EA] px-4 py-3 text-sm text-[#101412] outline-none focus:border-[#173B32]"
@@ -344,6 +348,7 @@ export default function NewClaimPage() {
                   <input
                     type="number"
                     required
+                    suppressHydrationWarning
                     min={0}
                     max={20000000}
                     value={claimAmount}
@@ -359,6 +364,7 @@ export default function NewClaimPage() {
                   <input
                     type="number"
                     required
+                    suppressHydrationWarning
                     min={10000}
                     max={20000000}
                     value={vehiclePrice}
@@ -374,6 +380,7 @@ export default function NewClaimPage() {
                   <input
                     type="number"
                     required
+                    suppressHydrationWarning
                     min={18}
                     max={100}
                     value={age}
@@ -392,6 +399,7 @@ export default function NewClaimPage() {
                   <input
                     type="number"
                     required
+                    suppressHydrationWarning
                     min={0}
                     max={40}
                     value={vehicleAge}
@@ -407,6 +415,7 @@ export default function NewClaimPage() {
                   <input
                     type="number"
                     required
+                    suppressHydrationWarning
                     min={0}
                     max={20}
                     value={pastClaims}
@@ -422,6 +431,7 @@ export default function NewClaimPage() {
                   <input
                     type="number"
                     required
+                    suppressHydrationWarning
                     min={1}
                     max={5}
                     value={driverRating}
@@ -500,6 +510,7 @@ export default function NewClaimPage() {
                   <span className="text-sm font-semibold text-[#173B32]">Police Report Filed?</span>
                   <input
                     type="checkbox"
+                    suppressHydrationWarning
                     checked={policeReportFiled}
                     onChange={(e) => setPoliceReportFiled(e.target.checked)}
                     className="h-5 w-5 rounded border-[#173B32]/30 text-[#173B32] focus:ring-[#173B32]"
@@ -510,6 +521,7 @@ export default function NewClaimPage() {
                   <span className="text-sm font-semibold text-[#173B32]">Witness Present?</span>
                   <input
                     type="checkbox"
+                    suppressHydrationWarning
                     checked={witnessPresent}
                     onChange={(e) => setWitnessPresent(e.target.checked)}
                     className="h-5 w-5 rounded border-[#173B32]/30 text-[#173B32] focus:ring-[#173B32]"
@@ -524,6 +536,7 @@ export default function NewClaimPage() {
                 </label>
                 <textarea
                   rows={3}
+                  suppressHydrationWarning
                   value={incidentDescription}
                   onChange={(e) => setIncidentDescription(e.target.value)}
                   placeholder="Describe what happened during the incident..."
@@ -553,6 +566,7 @@ export default function NewClaimPage() {
                     </div>
                     <button
                       type="button"
+                      suppressHydrationWarning
                       onClick={removeImage}
                       className="rounded-full bg-[#FDF0ED] p-2 text-[#E66A4E] hover:bg-red-200"
                     >
@@ -570,6 +584,7 @@ export default function NewClaimPage() {
                     </span>
                     <input
                       type="file"
+                      suppressHydrationWarning
                       accept="image/*"
                       onChange={handleImageChange}
                       className="hidden"
@@ -581,6 +596,7 @@ export default function NewClaimPage() {
               {/* Submit Button */}
               <button
                 type="submit"
+                suppressHydrationWarning
                 disabled={loading}
                 className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#E66A4E] hover:bg-[#d5593d] py-4 font-bold text-white shadow-lg transition active:scale-95 disabled:opacity-50"
               >

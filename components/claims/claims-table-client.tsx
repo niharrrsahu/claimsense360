@@ -94,6 +94,7 @@ export default function ClaimsTableClient({
             <Search className="text-[#173B32]/60" size={18} />
             <input
               type="text"
+              suppressHydrationWarning
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by customer name, vehicle, or claim ref (e.g. CLM-00001)..."
@@ -104,6 +105,7 @@ export default function ClaimsTableClient({
           {searchTerm && (
             <button
               type="button"
+              suppressHydrationWarning
               onClick={() => setSearchTerm("")}
               className="rounded-2xl border border-[#173B32]/20 bg-white hover:bg-[#F4F1EA] px-4 py-3 text-xs font-bold text-[#E66A4E] shadow-2xs transition active:scale-95 cursor-pointer shrink-0"
             >

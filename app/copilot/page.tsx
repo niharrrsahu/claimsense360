@@ -211,6 +211,7 @@ export default function CopilotPage() {
             <div className="flex items-center gap-2">
               <button
                 type="button"
+                suppressHydrationWarning
                 onClick={() => setMessages([messages[0]])}
                 className="flex items-center gap-1.5 rounded-xl border border-[#173B32]/15 bg-[#F4F1EA] hover:bg-[#173B32]/10 px-3 py-1.5 text-xs font-bold text-[#173B32] transition"
               >
@@ -227,6 +228,8 @@ export default function CopilotPage() {
             {QUICK_ACTION_PROMPTS.map((item, idx) => (
               <motion.button
                 key={idx}
+                type="button"
+                suppressHydrationWarning
                 whileHover={{ scale: 1.04, y: -1 }}
                 whileTap={{ scale: 0.96 }}
                 onClick={() => handleSend(item.prompt)}
@@ -285,6 +288,8 @@ export default function CopilotPage() {
                         {msg.followUpActions.map((act, aIdx) => (
                           <motion.button
                             key={aIdx}
+                            type="button"
+                            suppressHydrationWarning
                             whileHover={{ scale: 1.04, y: -1 }}
                             whileTap={{ scale: 0.96 }}
                             onClick={() => handleSend(act.prompt)}
@@ -327,6 +332,7 @@ export default function CopilotPage() {
             <div className="flex items-center gap-3 rounded-2xl border border-[#173B32]/20 bg-white p-2 shadow-md focus-within:border-[#173B32]">
               <input
                 type="text"
+                suppressHydrationWarning
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask AI Copilot (e.g. 'Explain claim #11' or 'Show high risk claims')..."
@@ -335,6 +341,7 @@ export default function CopilotPage() {
 
               <button
                 type="submit"
+                suppressHydrationWarning
                 disabled={!input.trim() || loading}
                 className="flex items-center gap-2 rounded-xl bg-[#173B32] hover:bg-[#23584b] disabled:opacity-50 px-4 py-2.5 text-xs font-bold text-[#C9FF3D] transition active:scale-95 shrink-0"
               >

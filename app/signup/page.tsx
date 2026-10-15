@@ -107,6 +107,7 @@ export default function SignupPage() {
                 <Link href="/" title="Go to Homepage" className="inline-block">
                   <motion.button
                     type="button"
+                    suppressHydrationWarning
                     whileHover={{ scale: 1.15, rotate: 8 }}
                     whileTap={{ scale: 0.9, rotate: -8 }}
                     className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#101412] shadow-md hover:ring-2 hover:ring-[#C9FF3D] transition-all cursor-pointer"
@@ -143,6 +144,7 @@ export default function SignupPage() {
                   <input
                     type="text"
                     required
+                    suppressHydrationWarning
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Priya Sharma"
@@ -157,6 +159,7 @@ export default function SignupPage() {
                   <input
                     type="email"
                     required
+                    suppressHydrationWarning
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="priya@claimsense.ai"
@@ -172,6 +175,7 @@ export default function SignupPage() {
                     type="password"
                     required
                     minLength={8}
+                    suppressHydrationWarning
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
@@ -181,6 +185,7 @@ export default function SignupPage() {
 
                 <button
                   type="submit"
+                  suppressHydrationWarning
                   disabled={loading}
                   className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#E66A4E] hover:bg-[#d5593d] py-3.5 font-bold text-white shadow-md transition active:scale-95 disabled:opacity-50 mt-2"
                 >

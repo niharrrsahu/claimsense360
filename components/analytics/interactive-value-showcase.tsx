@@ -35,6 +35,7 @@ export default function InteractiveValueShowcase() {
         <div className="flex items-center gap-1.5 rounded-2xl bg-[#F4F1EA] p-1 border border-[#173B32]/10 shrink-0 overflow-x-auto">
           <button
             type="button"
+            suppressHydrationWarning
             onClick={() => setActiveTab("speed")}
             className={`flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 whitespace-nowrap font-sans ${
               activeTab === "speed"
@@ -47,6 +48,7 @@ export default function InteractiveValueShowcase() {
 
           <button
             type="button"
+            suppressHydrationWarning
             onClick={() => setActiveTab("fraud")}
             className={`flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 whitespace-nowrap font-sans ${
               activeTab === "fraud"
@@ -59,6 +61,7 @@ export default function InteractiveValueShowcase() {
 
           <button
             type="button"
+            suppressHydrationWarning
             onClick={() => setActiveTab("audit")}
             className={`flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 whitespace-nowrap font-sans ${
               activeTab === "audit"
@@ -321,6 +324,7 @@ export default function InteractiveValueShowcase() {
               </div>
               <input
                 type="range"
+                suppressHydrationWarning
                 min="100"
                 max="5000"
                 step="50"
@@ -337,6 +341,7 @@ export default function InteractiveValueShowcase() {
               </div>
               <input
                 type="range"
+                suppressHydrationWarning
                 min="25000"
                 max="500000"
                 step="5000"

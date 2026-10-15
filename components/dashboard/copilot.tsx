@@ -93,6 +93,7 @@ function CopilotContent() {
       <form onSubmit={handleSend} className="mt-6">
         <textarea
           rows={3}
+          suppressHydrationWarning
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           placeholder="e.g., Which claim submitted today has the highest financial risk?"
@@ -101,6 +102,7 @@ function CopilotContent() {
 
         <button
           type="submit"
+          suppressHydrationWarning
           disabled={loading || !question.trim()}
           className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#E66A4E] hover:bg-[#d5593d] py-3.5 font-bold text-white shadow-md transition active:scale-95 disabled:opacity-50"
         >

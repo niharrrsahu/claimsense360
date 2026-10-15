@@ -114,6 +114,7 @@ export default function TopNavbar({
         {onOpenMobileMenu && (
           <button
             type="button"
+            suppressHydrationWarning
             onClick={onOpenMobileMenu}
             aria-label="Open navigation menu"
             className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#173B32] text-[#C9FF3D] shadow-md lg:hidden active:scale-95 cursor-pointer shrink-0"
@@ -230,6 +231,7 @@ export default function TopNavbar({
 
                   <button
                     type="button"
+                    suppressHydrationWarning
                     onClick={async () => {
                       setIsProfileOpen(false);
                       try {

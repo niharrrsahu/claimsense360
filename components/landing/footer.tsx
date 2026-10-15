@@ -35,6 +35,8 @@ export default function Footer() {
                 {modalContent.badge}
               </span>
               <button
+                type="button"
+                suppressHydrationWarning
                 onClick={() => setModalContent(null)}
                 className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white hover:bg-white/20 cursor-pointer"
               >
@@ -44,6 +46,8 @@ export default function Footer() {
             <h4 className="mt-4 font-serif text-xl font-bold text-white">{modalContent.title}</h4>
             <p className="mt-2 text-sm leading-relaxed text-white/70">{modalContent.body}</p>
             <button
+              type="button"
+              suppressHydrationWarning
               onClick={() => setModalContent(null)}
               className="mt-6 w-full rounded-full bg-[#C9FF3D] py-3 text-sm font-bold text-[#0B1120] hover:bg-[#a8df24] transition-all cursor-pointer"
             >
@@ -82,6 +86,7 @@ export default function Footer() {
                 <input
                   type="email"
                   required
+                  suppressHydrationWarning
                   placeholder="Enter officer email..."
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -90,6 +95,7 @@ export default function Footer() {
               </div>
               <button
                 type="submit"
+                suppressHydrationWarning
                 className="rounded-full bg-[#C9FF3D] px-6 py-3 text-sm font-bold text-[#0B1120] transition-all hover:bg-[#a8df24] hover:scale-105 shrink-0 cursor-pointer"
               >
                 Join Digest
@@ -217,6 +223,7 @@ export default function Footer() {
               <li>
                 <button
                   type="button"
+                  suppressHydrationWarning
                   onClick={() => setModalContent({
                     badge: "SOC2 TYPE II CERTIFIED",
                     title: "Enterprise SOC2 Type II Security",
@@ -230,6 +237,7 @@ export default function Footer() {
               <li>
                 <button
                   type="button"
+                  suppressHydrationWarning
                   onClick={() => setModalContent({
                     badge: "DPDP ACT 2023 COMPLIANT",
                     title: "Privacy Policy & Data Governance",
@@ -260,6 +268,8 @@ export default function Footer() {
             </span>
             <span className="h-1.5 w-1.5 rounded-full bg-[#C9FF3D]" />
             <button
+              type="button"
+              suppressHydrationWarning
               onClick={scrollToTop}
               className="flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-xs font-bold text-[#C9FF3D] hover:bg-white/10 transition-all cursor-pointer"
             >

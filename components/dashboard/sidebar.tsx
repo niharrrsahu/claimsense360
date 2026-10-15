@@ -64,6 +64,7 @@ export default function Sidebar() {
       {/* Mobile Menu Toggle Button */}
       <button
         type="button"
+        suppressHydrationWarning
         onClick={() => setMobileOpen(true)}
         className="fixed bottom-4 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#173B32] text-[#C9FF3D] shadow-xl lg:hidden active:scale-95"
       >
@@ -91,6 +92,7 @@ export default function Sidebar() {
           {collapsed ? (
             <button
               type="button"
+              suppressHydrationWarning
               onClick={() => setCollapsed(false)}
               title="Expand Sidebar"
               className="flex h-10 w-10 aspect-square shrink-0 items-center justify-center rounded-full bg-[#101412] font-extrabold text-[#C9FF3D] shadow-lg hover:scale-105 transition-transform duration-200 cursor-pointer"
@@ -127,6 +129,7 @@ export default function Sidebar() {
               {/* Desktop Collapse Toggle Button */}
               <button
                 type="button"
+                suppressHydrationWarning
                 onClick={() => setCollapsed(true)}
                 title="Collapse Sidebar"
                 className="hidden lg:flex rounded-xl p-1.5 text-white/70 hover:bg-white/10 hover:text-[#C9FF3D] transition active:scale-95 shrink-0 cursor-pointer"
@@ -139,6 +142,7 @@ export default function Sidebar() {
           {/* Mobile Close Button */}
           <button
             type="button"
+            suppressHydrationWarning
             onClick={() => setMobileOpen(false)}
             className="rounded-xl p-1.5 text-white/80 hover:bg-white/10 hover:text-white lg:hidden"
           >
@@ -194,6 +198,7 @@ export default function Sidebar() {
         <div className="border-t border-white/10 p-2.5">
           <button
             type="button"
+            suppressHydrationWarning
             onClick={handleLogout}
             title={collapsed ? "Logout" : undefined}
             className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold text-[#E66A4E] hover:bg-[#E66A4E]/15 transition active:scale-95 ${
