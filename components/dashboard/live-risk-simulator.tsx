@@ -260,6 +260,7 @@ export default function LiveRiskSimulator() {
               <motion.button
                 key={scenario.id}
                 type="button"
+                suppressHydrationWarning
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => runSimulation(scenario)}

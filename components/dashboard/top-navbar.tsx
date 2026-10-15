@@ -87,6 +87,7 @@ export default function TopNavbar({
         <Link href="/" title="Go to Homepage" className="inline-block">
           <motion.button
             type="button"
+            suppressHydrationWarning
             whileHover={{ scale: 1.1, rotate: 6 }}
             whileTap={{ scale: 0.9, rotate: -6 }}
             className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-[#173B32] font-black text-[#C9FF3D] text-xs sm:text-sm shadow-md hover:ring-2 hover:ring-[#C9FF3D] transition-all cursor-pointer shrink-0"
@@ -126,6 +127,7 @@ export default function TopNavbar({
           <Search className="text-[#173B32]/60 shrink-0" size={16} />
           <input
             type="text"
+            suppressHydrationWarning
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleSearchKeyDown}
@@ -140,6 +142,7 @@ export default function TopNavbar({
 
           <motion.button
             type="button"
+            suppressHydrationWarning
             whileHover={{ scale: 1.05, boxShadow: "0px 6px 20px rgba(23, 59, 50, 0.15)" }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsProfileOpen(!isProfileOpen)}

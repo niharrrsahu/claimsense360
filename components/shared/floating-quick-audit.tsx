@@ -1,12 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, X, Brain, PlusCircle, ShieldAlert, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function FloatingQuickAudit() {
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <div className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-40 hidden sm:block">
@@ -73,6 +80,7 @@ export default function FloatingQuickAudit() {
       {/* Trigger Floating Button */}
       <motion.button
         type="button"
+        suppressHydrationWarning
         whileHover={{ scale: 1.08, rotate: 5 }}
         whileTap={{ scale: 0.92 }}
         onClick={() => setIsOpen(!isOpen)}
